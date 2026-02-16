@@ -1,113 +1,170 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
+// ---------------------------------------------------
+// COMPONENTE x: ......
+// ---------------------------------------------------
 function App() {
-  // 1. Onde vamos guardar os produtos que chegarem do Django
-  const [produtos, setProdutos] = useState([])
-  const [carrinho,setCarrinho] = useState([])
-  const [busca,setBusca] = useState("")
-  const nomeLoja = "Didáticos";
+  // 1. A memória do App
+  const [ paginaAtual, setPaginaAtual ] = useState("loja");
+  const [ produtos, setProdutos ] = useState([]);
+  const [ carrinho, setCarrinho ] = useState([]);
+  const [ busca, setBusca ] = useState("");
 
-  function adicionarAoCarrinho(produtoClicado){
-    setCarrinho([...carrinho,produtoClicado]);
-    alert("Você comprou: " + produtoClicado.nome); 
+  // 2. Função para remover um item do carrinho
+  function removerDoCarrinho(indexParaRemover) {
+    // O filter cria uma nova lista
+    // "index" é a posição do item na lista, (0, 1, 2, 3...)
+    // Se a posição for diferente da que quero apagar, o item fica.
+    const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
+    setCarrinho(novaLista);
   }
 
-  // 2. O "Gatilho": Executa assim que a tela carrega
+  // Função que simula a finalização da compra
+  function finalizarCompra() {
+    alert("Compra finalizada! \nTotal: R$ " + total.toFixed(2));
+
+    // 1. Zera o carrinho (Volta a ser uma lista vazia)
+    setCarrinho([]); 
+
+    // 2. Manda o usuário de volta para a vitrine da loja
+    setPaginaAtual("loja");
+  }
+
+  // 3. Calcula o total do carrinho
+  // O "Number" garante que o texto "15.00" vire um número 15.00
+  const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
+
+  // 4. Busca de dados
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/produtos/')
-      .then(response => {
-        setProdutos(response.data) // Guarda os dados na caixinha
-        console.log("Dados recebidos!", response.data)
-      })
-      .catch(error => {
-        console.error("Deu erro na conexão:", error)
-      })
+      .then(response => setProdutos(response.data))
+      .catch(erro => console.log("Erro: ", erro))
   }, [])
 
-
-
+  // 5. Renderização/Desenho da tela/ O que aparece para o usuário
   return (
-    <div style={{ padding: '20px'}}>
+    <div>
+      {/* Menu de navegação */}
+      <nav style={{ background: '#111', padding: '20px', color: 'white', display: 'flex', justifyContent: 'space-between' }}>
 
-      {/* Título */}
-      <h1 style={{color:'green'}}>{nomeLoja}</h1>
+        {/* Botão para ir para a Loja */}
+        <h2 onClick={ () => setPaginaAtual("loja") } style={{ cursor: 'pointer' }}>
+          Didáticos
+        </h2>
 
+        {/* Botão para ir para o carrinho */}
+        <button onClick={ () => setPaginaAtual("carrinho") }>
+          Carrinho ({ carrinho.length })
+        </button>
 
-      {/* Input de busca */}
-      <input
-      type="text"
-      placeholder='Buscar curso ...'
-      value={busca}
-      onChange={ (ev) => setBusca(ev.target.value)}
-      style={{ padding: '10px', width: '300px', marginBottom: '20px'}}
-      />
+      </nav>
 
-      {/* Carrinho */}
-      <div
-        style={{border: '1px dashed #aaa',
-                padding: '10px',
-                marginBottom: '20px',
-                backgroundColor: '#0c0b0b',
-                color: 'white',}}>
+      <hr />
 
-        <h3>Meu carrinho ({carrinho.length} itens)</h3>
+      {/* Conteúdo da página atual (Renderização Condicional) */}
+      <div style={{ padding: '20px'}}>
 
-        <ul style={{ listStyleType: 'none', padding: 0}}>
-          {carrinho.map((item,index) => (
-            <li 
-            key={index} 
-            style={{ borderBottom: '1px solid #333', padding: '5px 10px'}}>
-              {item.nome} - <span style={{color:'#00ff00'}}>R$ {item.preco}</span>
-            </li>
-          ))}
-        </ul>
+        { paginaAtual === "loja" ? (
 
-        {/* Calculo do total */}
-        <div style={{ marginTop: '10px', fontWeight: 'bold', fontSize: '1.2em'}}>
-          Total: R$ {carrinho.reduce((total, item) => total + Number(item.preco), 0).toFixed(2)}
-        </div>
-      </div>
+          // OPÇÃO A: Se for a loja, mostrar os produtos
+          <div>
+            <h3>Vitrine de Produtos</h3>
+            {/* Campo busca) */}
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              style={{ padding: '10px', width: '100%', marginBottom: '20px' }}
+            />
 
-
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-
-        {/* 3. O Loop: Para cada produto, cria um cartão */}
-        {produtos
-          .filter(produto => (produto.nome || "").toLowerCase().includes(busca.toLowerCase()))
-          .map(produto => (
-            <div key={produto.id} style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '8px', width: '200px' }}>
-              
-              {/* Tenta mostrar a imagem (se existir) */}
-              {produto.imagem && (
-                <img src={produto.imagem} alt={produto.nome} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-              )}
-              
-              {/* Dados */}
-              <h3>{produto.nome}</h3>
-              <p style={{color:produto.preco >50 ? 'red' : 'green', fontWeight: 'bold'}}>R$ {produto.preco}</p>
-              
-              {/* Botões */}
-              <button 
-                onClick={() => adicionarAoCarrinho(produto)}
-                style={{ backgroundColor: '#28a745', color: 'white', border: 'none', padding:'5px 10px', borderRadius: '4px', cursor: 'pointer'}}
-                >
+            {produtos
+              .filter(p => (p.titulo || "").toLowerCase().includes(busca.toLowerCase())) // filtrar os produtos pela busca
+              .map(produto => ( // para cada produto, mostrar um card)
+              <div key={produto.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
+                {/* imagem do produto) */}
+                {produto.imagem_capa && ( 
+                  <img 
+                    src={produto.imagem_capa}
+                    alt={produto.titulo}
+                    style={{ width: '100%', height: '150px', objectFit: 'cover', marginBottom: '10px' }}
+                  />
+                )}
+                {/* Título do produto) */}
+                <p>{produto.titulo} - R$ {produto.preco}</p>
+                {/* Botão de compra do produto) */}
+                <button onClick={() => setCarrinho([...carrinho, produto])}>
                   Comprar
                 </button>
+              </div>
+              
+            ))}
+          </div>
+          ) : (
+          // OPÇÃO B: Se for o carrinho, mostrar os itens do carrinho
+          <div>
+            <h3>Seu Carrinho de Compras</h3>
 
-              <button 
-                onClick={ () => alert("Detalhes de: " + produto.nome)}
-                style={{marginLeft: '10px', backgroundColor: '#444'}}
-                >
-                  Ver detalhes
-                </button>
-            </div>
-        ))}
-        {/* Término da lógica do JavaScript */}
+            {/* Se o carrinho estiver vazio, mostrar uma mensagem */}
+            {carrinho.length === 0 ? (
+              <p>Seu carrinho está vazio. Volte para a loja!</p>
+            ) : (
+              <div>
+                {carrinho.map((item, index) => (
+                  <div key={index} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
+                    
+                    {/* Esquerda: Dados do produto */}
+                    <div>
+                      <p style={{ fontWeight: 'bold'}}>{item.titulo}</p>
+                      <p>R$ {item.preco}</p>
+                    </div>
 
+                    {/* Direita: Botão de Excluir */}
+                    <button 
+                      onClick={ () => removerDoCarrinho(index)}
+                      style={{backgroundColor: 'red', color: 'white', border: 'none', padding: '5px 10px', cursor:'pointer'}}
+                      >
+                      Excluir
+                    </button>
+
+                  </div>
+                ))}
+
+                {/* Total do carrinho) */}
+                <div style={{ marginTop: '20px', fontSize: '20px', fontWeight: 'bold'}}>
+                  Total: R$ {total.toFixed(2)}
+                </div>
+            
+              </div>
+            )}
+            
+            {/* Botão que simula finalizar compra */}
+            <button
+              onClick={finalizarCompra}
+              style={{
+                display:'block',
+                width: '100%',
+                padding: '15px',
+                color:'white',
+                border:'none',
+                marginTop: '20px',
+                cursor: 'pointer',
+                fontSize: '18px',
+                fontWeight: 'bold',
+              }}>
+              ✅ Finalizar Compra
+            </button>
+            
+            <button onClick={() => setPaginaAtual("loja")} style={{ marginTop: '20px' }}>
+              ⬅️ Voltar para a Loja
+            </button>
+         
+        </div>  
+      )}   
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App; 
