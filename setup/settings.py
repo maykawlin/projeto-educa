@@ -38,15 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store'
+    'store',
+    'rest_framework', # <-- O tradutor para JSON
+    'corsheaders', # <-- O porteiro de segurança
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #Esse site (React) tem permissão de falar com a gente?
+    'django.middleware.security.SecurityMiddleware', #Verifica se a conexão é segura (HTTPS).
+    'django.contrib.sessions.middleware.SessionMiddleware', #Verifica se o usuário tem um cookie de sessão.
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware', #Verifica se é um ataque hacker de formulário.
+    'django.contrib.auth.middleware.AuthenticationMiddleware', #Verifica quem é o usuário.
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -129,3 +132,12 @@ MEDIA_URL = '/media/'
 
 # Onde os arquivos ficam fisicamente no meu computador
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# Configuração do CORS, comunicação Django com react
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",   
+    "http://127.0.0.1:5173",
+]
