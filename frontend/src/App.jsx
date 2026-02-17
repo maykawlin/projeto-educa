@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
+import {Navegacao} from './components/Navegacao';
+import { Vitrine } from "./components/Vitrine";
+
 // ---------------------------------------------------
 // COMPONENTE x: ......
 // ---------------------------------------------------
@@ -8,10 +11,21 @@ function App() {
   // 1. A memória do App
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
   const [ produtos, setProdutos ] = useState([]);
-  const [ carrinho, setCarrinho ] = useState([]);
+  const [ carrinho, setCarrinho ] = useState(() => {
+    // Tenta ler o carrinho salvo no localStorage
+    const dadosSalvos = localStorage.getItem('carrinho');
+    // Se tiver dados salvos, retorna eles como um array (JSON.parse)
+    // Se não tiver, retorna uma lista vazia
+    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
+  });
   const [ busca, setBusca ] = useState("");
 
-  // 2. Função para remover um item do carrinho
+  // 2. Salva no LocalStorage toda vez que o carrinho mudar
+  useEffect(() => {
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+  }, [carrinho]); // <--- O array de dependência diz: "Vigie a variável carrinho"
+
+  // 3. Função para remover um item do carrinho
   function removerDoCarrinho(indexParaRemover) {
     // O filter cria uma nova lista
     // "index" é a posição do item na lista, (0, 1, 2, 3...)
@@ -20,7 +34,7 @@ function App() {
     setCarrinho(novaLista);
   }
 
-  // Função que simula a finalização da compra
+  // 4. Função que simula a finalização da compra
   function finalizarCompra() {
     alert("Compra finalizada! \nTotal: R$ " + total.toFixed(2));
 
@@ -31,34 +45,30 @@ function App() {
     setPaginaAtual("loja");
   }
 
-  // 3. Calcula o total do carrinho
+  // 5. Calcula o total do carrinho
   // O "Number" garante que o texto "15.00" vire um número 15.00
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
-  // 4. Busca de dados
+  // 6. Busca de dados
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/produtos/')
       .then(response => setProdutos(response.data))
       .catch(erro => console.log("Erro: ", erro))
   }, [])
 
-  // 5. Renderização/Desenho da tela/ O que aparece para o usuário
+  // 7. Função que adicona ao carrinho
+  function adcionarAoCarrinho(produtoClicado) {
+    setCarrinho([...carrinho,produtoClicado]);
+  }
+
+  // 8. Renderização/Desenho da tela/ O que aparece para o usuário
   return (
     <div>
-      {/* Menu de navegação */}
-      <nav style={{ background: '#111', padding: '20px', color: 'white', display: 'flex', justifyContent: 'space-between' }}>
-
-        {/* Botão para ir para a Loja */}
-        <h2 onClick={ () => setPaginaAtual("loja") } style={{ cursor: 'pointer' }}>
-          Didáticos
-        </h2>
-
-        {/* Botão para ir para o carrinho */}
-        <button onClick={ () => setPaginaAtual("carrinho") }>
-          Carrinho ({ carrinho.length })
-        </button>
-
-      </nav>
+      
+      <Navegacao
+        setPaginaAtual={setPaginaAtual}
+        tamanhoCarrinho={carrinho.length}
+      />
 
       <hr />
 
@@ -68,39 +78,12 @@ function App() {
         { paginaAtual === "loja" ? (
 
           // OPÇÃO A: Se for a loja, mostrar os produtos
-          <div>
-            <h3>Vitrine de Produtos</h3>
-            {/* Campo busca) */}
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              style={{ padding: '10px', width: '100%', marginBottom: '20px' }}
-            />
-
-            {produtos
-              .filter(p => (p.titulo || "").toLowerCase().includes(busca.toLowerCase())) // filtrar os produtos pela busca
-              .map(produto => ( // para cada produto, mostrar um card)
-              <div key={produto.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
-                {/* imagem do produto) */}
-                {produto.imagem_capa && ( 
-                  <img 
-                    src={produto.imagem_capa}
-                    alt={produto.titulo}
-                    style={{ width: '100%', height: '150px', objectFit: 'cover', marginBottom: '10px' }}
-                  />
-                )}
-                {/* Título do produto) */}
-                <p>{produto.titulo} - R$ {produto.preco}</p>
-                {/* Botão de compra do produto) */}
-                <button onClick={() => setCarrinho([...carrinho, produto])}>
-                  Comprar
-                </button>
-              </div>
-              
-            ))}
-          </div>
+          <Vitrine
+            produtos={produtos}
+            busca={busca}
+            setBusca={setBusca}
+            adicionarAoCarrinho={adcionarAoCarrinho}
+          />
           ) : (
           // OPÇÃO B: Se for o carrinho, mostrar os itens do carrinho
           <div>
