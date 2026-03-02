@@ -42,7 +42,7 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ItemCarrinho
-        fields = ['id', 'produto', 'produto_titulo', 'produto_preco', 'quantidade'] # Inclui os campos extras no JSON
+        fields = ['id', 'carrinho', 'produto', 'produto_titulo', 'produto_preco', 'quantidade'] # Inclui os campos extras no JSON
 
 class CarrinhoSerializer(serializers.ModelSerializer):
     # Aqui trazemos os itens do carrinho já com as informações do produto (título e preço) para facilitar o trabalho do front-end.

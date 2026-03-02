@@ -34,7 +34,7 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
         if usuario.is_anonymous:
             return Carrinho.objects.none() #Retorna um carrinho vazio para usuários anônimos.
         
-        return Carrinho.objects.filter(usuario, confirmado=False) #Retorna apenas o carrinho que ainda não foi confirmado.
+        return Carrinho.objects.filter(usuario=usuario, confirmado=False) #Retorna apenas o carrinho que ainda não foi confirmado.
     
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
     serializer_class=ItemCarrinhoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".

@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import {Navegacao} from './components/Navegacao';
 import { Vitrine } from "./components/Vitrine";
+import {Login} from "./components/Login";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -19,6 +20,7 @@ function App() {
     return dadosSalvos ? JSON.parse(dadosSalvos) : [];
   });
   const [ busca, setBusca ] = useState("");
+  const [token,setToken] = useState(localStorage.getItem("token"));
 
   // 2. Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
@@ -68,6 +70,8 @@ function App() {
       <Navegacao
         setPaginaAtual={setPaginaAtual}
         tamanhoCarrinho={carrinho.length}
+        token={token}
+        setToken={setToken}
       />
 
       <hr />
@@ -84,8 +88,15 @@ function App() {
             setBusca={setBusca}
             adicionarAoCarrinho={adcionarAoCarrinho}
           />
-          ) : (
-          // OPÇÃO B: Se for o carrinho, mostrar os itens do carrinho
+        ) : 
+        
+        // OPÇÃO B: Aqui vai mostar os campos para colocar o login no miolo da página
+        paginaAtual === "login" ? (
+          <Login setPaginaAtual={setPaginaAtual} setToken={setToken}/>
+        ) : (
+
+
+          // OPÇÃO C: Se for o carrinho, mostrar os itens do carrinho
           <div>
             <h3>Seu Carrinho de Compras</h3>
 
@@ -143,8 +154,8 @@ function App() {
               ⬅️ Voltar para a Loja
             </button>
          
-        </div>  
-      )}   
+          </div>  
+        )}   
       </div>
     </div>
   );
