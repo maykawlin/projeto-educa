@@ -37,14 +37,50 @@ function App() {
   }
 
   // 4. Função que simula a finalização da compra
-  function finalizarCompra() {
-    alert("Compra finalizada! \nTotal: R$ " + total.toFixed(2));
+  async function finalizarCompra() {
+    console.log("Olha o que tem no meu carrinho:", carrinho);
+    // Passo 1: O usuário tem o token?
+    if (!token) {
+      alert("Faça o login para finalizar a compra!");
+      setPaginaAtual("login"); // Manda para a tela de login
+      return; // Para a função aqui, não continua para os próximos passos
+    }
 
-    // 1. Zera o carrinho (Volta a ser uma lista vazia)
-    setCarrinho([]); 
+    try {
+      // Passo 2 - Enviar os dados do carrinho para o backend
+      // Como o carrinho tem vários produtos, enviamos a lista inteira
+      const resposta = await axios.post(
+        'http://127.0.0.1:8000/api/carrinho/',
+        {
+          // o formato exato depende de como montamos o Serializer no Django
+          produtos: carrinho
+        },
+        {
+          // É aqui que enviamos o token para o backend reconhecer quem é o usuário
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-    // 2. Manda o usuário de volta para a vitrine da loja
-    setPaginaAtual("loja");
+      // Passo 3 - Se o Django aceitou a compra, temos que ter uma resposta
+      alert("Compra finalizada com sucess e salva nas nuvens! \nTotal: R$ " + total.toFixed(2));
+      setCarrinho([]); // Limpa o carrinho
+      setPaginaAtual("loja"); // Volta para a loja
+
+    } catch (erro) {
+      console.log("Erro ao salvar no banco: ", erro);
+
+      // Se o token venceu, o Django devolve um erro 401 (Unauthorized)
+      if (erro.response && erro.response.status === 401) {
+        alert("Sua sessão expirou. Por favor, faça o login novamente.");
+        localStorage.removeItem("token"); // Limpa o token vencido
+        setToken(null); 
+        setPaginaAtual("login"); // Manda para a tela de login
+      } else {
+        alert("Ops! Ocorreu um erro ao processar seu carrinho. Tente novamente.");
+      }
+    }
   }
 
   // 5. Calcula o total do carrinho

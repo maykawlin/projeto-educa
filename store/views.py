@@ -36,6 +36,25 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
         
         return Carrinho.objects.filter(usuario=usuario, confirmado=False) #Retorna apenas o carrinho que ainda não foi confirmado.
     
+    def perform_create(self, serializer):
+        # 1. Salva o carrinho e vincula ao usuário
+        # Quando o carrinho for ser salvo, o Django entra aqui.
+        # Nós dizemos: "Guarde o carrinho, mas force o utilizador a ser o utilizador da requisição (do token)!"
+        serializer.save(usuario=self.request.user)
+        carrinho_salvo = serializer.save(usuario=self.request.user)
+        
+        # 2. Esperamos receber uma lista de produtos do front-end, cada um com 'produto_id' e 'quantidade'.
+        # Se não receber, usamos uma lista vazia [].
+        produtos_do_front = self.request.data.get('produtos', []) 
+        
+        # 3. Fazemos um loop nessa lista de produtos e criamos um ItemCarrinho, ou item, para cada um no banco de dados.
+        for item in produtos_do_front:
+            ItemCarrinho.objects.create(
+                carrinho=carrinho_salvo, # Liga o item ao carrinho que acabamos de criar
+                produto_id=item['id'], # O ID do produto vem do front-end
+                quantidade=item.get('quantidade',1) # A quantidade também vem do front-end
+            )
+        
 class ItemCarrinhoViewSet(viewsets.ModelViewSet):
     serializer_class=ItemCarrinhoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
     queryset=ItemCarrinho.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".

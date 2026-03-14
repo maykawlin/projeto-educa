@@ -51,3 +51,4 @@ class CarrinhoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carrinho
         fields = ['id', 'usuario', 'confirmado', 'itens'] # Inclui os itens do carrinho no JSON
+        read_only_fields = ['usuario'] # O campo 'usuario' é somente leitura, pois será definido automaticamente com base no usuário autenticado.
