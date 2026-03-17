@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Navegacao} from './components/Navegacao';
 import { Vitrine } from "./components/Vitrine";
 import {Login} from "./components/Login";
+import { Historico } from "./components/Historico";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -13,12 +14,13 @@ function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
   const [ produtos, setProdutos ] = useState([]);
   const [ carrinho, setCarrinho ] = useState(() => {
-    // Tenta ler o carrinho salvo no localStorage
-    const dadosSalvos = localStorage.getItem('carrinho');
-    // Se tiver dados salvos, retorna eles como um array (JSON.parse)
-    // Se não tiver, retorna uma lista vazia
-    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
-  });
+                                                    // Tenta ler o carrinho salvo no localStorage
+                                                    const dadosSalvos = localStorage.getItem('carrinho');
+                                                    // Se tiver dados salvos, retorna eles como um array (JSON.parse)
+                                                    // Se não tiver, retorna uma lista vazia
+                                                    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
+                                                  });
+  const [ historicoCompras, setHistoricoCompras ] = useState([]);
   const [ busca, setBusca ] = useState("");
   const [token,setToken] = useState(localStorage.getItem("token"));
 
@@ -49,22 +51,24 @@ function App() {
     try {
       // Passo 2 - Enviar os dados do carrinho para o backend
       // Como o carrinho tem vários produtos, enviamos a lista inteira
-      const resposta = await axios.post(
-        'http://127.0.0.1:8000/api/carrinho/',
-        {
-          // o formato exato depende de como montamos o Serializer no Django
-          produtos: carrinho
-        },
-        {
-          // É aqui que enviamos o token para o backend reconhecer quem é o usuário
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const resposta = await axios.post('http://127.0.0.1:8000/api/carrinho/',
+                                        {produtos: carrinho},// o formato exato depende de como montamos o Serializer no Django
+                                        {headers: {Authorization: `Bearer ${token}`}} // É aqui que enviamos o token para o backend reconhecer quem é o usuário
+                                      );
+
+      // Passo 3 - O Django nos devolve os dados do carrinho criado. Vamos pegar o ID dele!
+      const idDoCarrinho = resposta.data.id;
+
+      // Passo 4 - Chamar a rota de confirmar
+      // Usamos a crase (`) para poder injetar a variável ${idDoCarrinho} no meio da URL
+      await axios.post(
+                      `http://127.0.0.1:8000/api/carrinho/${idDoCarrinho}/confirmar/`,
+                      {}, // O corpo da requisição é vazio, não precisamos mandar nada além do POST
+                      {headers: {Authorization: `Bearer ${token}`}}
       );
 
-      // Passo 3 - Se o Django aceitou a compra, temos que ter uma resposta
-      alert("Compra finalizada com sucess e salva nas nuvens! \nTotal: R$ " + total.toFixed(2));
+      // Passo 5 - Se o Django aceitou a compra e confirmou, temos sucesso!
+      alert("Compra finalizada com sucesso e salva nas nuvens! \nTotal: R$ " + total.toFixed(2));
       setCarrinho([]); // Limpa o carrinho
       setPaginaAtual("loja"); // Volta para a loja
 
@@ -99,7 +103,30 @@ function App() {
     setCarrinho([...carrinho,produtoClicado]);
   }
 
-  // 8. Renderização/Desenho da tela/ O que aparece para o usuário
+  // 8. Função para visualizar o histórico do carrinho
+  async function buscarHistorico() {
+    try {
+      const resposta = await axios.get('http://127.0.0.1:8000/api/carrinho/historico/',
+        { headers: { Authorization: `Bearer ${token}` } } 
+      );
+      
+      setHistoricoCompras(resposta.data);
+      setPaginaAtual("historico");
+
+    } catch(erro) {
+      console.log("Erro ao acessar o histórico: ", erro);
+      if (erro.response && erro.response.status === 401) {
+        alert("Sua sessão expirou. Por favor, faça o login novamente.");
+        localStorage.removeItem("token"); 
+        setToken(null); 
+        setPaginaAtual("login"); 
+      } else {
+        alert("Ops! Ocorreu um erro ao buscar seu histórico. Tente novamente.");
+      }
+    }
+  }
+
+  // 9. Renderização/Desenho da tela/ O que aparece para o usuário
   return (
     <div>
       
@@ -108,6 +135,7 @@ function App() {
         tamanhoCarrinho={carrinho.length}
         token={token}
         setToken={setToken}
+        buscarHistorico={buscarHistorico}
       />
 
       <hr />
@@ -129,6 +157,15 @@ function App() {
         // OPÇÃO B: Aqui vai mostar os campos para colocar o login no miolo da página
         paginaAtual === "login" ? (
           <Login setPaginaAtual={setPaginaAtual} setToken={setToken}/>
+        ) : 
+        
+        // OPÇÃO D: Mostrar o Histórico de Compras
+        paginaAtual === "historico" ? (
+          <Historico 
+            historicoCompras={historicoCompras} 
+            setPaginaAtual={setPaginaAtual} 
+          />
+        
         ) : (
 
 
@@ -190,7 +227,8 @@ function App() {
               ⬅️ Voltar para a Loja
             </button>
          
-          </div>  
+          </div> 
+
         )}   
       </div>
     </div>
