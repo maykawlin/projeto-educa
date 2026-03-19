@@ -20,8 +20,28 @@ export function Historico({ historicoCompras, setPaginaAtual }) {
                             {/* Aqui nós fazemos um SEGUNDO loop para mostrar os itens dentro deste pedido! */}
                             <ul style={{ listStyleType: 'none', padding: 0 }}>
                                 {pedido.itens.map((item) => (
-                                    <li key={item.id} style={{ marginBottom: '5px' }}>
-                                        🔹 {item.produto_titulo} (Qtd: {item.quantidade}) - R$ {item.produto_preco}
+                                    <li key={item.id} style={{ marginBottom: '10px', display: 'flex', alignItems:'center', gap:'15px' }}>
+                                        <span>🔹 {item.produto_titulo} (Qtd: {item.quantidade}) - R$ {item.produto_preco} </span>
+                                    
+                                        {/*Só mostra o botão SE o produto tiver um arquivo usando o comando item.produto_arquivo &&*/}
+                                        {item.produto_arquivo && (
+                                            <a 
+                                                href={item.produto_arquivo}
+                                                target='_blank' /**Faz com que o PDF ou arquivo abra em uma nova aba do navegador, para que o usuário não saia do seu site por acidente. */
+                                                rel='noopener noreferrer'
+                                                style={{
+                                                    padding:'5px 7px',
+                                                    backgroundColor:'#0692d3',
+                                                    color:'white',
+                                                    textDecoration:'none',
+                                                    borderRadius:'10px',
+                                                    fontSize:'14px',
+                                                    fontWeight:'bold'
+                                                }}
+                                            >
+                                                📥 Baixar Material
+                                            </a>
+                                        )}
                                     </li>
                                 ))}
                             </ul>

@@ -39,10 +39,11 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
     # Aqui já mostrremos o título e preço do produto para o fron-end não ter trabalho extra para buscar essas informações.
     produto_titulo = serializers.CharField(source='produto.titulo', read_only=True) # Campo extra para mostrar o título do produto
     produto_preco = serializers.DecimalField(source='produto.preco', max_digits=10, decimal_places=2, read_only=True) # Campo extra para mostrar o preço do produto
-    
+    produto_arquivo = serializers.FileField(source='produto.arquivo', read_only=True)
+
     class Meta:
         model = ItemCarrinho
-        fields = ['id', 'carrinho', 'produto', 'produto_titulo', 'produto_preco', 'quantidade'] # Inclui os campos extras no JSON
+        fields = ['id', 'carrinho', 'produto', 'produto_titulo', 'produto_preco', 'produto_arquivo', 'quantidade'] # Inclui os campos extras no JSON
 
 class CarrinhoSerializer(serializers.ModelSerializer):
     # Aqui trazemos os itens do carrinho já com as informações do produto (título e preço) para facilitar o trabalho do front-end.
