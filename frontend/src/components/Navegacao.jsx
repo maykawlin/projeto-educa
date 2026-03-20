@@ -1,3 +1,5 @@
+import React from 'react';
+import logo from '../assets/logotipo.jpeg';
 // Recebemos "setPaginaAtual" e "tamanhoCarrinho" como props para controlar a navegação e mostrar o número de itens no carrinho
 export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico}) {
     
@@ -10,42 +12,66 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
     {/* Menu de navegação/ Header */}
     return (
     
-      <nav style={{ background: '#111', padding: '20px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', boxSizing: 'border-box'}}>
+      <nav style={{ background: '#fff', // Mudamos o fundo para branco para o logo destacar
+        padding: '10px 20px', // Diminuímos um pouco o padding vertical
+        color: 'var(--cor-texto-principal)', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        width: '100%', 
+        boxSizing: 'border-box',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' // Uma sombrinha leve embaixo
+        }}>
 
         {/* Botão para ir para a Loja no header */}
-        <h2 onClick={ () => setPaginaAtual("loja") } style={{ cursor: 'pointer', margin: 0 }}>
-          Didáticos
-        </h2>
+        <div 
+          onClick={ () => setPaginaAtual("loja") } 
+          className="icone-animado"
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        >
+          <img 
+            src={logo} 
+            alt="Logo Didáticos" 
+            style={{ 
+              height: '50px', // Definimos uma altura fixa para não quebrar o layout
+              width: 'auto', // A largura ajusta automaticamente
+              marginRight: '10px' 
+            }} 
+          />
+          {/* Se quiser manter o texto junto com o logo, tire o comentário abaixo: */}
+          <h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>
+        </div>
 
         {/* Campo de login no header */}
         <div style={{display: "flex", gap: "15px", alignItems: "center"}}>
+
+          {/* Botão para ir para o carrinho no header*/}
+          <button 
+              onClick={ () => setPaginaAtual("carrinho") } className="btn-secundario">
+            🛒 Carrinho ({ tamanhoCarrinho })
+          </button>
+
           {/*Se tem token, mostra "Sair". Se não tem, mostra "Login" */}
           {token ? (
             // Se tem token, mostramos "Meus Pedidos" e "Sair" num "Fragmento" (essas tags vazias <>)
             <>
-              <button onClick={buscarHistorico} style={{cursor:'pointer', padding:'5px 10px', backgroundColor: '#4CAF50', color: 'white', border:'none'}}>
+              <button onClick={buscarHistorico} className="btn-secundario">
                 Meus Pedidos
               </button>
 
-              <button onClick={fazerLogout} style={{cursor:'pointer', padding: '5px 10px', backgroundColor: 'red', color: 'white', border:'none'}}>
+              <button onClick={fazerLogout} className="btn-perigo">
                 Sair
               </button>
             </>
             
           ) : (
             // Se NÃO tem token, mostramos só o Login
-            <button onClick={() => setPaginaAtual("login")} style={{cursor:'pointer', padding:'5px 10px'}}>
+            <button onClick={() => setPaginaAtual("login")} className="btn-secundario">
               Login
             </button>
           )}
 
-          {/* Botão para ir para o carrinho no header*/}
-          <button 
-              onClick={ () => setPaginaAtual("carrinho") }
-              style={{ cursor: 'pointer', padding: '10px 20px', fontWeight: 'bold'}}
-          >
-            🛒 Carrinho ({ tamanhoCarrinho })
-          </button>
+          
         </div>
       </nav>
     );

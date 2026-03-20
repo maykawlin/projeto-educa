@@ -28,17 +28,9 @@ export function Historico({ historicoCompras, setPaginaAtual }) {
                                             <a 
                                                 href={item.produto_arquivo}
                                                 target='_blank' /**Faz com que o PDF ou arquivo abra em uma nova aba do navegador, para que o usuário não saia do seu site por acidente. */
-                                                rel='noopener noreferrer'
-                                                style={{
-                                                    padding:'5px 7px',
-                                                    backgroundColor:'#0692d3',
-                                                    color:'white',
-                                                    textDecoration:'none',
-                                                    borderRadius:'10px',
-                                                    fontSize:'14px',
-                                                    fontWeight:'bold'
-                                                }}
-                                            >
+                                                rel='noopener noreferrer' /*Sistem da segurança para que hackers não utilize a nova aba para controlar a aba original */
+                                                className="btn-primario"
+                                                style={{textDecoration:'none', display: 'inline-block'}}>
                                                 📥 Baixar Material
                                             </a>
                                         )}
@@ -51,9 +43,7 @@ export function Historico({ historicoCompras, setPaginaAtual }) {
             )}
 
             <button 
-                onClick={() => setPaginaAtual("loja")} 
-                style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
-            >
+                onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ marginTop: '20px' }}>
                 ⬅️ Voltar para a Loja
             </button>
         </div>

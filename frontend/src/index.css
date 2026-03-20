@@ -1,0 +1,111 @@
+/* =========================================
+   1. VARIÁVEIS GLOBAIS (O DNA da Marca)
+   ========================================= */
+:root {
+  /* Cores extraídas do Logotipo */
+  --cor-primaria-azul: #0D4F8B;   /* Azul escuro do "D" */
+  --cor-secundaria-azul: #008DDA; /* Azul claro da página */
+  --cor-primaria-verde: #23A41A;  /* Verde vibrante do notebook */
+  --cor-destaque-roxo: #8C3BFF;   /* Roxo da estrelinha */
+
+  /* Cores de Fundo e Texto (Visual Clean do seu Portfólio) */
+  --cor-fundo: #F8F9FA; 
+  --cor-fundo-card: #FFFFFF;
+  --cor-texto-principal: #333333;
+  --cor-texto-secundario: #666666;
+  --cor-borda: #E0E0E0;
+
+  /* Efeitos e Animações */
+  --sombra-suave: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --sombra-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --borda-arredondada: 8px;
+  --transicao-padrao: all 0.3s ease; /* O segredo das animações suaves! */
+}
+
+/* =========================================
+   2. CONFIGURAÇÕES BASE (Reset)
+   ========================================= */
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto-principal);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================
+   3. BOTÕES (Estilo Portfólio)
+   ========================================= */
+/* Botão de Compra/Ação Principal */
+.btn-primario {
+  background-color: var(--cor-primaria-verde);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--borda-arredondada);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: var(--sombra-suave);
+  transition: var(--transicao-padrao);
+}
+
+/* Efeito ao passar o mouse no botão (Muda cor e dá um pulinho) */
+.btn-primario:hover {
+  background-color: #1C8614; /* Verde um pouco mais escuro */
+  transform: translateY(-3px); /* Pulinho para cima */
+  box-shadow: var(--sombra-hover);
+}
+
+/* Botão Secundário (Para Voltar, Cancelar, etc) */
+.btn-secundario {
+  background-color: transparent;
+  color: var(--cor-secundaria-azul);
+  padding: 10px 20px;
+  border: 2px solid var(--cor-secundaria-azul);
+  border-radius: var(--borda-arredondada);
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transicao-padrao);
+}
+
+.btn-secundario:hover {
+  background-color: var(--cor-primaria-azul);
+  color: white;
+}
+
+/* =========================================
+   4. ANIMAÇÕES DE ÍCONES (Estilo LinkedIn/GitHub)
+   ========================================= */
+.icone-animado {
+  display: inline-block;
+  transition: var(--transicao-padrao);
+  color: var(--cor-primaria-azul);
+  cursor: pointer;
+}
+
+/* Efeito de ir para a direita ao passar o mouse */
+.icone-animado:hover {
+  transform: translateX(6px); 
+  color: var(--cor-secundaria-azul);
+}
+
+
+/* Botão de Perigo (Excluir / Sair) */
+.btn-perigo {
+  background-color: transparent; /* Vermelho padrão */
+  color: #DC3545;
+  padding: 10px 20px;
+  border: none;
+  border: 2px solid #DC3545;
+  border-radius: var(--borda-arredondada);
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transicao-padrao);
+}
+.btn-perigo:hover {
+  background-color: #B02A37;
+  /*transform: translateY(-3px);*/
+  box-shadow: var(--sombra-hover);
+  color:white;
+}

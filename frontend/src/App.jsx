@@ -189,9 +189,7 @@ function App() {
 
                     {/* Direita: Botão de Excluir */}
                     <button 
-                      onClick={ () => removerDoCarrinho(index)}
-                      style={{backgroundColor: 'red', color: 'white', border: 'none', padding: '5px 10px', cursor:'pointer'}}
-                      >
+                      onClick={ () => removerDoCarrinho(index)} className="btn-perigo">
                       Excluir
                     </button>
 
@@ -209,21 +207,12 @@ function App() {
             {/* Botão que simula finalizar compra */}
             <button
               onClick={finalizarCompra}
-              style={{
-                display:'block',
-                width: '100%',
-                padding: '15px',
-                color:'white',
-                border:'none',
-                marginTop: '20px',
-                cursor: 'pointer',
-                fontSize: '18px',
-                fontWeight: 'bold',
-              }}>
+              className="btn-primario"
+              style={{ display: 'block', width: '100%', marginTop: '20px', fontSize: '18px' }}>
               ✅ Finalizar Compra
             </button>
             
-            <button onClick={() => setPaginaAtual("loja")} style={{ marginTop: '20px' }}>
+            <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ marginTop: '20px' }}>
               ⬅️ Voltar para a Loja
             </button>
          
