@@ -1,7 +1,7 @@
 export function Historico({ historicoCompras, setPaginaAtual }) {
     return (
         <div style={{ padding: '20px' }}>
-            <h2>Meus Pedidos Concluídos 📦</h2>
+            <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Meus Pedidos Concluídos 📦</h2>
 
             {/* Se a lista estiver vazia, mostramos uma mensagem amigável */}
             {historicoCompras.length === 0 ? (

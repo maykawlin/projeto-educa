@@ -1,49 +1,52 @@
 export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
     return (
         <div>
-            <h3>Vitrine de Produtos</h3>
+            <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>
+                Vitrine de Produtos
+            </h2>
 
             {/* Campo de busca) */}
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              style={{ padding: '10px', width: '100%', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ccc'}}
-            />
+            <div className="pesquisa-container">
+                <input
+                type="text"
+                placeholder="🔍 O que você está buscando?"
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="input-pesquisa"
+                />
+            </div>
 
             {/* Lista de Produtos */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px' }}>
+            <div className="grid-produtos">
                 {produtos
                     .filter(p => (p.titulo || "").toLowerCase().includes(busca.toLowerCase())) // filtrar os produtos pela busca
                     .map(produto => ( // para cada produto, mostrar um card)
-                        <div key={produto.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px', width: '200px' }}>
-                            
+                        <div key={produto.id} className="card-produto">
                             {/* imagem do produto) */}
                             {produto.imagem_capa && ( 
                                 <img 
                                     src={produto.imagem_capa}
                                     alt={produto.titulo}
-                                    style={{ width: '100%', height: '150px', objectFit: 'cover', marginBottom: '10px' }}
+                                    className="img-produto"
                                 />
                             )}
 
                             {/* Título do produto/Dados */}
-                            <h3>{produto.titulo}</h3>
-                            <p style={{fontWeight: 'bold', color: 'green'}}>R$ {produto.preco}</p>
-                            
+                            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--cor-texto-principal)' }}>{produto.titulo}</h3>
+
+                            <p style={{ margin: '0 0 15px 0', fontSize: '20px', fontWeight: 'bold', color: 'var(--cor-primaria-verde)' }}>R$ {produto.preco}</p>
                             
                             {/* Botão de compra do produto) */}
-                            <button 
-                                onClick={() => adicionarAoCarrinho(produto)}
-                                style={{backgroundColor: '#28a745', 
-                                        color: 'white', 
-                                        border:'none', 
-                                        padding: '5px 10px', 
-                                        borderRadius: '4px', 
-                                        cursor: 'pointer'}}>
-                                Comprar
-                            </button>
+                            <div style={{ marginTop: 'auto' }}>
+                                <button 
+                                    onClick={() => adicionarAoCarrinho(produto)}
+                                    className="btn-primario"
+                                    style={{ width: '100%' }}>
+                                    Comprar
+                                </button>
+                            </div>
+                            
+                            
                         </div>  
                 ))}
             </div>

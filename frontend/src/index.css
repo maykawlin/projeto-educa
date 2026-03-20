@@ -109,3 +109,97 @@ body {
   box-shadow: var(--sombra-hover);
   color:white;
 }
+
+
+/* =========================================
+   5. VITRINE E CARDS DE PRODUTO
+   ========================================= */
+
+/* --- Barra de Pesquisa --- */
+.pesquisa-container {
+  max-width: 600px;
+  margin: 0 auto 30px auto; /* Centraliza na tela */
+}
+
+.input-pesquisa {
+  width: 100%;
+  padding: 15px 25px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 30px; /* Deixa arredondada tipo pílula */
+  font-size: 16px;
+  box-shadow: var(--sombra-suave);
+  outline: none;
+  transition: var(--transicao-padrao);
+}
+
+/* Efeito ao clicar para digitar na pesquisa */
+.input-pesquisa:focus {
+  border-color: var(--cor-secundaria-azul);
+  box-shadow: 0 0 0 3px rgba(0, 141, 218, 0.2); 
+}
+
+/* --- Grid e Cards --- */
+.grid-produtos {
+  display: grid;
+  /* Cria colunas automáticas que se adaptam ao tamanho da tela */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+  padding: 20px 0;
+}
+
+.card-produto {
+  background-color: var(--cor-fundo-card);
+  border-radius: var(--borda-arredondada);
+  padding: 15px;
+  border: 1px solid transparent;
+  box-shadow: var(--sombra-suave);
+  transition: var(--transicao-padrao);
+  display: flex;
+  flex-direction: column; /* Organiza os itens de cima para baixo */
+}
+
+/* Efeito de flutuar o card ao passar o mouse */
+.card-produto:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-hover);
+  border-color: var(--cor-borda);
+}
+
+.img-produto {
+  width: 100%;
+  height: 180px;
+  object-fit: cover; /* Corta a imagem perfeitamente sem amassar */
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* =========================================
+   6. NOTIFICAÇÃO (TOAST DE CARRINHO)
+   ========================================= */
+.notificacao-container {
+  position: fixed;
+  top: 80px; /* Fica um pouco abaixo do cabeçalho */
+  right: 20px; /* Fica no canto direito da tela */
+  background-color: var(--cor-fundo-card);
+  border-left: 5px solid var(--cor-primaria-verde); /* Uma faixa verde para indicar sucesso */
+  box-shadow: var(--sombra-hover);
+  padding: 15px 20px;
+  border-radius: var(--borda-arredondada);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 9999; /* Garante que fique por cima de tudo no site */
+  animation: deslizarParaEsquerda 0.4s ease-out forwards; /* Aqui chamamos a função de animação que criamos logo abaixo */
+}
+
+/* Criando os quadros da animação de deslizar */
+@keyframes deslizarParaEsquerda {
+  from { 
+    transform: translateX(100%); /* Começa totalmente fora da tela (à direita) */
+    opacity: 0; 
+  }
+  to { 
+    transform: translateX(0); /* Termina na posição normal */
+    opacity: 1; 
+  }
+}

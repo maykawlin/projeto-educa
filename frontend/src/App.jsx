@@ -5,6 +5,7 @@ import {Navegacao} from './components/Navegacao';
 import { Vitrine } from "./components/Vitrine";
 import {Login} from "./components/Login";
 import { Historico } from "./components/Historico";
+import { NotificacaoCarrinho } from "./components/NotificacaoCarrinho";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -23,6 +24,8 @@ function App() {
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
   const [ busca, setBusca ] = useState("");
   const [token,setToken] = useState(localStorage.getItem("token"));
+  const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
+
 
   // 2. Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
@@ -101,6 +104,14 @@ function App() {
   // 7. Função que adicona ao carrinho
   function adcionarAoCarrinho(produtoClicado) {
     setCarrinho([...carrinho,produtoClicado]);
+
+    // Mostra o produto na notificação
+    setUltimoProdutoAdicionado(produtoClicado);
+
+    // Esconde a notificação depois de 3 segundos
+    setTimeout(() => {
+      setUltimoProdutoAdicionado(null);
+    }, 3000);
   }
 
   // 8. Função para visualizar o histórico do carrinho
@@ -140,6 +151,11 @@ function App() {
 
       <hr />
 
+      {/*Notificação flutuante se houver um produto adicionado */}
+      {ultimoProdutoAdicionado && (
+        <NotificacaoCarrinho produto={ultimoProdutoAdicionado} />
+      )}
+
       {/* Conteúdo da página atual (Renderização Condicional) */}
       <div style={{ padding: '20px'}}>
 
@@ -171,7 +187,7 @@ function App() {
 
           // OPÇÃO C: Se for o carrinho, mostrar os itens do carrinho
           <div>
-            <h3>Seu Carrinho de Compras</h3>
+            <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Seu Carrinho de Compras</h2>
 
             {/* Se o carrinho estiver vazio, mostrar uma mensagem */}
             {carrinho.length === 0 ? (
