@@ -42,7 +42,7 @@ export function Login({setPaginaAtual, setToken}) {
             borderRadius:'8px',
         }}> 
             {/* Campo para os dados de login */}
-            <h2>Acesse sua conta</h2>
+            <h2 style={{ color: 'var(--cor-primaria-azul)'}}>Acesse sua conta</h2>
 
             {/* Mostra mensagem de erro se a senha estiver errada */}
             {erro && <p style={{color:'red', fontWeight:'bold'}}>{erro}</p>}
@@ -56,6 +56,7 @@ export function Login({setPaginaAtual, setToken}) {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        className='input-login'
                         style={{width:'93%', padding:'10px', marginTop:'5px'}}
                     />
                 </div>
@@ -68,12 +69,15 @@ export function Login({setPaginaAtual, setToken}) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{width:'93%', padding:'10px', marginTop:'5px'}}
+                        className='input-login'
+                        style={{width:'93%', 
+                                padding:'10px', 
+                                marginTop:'5px',}}
                     />
                 </div>
 
                 {/*Botão de Entrar */}
-                <button type="submit" style={{
+                <button type="submit" className='btn-secundario' style={{
                                             padding:'10px',
                                             backgroundColor:'#007BFF',
                                              color:'white',

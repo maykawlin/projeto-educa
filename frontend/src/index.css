@@ -203,3 +203,78 @@ body {
     opacity: 1; 
   }
 }
+
+
+/* =========================================
+   7. Login
+   ========================================= */
+
+/* --- Barra de Pesquisa --- */
+.Login-container {
+  max-width: 600px;
+  margin: 0 auto 30px auto; /* Centraliza na tela */
+}
+
+.input-login {
+  width: 100%;
+  padding: 15px 25px;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px; /* Deixa arredondada tipo pílula */
+  font-size: 16px;
+  box-shadow: var(--sombra-suave);
+  outline: none;
+  transition: var(--transicao-padrao);
+}
+
+/* Efeito ao clicar para digitar na pesquisa */
+.input-login:focus {
+  border-color: var(--cor-secundaria-azul);
+  box-shadow: 0 0 0 3px rgba(0, 141, 218, 0.2); 
+}
+
+/* =========================================
+   8. MINI CARRINHO (SIDEBAR)
+   ========================================= */
+/* O fundo escuro transparente que fica atrás da gaveta */
+.overlay-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998; /* Fica em cima de tudo, mas abaixo da gaveta */
+}
+
+/* A Gaveta em si */
+.sidebar-carrinho {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100vh; /* Ocupa a altura toda da tela */
+  background-color: var(--cor-fundo-card);
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  z-index: 9999;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  animation: deslizarSidebar 0.3s ease-out forwards;
+}
+
+/* Animação para a gaveta entrar pela direita */
+@keyframes deslizarSidebar {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Estilo para cada item dentro do mini carrinho */
+.item-mini-carrinho {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--cor-borda);
+}

@@ -20,8 +20,18 @@ export function Historico({ historicoCompras, setPaginaAtual }) {
                             {/* Aqui nós fazemos um SEGUNDO loop para mostrar os itens dentro deste pedido! */}
                             <ul style={{ listStyleType: 'none', padding: 0 }}>
                                 {pedido.itens.map((item) => (
-                                    <li key={item.id} style={{ marginBottom: '10px', display: 'flex', alignItems:'center', gap:'15px' }}>
-                                        <span>🔹 {item.produto_titulo} (Qtd: {item.quantidade}) - R$ {item.produto_preco} </span>
+                                    <li key={item.id} style={{ 
+                                        border: '1px solid var(--cor-borda)', 
+                                        padding: '15px', 
+                                        marginBottom: '15px', 
+                                        borderRadius: 'var(--borda-arredondada)',
+                                        backgroundColor: 'var(--cor-fundo-card)',
+                                        display: 'flex', /* Coloca os elementos lado a lado */
+                                        alignItems: 'center', /* Centraliza verticalmente */
+                                        gap: '20px', /* Espaço entre a imagem, texto e botão */
+                                        boxShadow: 'var(--sombra-suave)'
+                                        }}>
+                                        <span style={{ flex: 1 }}>🔹 {item.produto_titulo} (Qtd: {item.quantidade}) - R$ {item.produto_preco} </span>
                                     
                                         {/*Só mostra o botão SE o produto tiver um arquivo usando o comando item.produto_arquivo &&*/}
                                         {item.produto_arquivo && (
@@ -29,8 +39,8 @@ export function Historico({ historicoCompras, setPaginaAtual }) {
                                                 href={item.produto_arquivo}
                                                 target='_blank' /**Faz com que o PDF ou arquivo abra em uma nova aba do navegador, para que o usuário não saia do seu site por acidente. */
                                                 rel='noopener noreferrer' /*Sistem da segurança para que hackers não utilize a nova aba para controlar a aba original */
-                                                className="btn-primario"
-                                                style={{textDecoration:'none', display: 'inline-block'}}>
+                                                className="btn-secundario"
+                                                style={{textDecoration:'none', display: 'inline-block',}}>
                                                 📥 Baixar Material
                                             </a>
                                         )}

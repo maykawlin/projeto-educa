@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../assets/logotipo.jpeg';
 // Recebemos "setPaginaAtual" e "tamanhoCarrinho" como props para controlar a navegação e mostrar o número de itens no carrinho
-export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico}) {
+export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico, abrirMiniCarrinho}) {
     
     function fazerLogout() {
       localStorage.removeItem("token"); // deleta o token do navegador e tem realizar novamente o login
@@ -47,7 +47,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
           {/* Botão para ir para o carrinho no header*/}
           <button 
-              onClick={ () => setPaginaAtual("carrinho") } className="btn-secundario">
+              onClick={abrirMiniCarrinho} className="btn-secundario">
             🛒 Carrinho ({ tamanhoCarrinho })
           </button>
 
@@ -73,6 +73,8 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
           
         </div>
+
+        
       </nav>
     );
 }

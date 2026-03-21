@@ -6,6 +6,7 @@ import { Vitrine } from "./components/Vitrine";
 import {Login} from "./components/Login";
 import { Historico } from "./components/Historico";
 import { NotificacaoCarrinho } from "./components/NotificacaoCarrinho";
+import { MiniCarrinho } from "./components/MiniCarrinho";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -25,7 +26,7 @@ function App() {
   const [ busca, setBusca ] = useState("");
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
-
+  const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado                                   
 
   // 2. Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
@@ -147,6 +148,7 @@ function App() {
         token={token}
         setToken={setToken}
         buscarHistorico={buscarHistorico}
+        abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
       />
 
       <hr />
@@ -195,17 +197,45 @@ function App() {
             ) : (
               <div>
                 {carrinho.map((item, index) => (
-                  <div key={index} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
-                    
-                    {/* Esquerda: Dados do produto */}
-                    <div>
-                      <p style={{ fontWeight: 'bold'}}>{item.titulo}</p>
-                      <p>R$ {item.preco}</p>
+                      <div key={index} style={{ 
+                      border: '1px solid var(--cor-borda)', 
+                      padding: '15px', 
+                      marginBottom: '15px', 
+                      borderRadius: 'var(--borda-arredondada)',
+                      backgroundColor: 'var(--cor-fundo-card)',
+                      display: 'flex', /* Coloca os elementos lado a lado */
+                      alignItems: 'center', /* Centraliza verticalmente */
+                      gap: '20px', /* Espaço entre a imagem, texto e botão */
+                      boxShadow: 'var(--sombra-suave)'
+                    }}
+                  >
+                    {/* 1. A IMAGEM DO PRODUTO */}
+                    <img 
+                      src={item.imagem_capa} 
+                      alt={item.titulo} 
+                      style={{ 
+                        width: '90px', 
+                        height: '90px', 
+                        objectFit: 'cover', 
+                        borderRadius: '8px' 
+                      }} 
+                    />
+
+                    {/* 2. OS TEXTOS (O flex: 1 faz essa parte crescer e empurrar o botão pra direita) */}
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: '0 0 10px 0', color: 'var(--cor-texto-principal)' }}>
+                        {item.titulo}
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', color: 'var(--cor-primaria-verde)' }}>
+                        R$ {item.preco}
+                      </p>
                     </div>
 
-                    {/* Direita: Botão de Excluir */}
+                    {/* 3. O BOTÃO DE EXCLUIR */}
                     <button 
-                      onClick={ () => removerDoCarrinho(index)} className="btn-perigo">
+                      onClick={() => removerDoCarrinho(index)}
+                      className="btn-perigo"
+                    >
                       Excluir
                     </button>
 
@@ -236,6 +266,17 @@ function App() {
 
         )}   
       </div>
+      
+        {/* Se a memória for true, desenha a gaveta */}
+        {miniCarrinhoAberto && (
+          <MiniCarrinho 
+            carrinho={carrinho} 
+            removerDoCarrinho={removerDoCarrinho} 
+            fechar={() => setMiniCarrinhoAberto(false)} 
+            irParaCheckout={() => setPaginaAtual("carrinho")} 
+          />
+        )}
+
     </div>
   );
 }
