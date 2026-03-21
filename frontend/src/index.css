@@ -256,11 +256,12 @@ body {
   background-color: var(--cor-fundo-card);
   box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  border-radius: 10px;
   z-index: 9999;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  animation: deslizarSidebar 0.3s ease-out forwards;
+  animation: deslizarSidebar 0.5s ease-out forwards;
 }
 
 /* Animação para a gaveta entrar pela direita */
@@ -277,4 +278,60 @@ body {
   padding-bottom: 15px;
   margin-bottom: 15px;
   border-bottom: 1px solid var(--cor-borda);
+}
+
+/* =========================================
+   9. LAYOUT DA LOJA (FILTROS + VITRINE)
+   ========================================= */
+.layout-loja {
+  display: flex;
+  gap: 30px; /* Espaço entre a barra lateral e os produtos */
+  align-items: flex-start; /* Impede que a barra lateral estique até o final da tela atoa */
+}
+
+/* A Barra Esquerda */
+.sidebar-filtros {
+  width: 260px; /* Largura fixa */
+  flex-shrink: 0; /* Impede que a barra seja esmagada em telas menores */
+  background-color: var(--cor-fundo-card);
+  padding: 20px;
+  border-radius: var(--borda-arredondada);
+  box-shadow: var(--sombra-suave);
+  border: 1px solid var(--cor-borda);
+}
+
+/* O Lado Direito */
+.conteudo-vitrine {
+  flex: 1; /* Ocupa todo o resto do espaço disponível */
+}
+
+/* --- Estilo interno dos Filtros --- */
+.grupo-filtro {
+  margin-bottom: 20px;
+}
+
+.grupo-filtro h4 {
+  margin: 0 0 10px 0;
+  color: var(--cor-primaria-azul);
+  font-size: 16px;
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 5px;
+}
+
+.opcao-filtro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--cor-texto-principal);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Deixa as caixinhas (checkbox) mais bonitas */
+.opcao-filtro input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cor-primaria-verde); /* Pinta a caixinha de verde quando marcada! */
 }
