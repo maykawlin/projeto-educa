@@ -3,64 +3,61 @@ import { FiltrosLateral } from "./FiltrosLateral";
 
 export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
     
-    // 1. A Memória dos Filtros (Guarda o que o usuário marcou)
+    // 1. Memória dos Filtros (Adicionamos o 'assunto' aqui)
     const [filtrosSelecionados, setFiltrosSelecionados] = useState({
         nivel: [],
         disciplina: [],
+        assunto: [],
         tipo: []
     });
-
 
     // 2. Função que marca e desmarca a caixinha
     function alternarFiltro(categoria, valor) {
         setFiltrosSelecionados(memoriaAnterior => {
             const listaAtual = memoriaAnterior[categoria];
-            
-            // Se já estava marcado, a gente tira da lista (desmarca)
             if (listaAtual.includes(valor)) {
                 return { ...memoriaAnterior, [categoria]: listaAtual.filter(item => item !== valor) };
-            } 
-            // Se não estava marcado, a gente adiciona na lista
-            else {
+            } else {
                 return { ...memoriaAnterior, [categoria]: [...listaAtual, valor] };
             }
         });
     }
 
-    // 3. A MÁGICA: Filtrando os produtos antes de desenhar na tela
+    // 3. A MÁGICA: Filtrando os produtos
     const produtosFiltrados = produtos.filter(produto => {
-        // Filtro de texto (A barra de pesquisa)
         const matchBusca = (produto.titulo || "").toLowerCase().includes(busca.toLowerCase());
 
-        // Extraindo os nomes reais de dentro do objeto do Django
-        // Usamos o "?." (Optional Chaining) para não dar erro se o produto não tiver disciplina cadastrada
         const nomeNivel = produto.nivel?.nome || "";
         const nomeDisciplina = produto.disciplina?.nome || "";
         const nomeTipo = produto.tipo?.nome || "";
 
-        // Filtro de Disciplina (Aqui a palavra bate exatamente)
-        const matchDisciplina = filtrosSelecionados.disciplina.length === 0 || 
-                                filtrosSelecionados.disciplina.includes(nomeDisciplina);
+        const matchDisciplina = filtrosSelecionados.disciplina.length === 0 || filtrosSelecionados.disciplina.includes(nomeDisciplina);
 
-        // Filtro de Nível (Agrupamento Inteligente)
         const matchNivel = filtrosSelecionados.nivel.length === 0 || 
                            filtrosSelecionados.nivel.some(nivelSelecionado => {
-                               // Se a caixinha "Ensino Médio" estiver marcada, aceita tudo que tiver "EM" no nome (1º Ano EM, 2º Ano EM)
                                if (nivelSelecionado === "Ensino Médio") return nomeNivel.includes("EM");
-                               // Se for Fundamental, aceita o que tiver "EF" ou "Fundamental"
                                if (nivelSelecionado === "Ensino Fundamental II") return nomeNivel.includes("EF") || nomeNivel.includes("Fundamental");
                                return nomeNivel === nivelSelecionado;
                            });
 
-        // Filtro de Tipo (Busca Flexível)
         const matchTipo = filtrosSelecionados.tipo.length === 0 || 
                           filtrosSelecionados.tipo.some(tipoSelecionado => {
-                              // Verifica se "Slides (Teoria)" inclui a palavra "Slide" vinda do banco
                               return tipoSelecionado.toLowerCase().includes(nomeTipo.toLowerCase());
                           });
 
-        // O produto só aparece se passar em TODOS os testes acima
-        return matchBusca && matchNivel && matchDisciplina && matchTipo;
+        // FILTRO INTELIGENTE DE ASSUNTO
+        const matchAssunto = filtrosSelecionados.assunto.length === 0 || 
+                             filtrosSelecionados.assunto.some(assuntoSelecionado => {
+                                 const termo = assuntoSelecionado.toLowerCase();
+                                 const tituloDoProduto = (produto.titulo || "").toLowerCase();
+                                 const descricaoDoProduto = (produto.descricao || "").toLowerCase(); // Busca na descrição também!
+                                 
+                                 // Se o título ou a descrição do produto contiver a palavra (Ex: "Eletrostática"), ele aprova!
+                                 return tituloDoProduto.includes(termo) || descricaoDoProduto.includes(termo);
+                             });
+
+        // O produto só aparece se passar em TODOS os testes
+        return matchBusca && matchNivel && matchDisciplina && matchTipo && matchAssunto;
     });
 
     return (
@@ -80,8 +77,6 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
             </div>
 
             <div className="layout-loja">
-                
-                {/* Enviamos a memória e a função para a barra lateral */}
                 <FiltrosLateral 
                     filtrosSelecionados={filtrosSelecionados} 
                     alternarFiltro={alternarFiltro} 
@@ -89,8 +84,6 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
 
                 <div className="conteudo-vitrine">
                     <div className="grid-produtos">
-                        
-                        {/* Agora usamos a lista FILTRADA em vez da lista crua */}
                         {produtosFiltrados.map(produto => ( 
                             <div key={produto.id} className="card-produto">
                                 {produto.imagem_capa && ( 
@@ -114,13 +107,11 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                             </div>  
                         ))}
 
-                        {/* Mensagem amigável se a busca/filtro não encontrar nada */}
                         {produtosFiltrados.length === 0 && (
                             <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--cor-texto-secundario)', padding: '40px 0' }}>
                                 Nenhum material encontrado com esses filtros. 😔
                             </p>
                         )}
-
                     </div>
                 </div>
             </div>
