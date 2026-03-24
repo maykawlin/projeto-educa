@@ -335,3 +335,102 @@ body {
   height: 16px;
   accent-color: var(--cor-primaria-verde); /* Pinta a caixinha de verde quando marcada! */
 }
+
+
+
+/* =========================================
+   10. MODAL DE PRODUTO (QUICK VIEW)
+   ========================================= */
+/* Fundo escuro atrás do modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7); /* Mais escuro que a gaveta */
+  z-index: 10000; /* Em cima de tudo, inclusive da gaveta */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInModal 0.3s ease;
+}
+
+/* A Janela do Modal */
+.modal-container {
+  background-color: var(--cor-fundo-card);
+  width: 90%;
+  max-width: 900px; /* Largura boa para desktop */
+  max-height: 90vh; /* Não deixa o modal ser maior que a tela */
+  border-radius: var(--borda-arredondada);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden; /* Para a imagem não sair das bordas arredondadas */
+  display: flex; /* Duas colunas */
+  animation: slideInModal 0.3s ease;
+}
+
+/* Botão Fechar (X) */
+.modal-fechar {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--cor-texto-secundario);
+  z-index: 10;
+}
+.modal-fechar:hover { color: var(--cor-primaria-azul); }
+
+/* Coluna 1: Imagem */
+.modal-imagem-container {
+  flex: 1; /* Ocupa metade do espaço */
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid var(--cor-borda);
+}
+.modal-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Preenche o espaço mantendo a proporção */
+}
+
+/* Coluna 2: Detalhes (Texto) */
+.modal-detalhes {
+  flex: 1; /* Ocupa a outra metade */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Se o texto for gigante, cria barra de rolagem só aqui */
+}
+
+/* Tags (Nível, Disciplina, Tipo) */
+.modal-tags {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.tag {
+  background-color: #eef2f5;
+  color: var(--cor-primaria-azul);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  fontWeight: bold;
+}
+
+/* Preço no Modal */
+.modal-preco {
+  font-size: 32px;
+  fontWeight: bold;
+  color: var(--cor-primaria-verde);
+  margin: 20px 0;
+}
+
+/* Animações */
+@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideInModal { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

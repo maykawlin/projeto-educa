@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { FiltrosLateral } from "./FiltrosLateral";
+import { ModalProduto } from "./ModalProduto"; // 1. IMPORTAÇÃO
 
 export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
     
-    // 1. Memória dos Filtros (Adicionamos o 'assunto' aqui)
+    // Memória dos Filtros
     const [filtrosSelecionados, setFiltrosSelecionados] = useState({
         nivel: [],
         disciplina: [],
-        assunto: [],
+        assunto: [], 
         tipo: []
     });
 
-    // 2. Função que marca e desmarca a caixinha
+    // Guarda o produto que vai aparecer no Modal (null = fechado)
+    const [produtoModal, setProdutoModal] = useState(null);
+
+    // Função que marca e desmarca a caixinha
     function alternarFiltro(categoria, valor) {
         setFiltrosSelecionados(memoriaAnterior => {
             const listaAtual = memoriaAnterior[categoria];
@@ -23,10 +27,9 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
         });
     }
 
-    // 3. A MÁGICA: Filtrando os produtos
+    // Filtrando os produtos
     const produtosFiltrados = produtos.filter(produto => {
         const matchBusca = (produto.titulo || "").toLowerCase().includes(busca.toLowerCase());
-
         const nomeNivel = produto.nivel?.nome || "";
         const nomeDisciplina = produto.disciplina?.nome || "";
         const nomeTipo = produto.tipo?.nome || "";
@@ -45,18 +48,14 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                               return tipoSelecionado.toLowerCase().includes(nomeTipo.toLowerCase());
                           });
 
-        // FILTRO INTELIGENTE DE ASSUNTO
         const matchAssunto = filtrosSelecionados.assunto.length === 0 || 
                              filtrosSelecionados.assunto.some(assuntoSelecionado => {
                                  const termo = assuntoSelecionado.toLowerCase();
                                  const tituloDoProduto = (produto.titulo || "").toLowerCase();
-                                 const descricaoDoProduto = (produto.descricao || "").toLowerCase(); // Busca na descrição também!
-                                 
-                                 // Se o título ou a descrição do produto contiver a palavra (Ex: "Eletrostática"), ele aprova!
+                                 const descricaoDoProduto = (produto.descricao || "").toLowerCase(); 
                                  return tituloDoProduto.includes(termo) || descricaoDoProduto.includes(termo);
                              });
 
-        // O produto só aparece se passar em TODOS os testes
         return matchBusca && matchNivel && matchDisciplina && matchTipo && matchAssunto;
     });
 
@@ -86,17 +85,30 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                     <div className="grid-produtos">
                         {produtosFiltrados.map(produto => ( 
                             <div key={produto.id} className="card-produto">
+                                
+                                {/* 3. GATILHO: Clicar na imagem abre o modal */}
                                 {produto.imagem_capa && ( 
                                     <img 
                                         src={produto.imagem_capa}
                                         alt={produto.titulo}
                                         className="img-produto"
+                                        onClick={() => setProdutoModal(produto)} // <-- Abre Modal
+                                        style={{cursor: 'pointer'}} // Muda o mouse para a mãozinha
                                     />
                                 )}
-                                <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--cor-texto-principal)' }}>{produto.titulo}</h3>
+                                
+                                {/* 3. GATILHO: Clicar no título abre o modal */}
+                                <h3 
+                                    style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--cor-texto-principal)', cursor: 'pointer' }}
+                                    onClick={() => setProdutoModal(produto)} // <-- Abre Modal
+                                >
+                                    {produto.titulo}
+                                </h3>
+                                
                                 <p style={{ margin: '0 0 15px 0', fontSize: '20px', fontWeight: 'bold', color: 'var(--cor-primaria-verde)' }}>R$ {produto.preco}</p>
                                 
                                 <div style={{ marginTop: 'auto' }}>
+                                    {/* Mantemos o botão direto para quem já quer comprar sem ler */}
                                     <button 
                                         onClick={() => adicionarAoCarrinho(produto)}
                                         className="btn-primario"
@@ -115,6 +127,16 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                     </div>
                 </div>
             </div>
+
+            {/* 4. DESENHO DO MODAL (Aparece se tiver produto na memória) */}
+            {produtoModal && (
+                <ModalProduto 
+                    produto={produtoModal} 
+                    adicionarAoCarrinho={adicionarAoCarrinho} 
+                    fechar={() => setProdutoModal(null)} // Esvazia a memória (fecha)
+                />
+            )}
+
         </div>
     );
 }
