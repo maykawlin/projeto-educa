@@ -65,10 +65,16 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             </>
             
           ) : (
-            // Se NÃO tem token, mostramos só o Login
-            <button onClick={() => setPaginaAtual("login")} className="btn-secundario">
-              Login
-            </button>
+            // Se NÃO tem token, mostramos Login e Cadastro
+            <>
+              <button onClick={() => setPaginaAtual("login")} className="btn-secundario">
+                Login
+              </button>
+              <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario">
+                Criar Conta
+              </button>
+            </>
+            
           )}
 
           

@@ -1,5 +1,6 @@
 #Aqui irá fazer a tradução da linguagem de banco de dados para JSON
 # fazendo a comunicação entre o banco de dados e o REACT
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
 
@@ -53,3 +54,20 @@ class CarrinhoSerializer(serializers.ModelSerializer):
         model = Carrinho
         fields = ['id', 'usuario', 'confirmado', 'itens'] # Inclui os itens do carrinho no JSON
         read_only_fields = ['usuario'] # O campo 'usuario' é somente leitura, pois será definido automaticamente com base no usuário autenticado.
+
+
+class RegistroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+        # write_only garante que a senha nunca seja devolvida na resposta (Segurança!)
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        # Usamos o create_user para que o Django faça o hash (criptografia) da senha automaticamente
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password']
+        )
+        return user

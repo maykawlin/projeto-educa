@@ -87,6 +87,15 @@ export function Login({setPaginaAtual, setToken}) {
                     Entrar
                 </button>
             </form>
+            <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
+                <span style={{ color: '#666' }}>Não tem uma conta? </span>
+                <span 
+                    onClick={() => setPaginaAtual("cadastro")} 
+                    style={{ color: '#007BFF', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'underline' }}
+                >
+                    Cadastre-se grátis.
+                </span>
+            </div>
         </div>
     )
 }

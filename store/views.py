@@ -1,13 +1,15 @@
 # aqui você controla em python o banco de dados todas as solicitações que vem do frontend e o que você retorna
 # o serializer faz a mudança de linguagem do python para o sql
-
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
 from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
                          TipoMaterialSerializer, ProdutoSerializer, CarrinhoSerializer,
-                         ItemCarrinhoSerializer)
+                         ItemCarrinhoSerializer, RegistroSerializer)
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset=Produto.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
@@ -92,3 +94,9 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
     serializer_class=ItemCarrinhoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
     queryset=ItemCarrinho.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
     
+
+class RegistroUsuarioView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    # AllowAny significa que qualquer pessoa (mesmo sem estar logada) pode acessar essa rota para criar a conta
+    permission_classes = (AllowAny,) 
+    serializer_class = RegistroSerializer

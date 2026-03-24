@@ -7,6 +7,7 @@ import {Login} from "./components/Login";
 import { Historico } from "./components/Historico";
 import { NotificacaoCarrinho } from "./components/NotificacaoCarrinho";
 import { MiniCarrinho } from "./components/MiniCarrinho";
+import { Cadastro } from "./components/Cadastro";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -176,6 +177,11 @@ function App() {
         paginaAtual === "login" ? (
           <Login setPaginaAtual={setPaginaAtual} setToken={setToken}/>
         ) : 
+
+        // OPÇÃO EXTRA: A tela de Cadastro
+        paginaAtual === "cadastro" ? (
+          <Cadastro setPaginaAtual={setPaginaAtual} />
+        ) :
         
         // OPÇÃO D: Mostrar o Histórico de Compras
         paginaAtual === "historico" ? (
