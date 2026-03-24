@@ -1,15 +1,17 @@
 # aqui você controla em python o banco de dados todas as solicitações que vem do frontend e o que você retorna
 # o serializer faz a mudança de linguagem do python para o sql
 from django.contrib.auth.models import User
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
 from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
                          TipoMaterialSerializer, ProdutoSerializer, CarrinhoSerializer,
-                         ItemCarrinhoSerializer, RegistroSerializer)
+                         ItemCarrinhoSerializer, RegistroSerializer, MudarSenhaSerializer,
+                         PerfilSerializer)
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset=Produto.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
@@ -100,3 +102,41 @@ class RegistroUsuarioView(generics.CreateAPIView):
     # AllowAny significa que qualquer pessoa (mesmo sem estar logada) pode acessar essa rota para criar a conta
     permission_classes = (AllowAny,) 
     serializer_class = RegistroSerializer
+
+
+class MudarSenhaView(generics.UpdateAPIView):
+    # EXTREMAMENTE IMPORTANTE: Só usuários logados com Token podem acessar essa rota!
+    permission_classes = (IsAuthenticated,)
+    serializer_class = MudarSenhaSerializer
+
+    def get_object(self):
+        # O "alvo" da mudança é o próprio usuário que está logado
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        # Se a senha atual passou pelo nosso validador...
+        if serializer.is_valid():
+            # Pegamos a nova senha
+            nova_senha = serializer.validated_data.get("nova_senha")
+            
+            # set_password é mágico: ele pega a senha crua ("Mudar@123") e transforma num código criptografado seguro
+            user.set_password(nova_senha)
+            user.save()
+            
+            return Response({"mensagem": "Senha atualizada com sucesso!"}, status=status.HTTP_200_OK)
+
+        # Se a senha atual estiver errada, devolvemos o erro (ex: código 400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PerfilUsuarioView(generics.RetrieveAPIView):
+    
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PerfilSerializer
+
+    def get_object(self):
+        # Retorna magicamente os dados do dono do Token
+        return self.request.user

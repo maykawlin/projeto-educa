@@ -71,3 +71,22 @@ class RegistroSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+
+class MudarSenhaSerializer(serializers.Serializer):
+    senha_atual = serializers.CharField(required=True)
+    nova_senha = serializers.CharField(required=True)
+
+    def validate_senha_atual(self, value):
+        # Pega o usuário que está fazendo o pedido (através do Token)
+        user = self.context['request'].user
+        
+        # Verifica se a senha que ele digitou bate com a do banco de dados
+        if not user.check_password(value):
+            raise serializers.ValidationError("A senha atual está incorreta.")
+        return value
+
+class PerfilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email')

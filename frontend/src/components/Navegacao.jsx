@@ -55,6 +55,10 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
           {token ? (
             // Se tem token, mostramos "Meus Pedidos" e "Sair" num "Fragmento" (essas tags vazias <>)
             <>
+              <button onClick={() => setPaginaAtual("perfil")} className="btn-secundario" style={{ marginRight: '10px' }}>
+                Meu Perfil
+              </button>
+              
               <button onClick={buscarHistorico} className="btn-secundario">
                 Meus Pedidos
               </button>

@@ -434,3 +434,79 @@ body {
 /* Animações */
 @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideInModal { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+
+/* =========================================
+   11. RODAPÉ (FOOTER)
+   ========================================= */
+.footer-container {
+  background-color: #1a2b3c; /* Azul marinho muito elegante */
+  color: #eef2f5;
+  padding: 60px 20px 20px 20px;
+  margin-top: 60px; /* Empurra o footer lá para baixo */
+}
+
+.footer-conteudo {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.footer-coluna h3 {
+  color: var(--cor-primaria-verde); /* Destaque verde no título */
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.footer-coluna p, .footer-coluna ul {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b0c4de; /* Azul bem clarinho para o texto não ofuscar */
+}
+
+.footer-coluna ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-coluna ul li {
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.footer-coluna ul li:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Botão do WhatsApp no Footer */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #25D366; /* Verde oficial do WhatsApp */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 15px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-whatsapp:hover {
+  background-color: #128C7E;
+  transform: scale(1.05);
+  color: white;
+}
+
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 40px;
+}

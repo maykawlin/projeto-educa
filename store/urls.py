@@ -5,7 +5,8 @@ from .views import (CarrinhoViewSet, ProdutoViewSet,
                     DisciplinaViewSet, NivelViewSet,
                     AreaViewSet, TipoMaterialViewSet,
                     CarrinhoViewSet, ItemCarrinhoViewSet,
-                    RegistroUsuarioView)
+                    RegistroUsuarioView, MudarSenhaView,
+                    PerfilUsuarioView)
 
 router = routers.DefaultRouter()
 router.register(r'produtos', ProdutoViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
@@ -19,4 +20,6 @@ router.register(r'itens', ItemCarrinhoViewSet)
 
 urlpatterns = [
     path('register/', RegistroUsuarioView.as_view(), name='auth_register'),
+    path('mudar-senha/', MudarSenhaView.as_view(), name='mudar_senha'),
+    path('perfil/', PerfilUsuarioView.as_view(), name='perfil_usuario'),
 ] + router.urls

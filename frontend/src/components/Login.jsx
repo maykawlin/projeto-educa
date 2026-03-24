@@ -75,6 +75,18 @@ export function Login({setPaginaAtual, setToken}) {
                                 marginTop:'5px',}}
                     />
                 </div>
+                
+                {/* BOTÃO DE ESQUECI A SENHA */}
+                <div style={{ textAlign: 'right', marginTop: '5px', marginBottom: '15px' }}>
+                    <a 
+                        href="https://wa.me/55SEUNUMEROAQUI?text=Olá!%20Esqueci%20minha%20senha%20na%20plataforma%20e%20preciso%20de%20ajuda." 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ fontSize: '12px', color: 'var(--cor-texto-secundario)', textDecoration: 'none' }}
+                    >
+                        Esqueceu a senha?
+                    </a>
+                </div>
 
                 {/*Botão de Entrar */}
                 <button type="submit" className='btn-secundario' style={{

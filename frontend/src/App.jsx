@@ -8,6 +8,7 @@ import { Historico } from "./components/Historico";
 import { NotificacaoCarrinho } from "./components/NotificacaoCarrinho";
 import { MiniCarrinho } from "./components/MiniCarrinho";
 import { Cadastro } from "./components/Cadastro";
+import { Perfil } from "./components/Perfil";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -190,6 +191,11 @@ function App() {
             setPaginaAtual={setPaginaAtual} 
           />
         
+        ) :
+        
+        // OPÇÃO E: Mostrar o Perfil
+        paginaAtual === "perfil" ? (
+          <Perfil token={token} />
         ) : (
 
 
