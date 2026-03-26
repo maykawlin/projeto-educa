@@ -9,6 +9,7 @@ import { NotificacaoCarrinho } from "./components/NotificacaoCarrinho";
 import { MiniCarrinho } from "./components/MiniCarrinho";
 import { Cadastro } from "./components/Cadastro";
 import { Perfil } from "./components/Perfil";
+import { Footer } from "./components/Footer";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -288,7 +289,9 @@ function App() {
             irParaCheckout={() => setPaginaAtual("carrinho")} 
           />
         )}
+      
 
+      <Footer />
     </div>
   );
 }
