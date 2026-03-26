@@ -359,11 +359,11 @@ body {
 /* A Janela do Modal */
 .modal-container {
   background-color: var(--cor-fundo-card);
-  width: 90%;
-  max-width: 900px; /* Largura boa para desktop */
-  max-height: 90vh; /* Não deixa o modal ser maior que a tela */
+  width: 95%;
+  max-width: 1000px; /* Largura boa para desktop */
+  max-height: 95vh; /* Não deixa o modal ser maior que a tela */
   border-radius: var(--borda-arredondada);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden; /* Para a imagem não sair das bordas arredondadas */
   display: flex; /* Duas colunas */
@@ -386,12 +386,13 @@ body {
 
 /* Coluna 1: Imagem */
 .modal-imagem-container {
-  flex: 1; /* Ocupa metade do espaço */
+  flex: 0 0 45%; /* imagem ocupa 45% do espaço */
   background-color: #f9f9f9;
   display: flex;
   justify-content: center;
   align-items: center;
   border-right: 1px solid var(--cor-borda);
+  overflow: hidden;
 }
 .modal-imagem {
   width: 100%;

@@ -136,6 +136,7 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
             {produtoModal && (
                 <ModalProduto 
                     produto={produtoModal} 
+                    todosOsProdutos={produtos}
                     adicionarAoCarrinho={adicionarAoCarrinho} 
                     fechar={() => setProdutoModal(null)} // Esvazia a memória (fecha)
                 />
