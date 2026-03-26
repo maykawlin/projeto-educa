@@ -42,6 +42,7 @@ class Produto(models.Model):
     
     # Arquivos
     arquivo = models.FileField(upload_to='materiais/') #Onde salvar o PDF/ZIP
+    arquivo_amostra = models.FileField(upload_to='amostras_produtos/', null=True, blank=True) #O null=True e blank=True significam que não é obrigatório.
     imagem_capa = models.ImageField(upload_to='capas/', blank=True)
 
     def __str__(self):

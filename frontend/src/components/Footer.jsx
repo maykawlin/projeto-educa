@@ -34,7 +34,7 @@ export function Footer() {
                         Fale diretamente com nossa equipe de suporte.
                     </p>
                     
-                    {/* Substitua o número abaixo pelo seu WhatsApp */}
+                    {/* link do WhatsApp */}
                     <a 
                         href="https://wa.me/5511999999999?text=Olá!%20Estou%20na%20loja%20Didáticos%20e%20preciso%20de%20ajuda." 
                         target="_blank" 

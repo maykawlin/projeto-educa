@@ -61,6 +61,25 @@ export function ModalProduto({ produto, adicionarAoCarrinho, fechar }) {
                             style={{ width: '100%', padding: '15px', fontSize: '18px' }}>
                             🛒 Adicionar ao Carrinho
                         </button>
+
+                        {produto.arquivo_amostra && (
+                            <a 
+                                href={produto.arquivo_amostra} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="btn-secundario"
+                                style={{ 
+                                    display: 'inline-block', 
+                                    marginTop: '10px', 
+                                    padding: '10px 20px', 
+                                    textAlign: 'center',
+                                    textDecoration: 'none',
+                                    width: '100%'
+                                }}
+                            >
+                                👀 Espiar Material (Amostra Grátis)
+                            </a>
+                        )}
                     </div>
                 </div>
 
