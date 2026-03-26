@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FiltrosLateral } from "./FiltrosLateral";
-import { ModalProduto } from "./ModalProduto"; // 1. IMPORTAÇÃO
+import { ModalProduto } from "./ModalProduto"; 
+import { BannerPromocional } from "./BannerPromocional";
 
 export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
     
@@ -74,6 +75,9 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                     className="input-pesquisa"
                 />
             </div>
+
+            {/* Se a barra de busca estiver VAZIA, mostramos o Banner! */}
+            {busca === "" && <BannerPromocional />}
 
             <div className="layout-loja">
                 <FiltrosLateral 
