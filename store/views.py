@@ -1,11 +1,13 @@
 # aqui você controla em python o banco de dados todas as solicitações que vem do frontend e o que você retorna
 # o serializer faz a mudança de linguagem do python para o sql
+import requests
+import uuid
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
 from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
@@ -140,3 +142,53 @@ class PerfilUsuarioView(generics.RetrieveAPIView):
     def get_object(self):
         # Retorna magicamente os dados do dono do Token
         return self.request.user
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def gerar_link_infinitepay(request, carrinho_id):
+    try:
+        # Pega o carrinho aberto do usuário logado
+        carrinho = Carrinho.objects.get(id=carrinho_id, usuario=request.user, confirmado=False)
+        itens_carrinho = ItemCarrinho.objects.filter(carrinho=carrinho)
+        
+        itens_payload = []
+        for item in itens_carrinho:
+            # InfinitePay exige o valor em CENTAVOS
+            preco_centavos = int(item.produto.preco * 100) 
+            itens_payload.append({
+                "quantity": item.quantidade,
+                "price": preco_centavos,
+                "description": item.produto.titulo[:50] 
+            })
+            
+        if len(itens_payload) == 0:
+            return Response({"erro": "O carrinho está vazio."}, status=status.HTTP_400_BAD_REQUEST)
+
+        order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
+        
+        payload = {
+            "handle": "xxxxxxx", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "order_nsu": order_nsu_personalizado,
+            "items": itens_payload,
+            "redirect_url": "http://localhost:5173/historico", 
+            "customer": {
+                "name": request.user.first_name or request.user.username,
+                "email": request.user.email
+            }
+        }
+        
+        url_infinitepay = "https://api.infinitepay.io/invoices/public/checkout/links"
+        headers = { "Content-Type": "application/json" }
+        
+        resposta = requests.post(url_infinitepay, json=payload, headers=headers)
+        
+        if resposta.status_code == 200 or resposta.status_code == 201:
+            dados_resposta = resposta.json()
+            return Response({"url_pagamento": dados_resposta.get("url")})
+        else:
+            print("Erro InfinitePay:", resposta.text)
+            return Response({"erro": "Falha ao gerar link de pagamento na InfinitePay."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    except Carrinho.DoesNotExist:
+        return Response({"erro": "Carrinho não encontrado."}, status=status.HTTP_404_NOT_FOUND)

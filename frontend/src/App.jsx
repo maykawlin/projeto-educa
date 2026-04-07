@@ -66,18 +66,30 @@ function App() {
       // Passo 3 - O Django nos devolve os dados do carrinho criado. Vamos pegar o ID dele!
       const idDoCarrinho = resposta.data.id;
 
-      // Passo 4 - Chamar a rota de confirmar
-      // Usamos a crase (`) para poder injetar a variável ${idDoCarrinho} no meio da URL
-      await axios.post(
-                      `http://127.0.0.1:8000/api/carrinho/${idDoCarrinho}/confirmar/`,
-                      {}, // O corpo da requisição é vazio, não precisamos mandar nada além do POST
+      // Passo 4 - Bater na porta nova da InfinitePay pedindo o link
+      const respostaPagamento = await axios.post(
+                      `http://127.0.0.1:8000/api/pagar/${idDoCarrinho}/`,
+                      {}, // O corpo é vazio, o Django já sabe o que fazer com o ID
                       {headers: {Authorization: `Bearer ${token}`}}
       );
 
-      // Passo 5 - Se o Django aceitou a compra e confirmou, temos sucesso!
-      alert("Compra finalizada com sucesso e salva nas nuvens! \nTotal: R$ " + total.toFixed(2));
-      setCarrinho([]); // Limpa o carrinho
-      setPaginaAtual("loja"); // Volta para a loja
+      // Passo 5 - Pegamos o link devolvido pela InfinitePay
+      const linkDeCheckout = respostaPagamento.data.url_pagamento;
+
+      // Se a InfinitePay nos deu o link com sucesso...
+      if (linkDeCheckout) {
+        
+        // Limpamos o carrinho da memória (pois ele já foi pro banco de dados)
+        setCarrinho([]); 
+        
+        // 🚀 O REDIRECIONAMENTO MÁGICO 🚀
+        // O comando window.location.href tira o cliente do seu site e joga ele
+        // na tela segura da InfinitePay para digitar o cartão ou escanear o PIX!
+        window.location.href = linkDeCheckout;
+        
+      } else {
+        alert("Ops! Não conseguimos gerar o link de pagamento. Tente novamente.");
+      }
 
     } catch (erro) {
       console.log("Erro ao salvar no banco: ", erro);
@@ -106,15 +118,15 @@ function App() {
   }, [])
 
   // 7. Função que adicona ao carrinho
-  function adcionarAoCarrinho(produtoClicado, origem='vitrine') {
+  function adicionarAoCarrinho(produtoClicado, origem='vitrine') {
 
     // Clone do produto e a etiqueta de origem
     const produtoComOrigem = { ...produtoClicado, origem_venda: origem };
 
-    setCarrinho([...carrinho,produtoClicado]);
+    setCarrinho([...carrinho,produtoComOrigem]);
 
     // Mostra o produto na notificação
-    setUltimoProdutoAdicionado(produtoClicado);
+    setUltimoProdutoAdicionado(produtoComOrigem);
 
     // Esconde a notificação depois de 3 segundos
     setTimeout(() => {
@@ -175,7 +187,7 @@ function App() {
             produtos={produtos}
             busca={busca}
             setBusca={setBusca}
-            adicionarAoCarrinho={adcionarAoCarrinho}
+            adicionarAoCarrinho={adicionarAoCarrinho}
           />
         ) : 
         

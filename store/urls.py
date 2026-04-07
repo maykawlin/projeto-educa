@@ -4,9 +4,9 @@ from rest_framework import routers
 from .views import (CarrinhoViewSet, ProdutoViewSet,
                     DisciplinaViewSet, NivelViewSet,
                     AreaViewSet, TipoMaterialViewSet,
-                    CarrinhoViewSet, ItemCarrinhoViewSet,
-                    RegistroUsuarioView, MudarSenhaView,
-                    PerfilUsuarioView)
+                    ItemCarrinhoViewSet, RegistroUsuarioView, 
+                    MudarSenhaView, PerfilUsuarioView,
+                    gerar_link_infinitepay)
 
 router = routers.DefaultRouter()
 router.register(r'produtos', ProdutoViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
@@ -22,4 +22,5 @@ urlpatterns = [
     path('register/', RegistroUsuarioView.as_view(), name='auth_register'),
     path('mudar-senha/', MudarSenhaView.as_view(), name='mudar_senha'),
     path('perfil/', PerfilUsuarioView.as_view(), name='perfil_usuario'),
+    path('pagar/<int:carrinho_id>/', gerar_link_infinitepay, name='gerar_pagamento_infinitepay'),
 ] + router.urls
