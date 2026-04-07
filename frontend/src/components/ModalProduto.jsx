@@ -120,7 +120,7 @@ export function ModalProduto({ produto, todosOsProdutos, adicionarAoCarrinho, fe
                                         </div>
                                         
                                         <button
-                                            onClick={() => adicionarAoCarrinho(relacionado)}
+                                            onClick={() => adicionarAoCarrinho(relacionado, 'cross_sell_modal')}
                                             style={{ width: '100%', backgroundColor: 'var(--cor-primaria-azul)', color: 'white', border: 'none', padding: '5px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
                                             onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
                                             onMouseOut={(e) => e.target.style.backgroundColor = 'var(--cor-primaria-azul)'}

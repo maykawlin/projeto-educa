@@ -70,5 +70,7 @@ class ItemCarrinho(models.Model):
     
     quantidade = models.PositiveIntegerField(default=1) # Quantidade do produto no carrinho (1, 2, 3...)
     
+    origem_venda = models.CharField(max_length=50, default='vitrine')
+
     def __str__(self):
         return f"{self.produto.titulo} ({self.quantidade}x)"     

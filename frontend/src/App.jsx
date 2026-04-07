@@ -106,7 +106,11 @@ function App() {
   }, [])
 
   // 7. Função que adicona ao carrinho
-  function adcionarAoCarrinho(produtoClicado) {
+  function adcionarAoCarrinho(produtoClicado, origem='vitrine') {
+
+    // Clone do produto e a etiqueta de origem
+    const produtoComOrigem = { ...produtoClicado, origem_venda: origem };
+
     setCarrinho([...carrinho,produtoClicado]);
 
     // Mostra o produto na notificação
