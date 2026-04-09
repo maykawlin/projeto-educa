@@ -143,6 +143,7 @@ class PerfilUsuarioView(generics.RetrieveAPIView):
         # Retorna magicamente os dados do dono do Token
         return self.request.user
 
+### INFINITEPAY GERAR LINK
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -168,10 +169,11 @@ def gerar_link_infinitepay(request, carrinho_id):
         order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
         
         payload = {
-            "handle": "xxxxxxx", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "handle": "MINHA_TAG_AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
-            "redirect_url": "http://localhost:5173/historico", 
+            "redirect_url": "http://localhost:5173/historico",
+            "webhook_url": "URL_DO_WEBHOOK_AQUI", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email
@@ -192,3 +194,55 @@ def gerar_link_infinitepay(request, carrinho_id):
             
     except Carrinho.DoesNotExist:
         return Response({"erro": "Carrinho não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+
+### INFINITEPAY WEBHOOK
+
+@api_view(['POST'])
+@permission_classes([AllowAny]) # Permite que os robôs da infinitepay, que não tem login nos dê o link de confirmação.
+def webhookinifinitepay(request):
+    try:
+        # 1. Recebemos os dados da InfinitePay
+        dados = request.data
+        print("\n 🔔 [WEBHOOK] Mensagem recebida da InifitePay:", dados)
+
+        if not dados:
+            print("⚠️ [WEBHOOK] Mensagem chegou vazia!")
+            return Response({"erro": "Sem dados"}, status=status.HTTP_400_BAD_REQUEST)
+
+        print("\n🔔 [WEBHOOK] Mensagem recebida da InfinitePay:", dados)
+
+        # 2. Pegamos o número do pedido que geramos antes
+        order_nsu = dados.get('order_nsu')
+
+        if not order_nsu:
+            return Response({"erro": "Faltou o order_nsu"},status=status.HTTP_400_BAD_REQUEST)
+        
+        # 3. Enviamos o pedido no formato "PEDIDO-15-a1b2". Vamos extrair o ID, que no caso é o 15.
+        partes_nsu = order_nsu.split('-')
+
+        if len(partes_nsu) >= 2 and partes_nsu[0] == "PEDIDO":
+            carrinho_id = partes_nsu[1]
+
+            try:
+                # 4. Temos que encontrar esse carrinho no banco de dados
+                carrinho = Carrinho.objects.get(id=carrinho_id)
+
+                # 5. Muda o status daquele carrinho para pago
+                carrinho.confirmado = True
+                carrinho.save()
+
+                print(f"✅ [SUCESSO] Carrinho {carrinho_id} atualizado para PAGO")
+
+                # A InfinitePay exige uma resposta rápida com 200 OK
+                return Response({"mensagem": "Webhook processado com sucesso"}, status=status.HTTP_200_OK)
+
+            except Carrinho.DoesNotExist:
+                print(f"❌ [ERRO] Carrinho {carrinho_id} não encontrado no banco")
+                return Response({"erro": "Carrinho não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({"erro": "Foirmato de order_nsu inválido"},status=status.HTTP_400_BAD_REQUEST)
+    
+    except Exception as e:
+        print("❌ [ERRO GRAVE NO WEBHOOK]:",str(e))
+        return Response({'erro': "Erro interno"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
