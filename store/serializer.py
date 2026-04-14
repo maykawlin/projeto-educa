@@ -57,18 +57,44 @@ class CarrinhoSerializer(serializers.ModelSerializer):
 
 
 class RegistroSerializer(serializers.ModelSerializer):
+    nome_completo = serializers.CharField(write_only=True, required=True)
+    senha = serializers.CharField(write_only=True, required=True, min_length=4)
+    confirmar_senha = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('nome_completo', 'email', 'senha', 'confirmar_senha')
         # write_only garante que a senha nunca seja devolvida na resposta (Segurança!)
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {'senha': {'write_only': True}}
 
-    def create(self, validated_data):
-        # Usamos o create_user para que o Django faça o hash (criptografia) da senha automaticamente
+    def validate(self, dados):
+        if dados['senha'] != dados['confirmar_senha']:
+            raise serializers.ValidationError({"senha": "As senhas não coincidem."})
+
+        if User.objects.filter(email=dados['email']).exists():
+            raise serializers.ValidationError({"email": "Este e-mail já está cadastrado."})
+
+        return dados
+
+
+    def create(self, dados_validados):
+        # Pega o email
+        email_do_cliente = dados_validados['email']
+
+        # Separa o nome do sobrenome no primeiro espaço
+        nome_inteiro = dados_validados['nome_completo'].strip()
+        partes_do_nome = nome_inteiro.split(' ',1)
+
+        primero_nome = partes_do_nome[0]
+        sobrenome = partes_do_nome[1] if len(partes_do_nome)>1 else ''
+
+        # Usamos o email  para que o Django faça o hash (criptografia) da senha automaticamente
         user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data.get('email', ''),
-            password=validated_data['password']
+            username= email_do_cliente,
+            email=email_do_cliente,
+            password=dados_validados['senha'],
+            first_name = primero_nome,
+            last_name = sobrenome
         )
         return user
 

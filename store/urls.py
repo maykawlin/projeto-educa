@@ -6,7 +6,7 @@ from .views import (CarrinhoViewSet, ProdutoViewSet,
                     AreaViewSet, TipoMaterialViewSet,
                     ItemCarrinhoViewSet, RegistroUsuarioView, 
                     MudarSenhaView, PerfilUsuarioView,
-                    gerar_link_infinitepay, webhookinifinitepay)
+                    gerar_link_infinitepay, webhookinfinitepay)
 
 router = routers.DefaultRouter()
 router.register(r'produtos', ProdutoViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
@@ -23,5 +23,5 @@ urlpatterns = [
     path('mudar-senha/', MudarSenhaView.as_view(), name='mudar_senha'),
     path('perfil/', PerfilUsuarioView.as_view(), name='perfil_usuario'),
     path('pagar/<int:carrinho_id>/', gerar_link_infinitepay, name='gerar_pagamento_infinitepay'),
-    path('webhook/infinitepay/', webhookinifinitepay, name='webhookinifinitepay')
+    path('webhook/infinitepay/', webhookinfinitepay, name='webhookinifinitepay')
 ] + router.urls
