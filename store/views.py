@@ -2,6 +2,7 @@
 # o serializer faz a mudança de linguagem do python para o sql
 import requests
 import uuid
+from django.http import FileResponse
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -143,6 +144,34 @@ class PerfilUsuarioView(generics.RetrieveAPIView):
         # Retorna magicamente os dados do dono do Token
         return self.request.user
 
+
+### DOWNLOAD SEGURO DO PDF
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def baixar_material(request, item_id):
+    try:
+        # Pega o item específico que o cliente quer baixar
+        item = ItemCarrinho.objects.get(id=item_id)
+
+        # Verifica se o carrinho é do usuário E está pago
+        if item.carrinho.usuario != request.user or not item.carrinho.confirmado:
+            return Response({"erro": "Acesso negado"}, status = status.HTTP_402_FORBIDDEN)
+
+        # Verifica se o produto tem um arquivo salvo
+        if not item.produto.arquivo:
+            return Response({"erro": "Arquivo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Entrega o arquivo para o navegador baixar
+        arquivo = item.produto.arquivo
+        return FileResponse(arquivo.open('rb'), as_attachment=True, filename=arquivo.name.split('/')[-1])
+
+    except ItemCarrinho.DoesNotExist:
+        return Response({"erro": "Item não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
 ### INFINITEPAY GERAR LINK
 
 @api_view(['POST'])
@@ -169,11 +198,11 @@ def gerar_link_infinitepay(request, carrinho_id):
         order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
         
         payload = {
-            "handle": "MINHA_TAG_AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "handle": "MINHA-TAG-AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
             "redirect_url": "http://localhost:5173/historico",
-            "webhook_url": "LINK_DO_NGROK_AQUI/api/webhook/infinitepay/", 
+            "webhook_url": "MEU-NGROK-AQUI/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email

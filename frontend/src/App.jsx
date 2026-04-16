@@ -255,6 +255,7 @@ function App() {
           <Historico 
             historicoCompras={historicoCompras} 
             setPaginaAtual={setPaginaAtual} 
+            token={token}
           />
         
         ) :
@@ -328,6 +329,24 @@ function App() {
               </div>
             )}
             
+            {/* Aviso de compra segura */}
+            {carrinho.length > 0 && (
+              <div style={{
+                marginTop: '25px',
+                padding: '15px',
+                backgroundColor: '#f8f9fa',
+                borderLeft: ' 4px solid var(--cor-primaria-verde)',
+                borderRadius: '4px',
+                fontSize: '14px',
+                color: 'var(--cor-texto-secundario)',
+                lineHeight: '1.5'
+              }}>
+                <p style={{margin: 0}}>
+                  🔒 <strong>Pagamento 100% seguro.</strong> Para garantir as melhores taxas e repassar o menor preço a você, professor(a), nossa plataforma opera no modelo MEI. Ao prosseguir, o recebedor no seu PIX ou Fatura de Cartão aparecerá como <strong>Maycon Kawlin</strong>. Fique tranquilo(a), é a nossa conta oficial!
+                </p>
+              </div>
+            )}
+
             {/* Botão que simula finalizar compra */}
             <button
               onClick={finalizarCompra}
