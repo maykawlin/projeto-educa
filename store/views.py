@@ -198,7 +198,7 @@ def gerar_link_infinitepay(request, carrinho_id):
         order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
         
         payload = {
-            "handle": "MINHA-TAG-AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "handle": "SUA-TAG-AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
             "redirect_url": "http://localhost:5173/historico",
