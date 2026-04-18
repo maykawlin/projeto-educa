@@ -1,29 +1,118 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import logo from '../assets/logotipo.jpeg';
-// Recebemos "setPaginaAtual" e "tamanhoCarrinho" como props para controlar a navegação e mostrar o número de itens no carrinho
+
+// ==========================================
+// 🌟 COMPONENTE DO MENU FLUTUANTE (Dropdown)
+// ==========================================
+function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
+    const [menuAberto, setMenuAberto] = useState(false);
+    const menuRef = useRef(null);
+
+    // Fecha o menu se clicar fora dele
+    useEffect(() => {
+        function cliqueFora(event) {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setMenuAberto(false);
+            }
+        }
+        document.addEventListener("mousedown", cliqueFora);
+        return () => document.removeEventListener("mousedown", cliqueFora);
+    }, []);
+
+    return (
+        <div style={{ position: 'relative', display: 'inline-block' }} ref={menuRef}>
+            {/* O GATILHO */}
+            <button
+                onClick={() => setMenuAberto(!menuAberto)}
+                className="btn-secundario"
+                style={{ 
+                    display: 'flex', alignItems: 'center', gap: '8px', 
+                    cursor: 'pointer', padding: '8px 15px'
+                }}
+            >
+                👤 Olá, Professor(a) {menuAberto ? '▴' : '▾'}
+            </button>
+
+            {/* A CAIXINHA FLUTUANTE */}
+            {menuAberto && (
+                <div style={{
+                    position: 'absolute',
+                    top: '115%', right: '0',
+                    backgroundColor: 'white',
+                    border: '1px solid var(--cor-borda)',
+                    borderRadius: '8px',
+                    boxShadow: '0px 8px 16px rgba(0,0,0,0.15)',
+                    width: '220px', zIndex: 1000,
+                    display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                }}>
+                    <button 
+                        onClick={() => { buscarHistorico(); setMenuAberto(false); }} 
+                        style={estiloOpcaoMenu}>
+                        📦 Meus Pedidos
+                    </button>
+
+                    <button 
+                        onClick={() => { setPaginaAtual("quem_somos"); setMenuAberto(false); }} 
+                        style={estiloOpcaoMenu}>
+                        👋 Quem Somos Nós
+                    </button>
+                    
+                    <button 
+                        onClick={() => { setPaginaAtual("perfil"); setMenuAberto(false); }} 
+                        style={estiloOpcaoMenu}>
+                        ⚙️ Meus Dados
+                    </button>
+
+                    <button 
+                        onClick={() => { window.open("https://wa.me/5500000000000", "_blank"); setMenuAberto(false); }} 
+                        style={estiloOpcaoMenu}>
+                        💬 Contato / Suporte
+                    </button>
+
+                    <hr style={{ margin: 0, border: 'none', borderTop: '1px solid #eee' }} />
+                    
+                    <button 
+                        onClick={() => { fazerLogout(); setMenuAberto(false); }} 
+                        style={{ ...estiloOpcaoMenu, color: '#d9534f', fontWeight: 'bold' }}>
+                        🚪 Sair da Conta
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+const estiloOpcaoMenu = {
+    background: 'none', border: 'none', padding: '15px 20px',
+    textAlign: 'left', cursor: 'pointer', fontSize: '15px', width: '100%',
+    color: 'var(--cor-texto-principal)', transition: 'background-color 0.2s',
+};
+
+// ==========================================
+// 🚀 SEU COMPONENTE DE NAVEGAÇÃO PRINCIPAL
+// ==========================================
 export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico, abrirMiniCarrinho}) {
     
     function fazerLogout() {
-      localStorage.removeItem("token"); // deleta o token do navegador e tem realizar novamente o login
+      localStorage.removeItem("token");
       setToken(null);
       setPaginaAtual("loja");
     }
 
-    {/* Menu de navegação/ Header */}
     return (
-    
-      <nav style={{ background: '#fff', // Mudamos o fundo para branco para o logo destacar
-        padding: '10px 20px', // Diminuímos um pouco o padding vertical
+      <nav style={{ 
+        background: '#fff', 
+        padding: '10px 20px', 
         color: 'var(--cor-texto-principal)', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         width: '100%', 
         boxSizing: 'border-box',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' // Uma sombrinha leve embaixo
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
         }}>
 
-        {/* Botão para ir para a Loja no header */}
+        {/* LOGO */}
         <div 
           onClick={ () => setPaginaAtual("loja") } 
           className="icone-animado"
@@ -32,44 +121,29 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
           <img 
             src={logo} 
             alt="Logo Didáticos" 
-            style={{ 
-              height: '50px', // Definimos uma altura fixa para não quebrar o layout
-              width: 'auto', // A largura ajusta automaticamente
-              marginRight: '10px' 
-            }} 
+            style={{ height: '50px', width: 'auto', marginRight: '10px' }} 
           />
-          {/* Se quiser manter o texto junto com o logo, tire o comentário abaixo: */}
           <h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>
         </div>
 
-        {/* Campo de login no header */}
+        {/* ÁREA DOS BOTÕES DA DIREITA */}
         <div style={{display: "flex", gap: "15px", alignItems: "center"}}>
 
-          {/* Botão para ir para o carrinho no header*/}
-          <button 
-              onClick={abrirMiniCarrinho} className="btn-secundario">
+          {/* Botão do Carrinho */}
+          <button onClick={abrirMiniCarrinho} className="btn-secundario">
             🛒 Carrinho ({ tamanhoCarrinho })
           </button>
 
-          {/*Se tem token, mostra "Sair". Se não tem, mostra "Login" */}
+          {/* Lógica de Autenticação */}
           {token ? (
-            // Se tem token, mostramos "Meus Pedidos" e "Sair" num "Fragmento" (essas tags vazias <>)
-            <>
-              <button onClick={() => setPaginaAtual("perfil")} className="btn-secundario" style={{ marginRight: '10px' }}>
-                Meu Perfil
-              </button>
-              
-              <button onClick={buscarHistorico} className="btn-secundario">
-                Meus Pedidos
-              </button>
-
-              <button onClick={fazerLogout} className="btn-perigo">
-                Sair
-              </button>
-            </>
-            
+            // Se tem token, chama o novo Menu Inteligente
+            <MenuUsuario 
+                setPaginaAtual={setPaginaAtual} 
+                buscarHistorico={buscarHistorico} 
+                fazerLogout={fazerLogout} 
+            />
           ) : (
-            // Se NÃO tem token, mostramos Login e Cadastro
+            // Se NÃO tem token, continua mostrando Login e Cadastro
             <>
               <button onClick={() => setPaginaAtual("login")} className="btn-secundario">
                 Login
@@ -78,13 +152,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 Criar Conta
               </button>
             </>
-            
           )}
 
-          
         </div>
-
-        
       </nav>
     );
 }

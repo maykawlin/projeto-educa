@@ -50,9 +50,9 @@ export function Login({setPaginaAtual, setToken}) {
             <form onSubmit={fazerLogin} style={{display:'flex', flexDirection:'column',gap:'15px'}}>
                 {/*Campo Usuário */}
                 <div>
-                    <label>Usuário:</label>
+                    <label>E-mail:</label>
                     <input
-                        type='text'
+                        type='email'
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required

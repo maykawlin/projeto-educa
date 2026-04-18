@@ -10,6 +10,7 @@ import { MiniCarrinho } from "./components/MiniCarrinho";
 import { Cadastro } from "./components/Cadastro";
 import { Perfil } from "./components/Perfil";
 import { Footer } from "./components/Footer";
+import { QuemSomos} from "./components/QuemSomos";
 
 // ---------------------------------------------------
 // COMPONENTE x: ......
@@ -29,7 +30,56 @@ function App() {
   const [ busca, setBusca ] = useState("");
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
-  const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado                                   
+  const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado   
+  
+  useEffect(() => {
+    const idPendente = localStorage.getItem("carrinhoPendente");
+
+    if (idPendente && token) {
+      console.log("🕵️‍♂️ Porteiro ativado: Procurando confirmação do pedido", idPendente);
+      
+      let tentativas = 0;
+      const maxTentativas = 5; // Vai tentar 5 vezes (total de 10 segundos)
+
+      // Cria um "relógio" que repete a pergunta a cada 2 segundos
+      const checarPagamento = setInterval(() => {
+        tentativas++;
+        console.log(`Procurando pagamento no banco... Tentativa ${tentativas}`);
+
+        axios.get('http://127.0.0.1:8000/api/carrinho/historico/', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(resposta => {
+          const historico = resposta.data;
+          const pagamentoConfirmado = historico.some(compra => compra.id === Number(idPendente));
+
+          if (pagamentoConfirmado) {
+            console.log("✅ Pagamento confirmado pelo Django! Esvaziando carrinho...");
+            setCarrinho([]); // Limpa o carrinho de verdade
+            localStorage.removeItem("carrinhoPendente"); // Rasga o aviso
+            
+            // Joga o cliente direto pro histórico dele
+            setHistoricoCompras(historico);
+            setPaginaAtual("historico"); 
+            
+            // Para o relógio, já achamos!
+            clearInterval(checarPagamento); 
+          } else if (tentativas >= maxTentativas) {
+            console.log("❌ O webhook demorou muito. Desistindo de procurar automaticamente.");
+            clearInterval(checarPagamento); // Para o relógio para não ficar rodando pra sempre
+          }
+        })
+        .catch(erro => {
+          console.log("Erro ao checar pagamento:", erro);
+          clearInterval(checarPagamento); // Se der erro no Django, para o relógio
+        });
+
+      }, 2000); // 2000 milissegundos = 2 segundos de intervalo
+
+      // Isso garante que se o cliente sair do site do nada, o relógio desliga sozinho
+      return () => clearInterval(checarPagamento);
+    }
+  }, []); // O array vazio significa para rodar apenas quando o site abrir/recarregar
 
   // 2. Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
@@ -65,6 +115,9 @@ function App() {
 
       // Passo 3 - O Django nos devolve os dados do carrinho criado. Vamos pegar o ID dele!
       const idDoCarrinho = resposta.data.id;
+      
+      // Salva o carrinho no armazenamento do navegador casa o cliente desista da compra quando for pagar
+      localStorage.setItem('carrinhoPendente', idDoCarrinho);
 
       // Passo 4 - Bater na porta nova da InfinitePay pedindo o link
       const respostaPagamento = await axios.post(
@@ -78,10 +131,7 @@ function App() {
 
       // Se a InfinitePay nos deu o link com sucesso...
       if (linkDeCheckout) {
-        
-        // Limpamos o carrinho da memória (pois ele já foi pro banco de dados)
-        setCarrinho([]); 
-        
+                
         // 🚀 O REDIRECIONAMENTO MÁGICO 🚀
         // O comando window.location.href tira o cliente do seu site e joga ele
         // na tela segura da InfinitePay para digitar o cartão ou escanear o PIX!
@@ -206,6 +256,7 @@ function App() {
           <Historico 
             historicoCompras={historicoCompras} 
             setPaginaAtual={setPaginaAtual} 
+            token={token}
           />
         
         ) :
@@ -213,9 +264,12 @@ function App() {
         // OPÇÃO E: Mostrar o Perfil
         paginaAtual === "perfil" ? (
           <Perfil token={token} />
+        ) : 
+
+        // OPÇÃO F: A página Quem Somos
+        paginaAtual === "quem_somos" ? (
+          <QuemSomos setPaginaAtual={setPaginaAtual} />
         ) : (
-
-
           // OPÇÃO C: Se for o carrinho, mostrar os itens do carrinho
           <div>
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Seu Carrinho de Compras</h2>
@@ -279,6 +333,24 @@ function App() {
               </div>
             )}
             
+            {/* Aviso de compra segura */}
+            {carrinho.length > 0 && (
+              <div style={{
+                marginTop: '25px',
+                padding: '15px',
+                backgroundColor: '#f8f9fa',
+                borderLeft: ' 4px solid var(--cor-primaria-verde)',
+                borderRadius: '4px',
+                fontSize: '14px',
+                color: 'var(--cor-texto-secundario)',
+                lineHeight: '1.5'
+              }}>
+                <p style={{margin: 0}}>
+                  🔒 <strong>Pagamento 100% seguro.</strong> Para garantir as melhores taxas e repassar o menor preço a você, professor(a), nossa plataforma opera no modelo MEI. Ao prosseguir, o recebedor no seu PIX ou Fatura de Cartão aparecerá como <strong>Maycon Kawlin</strong>. Fique tranquilo(a), é a nossa conta oficial!
+                </p>
+              </div>
+            )}
+
             {/* Botão que simula finalizar compra */}
             <button
               onClick={finalizarCompra}
@@ -307,7 +379,7 @@ function App() {
         )}
       
 
-      <Footer />
+      <Footer setPaginaAtual={setPaginaAtual}/>
     </div>
   );
 }

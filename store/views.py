@@ -2,6 +2,7 @@
 # o serializer faz a mudança de linguagem do python para o sql
 import requests
 import uuid
+from django.http import FileResponse
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -20,19 +21,19 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class=ProdutoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
 
 class DisciplinaViewSet(viewsets.ModelViewSet):
-    queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
+    queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Disciplina".
     serializer_class=DisciplinaSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
 
 class AreaViewSet(viewsets.ModelViewSet):
-    queryset=Area.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
+    queryset=Area.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Area".
     serializer_class=AreaSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
 
 class NivelViewSet(viewsets.ModelViewSet):
-    queryset=Nivel.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
+    queryset=Nivel.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Nivel".
     serializer_class=NivelSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
 
 class TipoMaterialViewSet(viewsets.ModelViewSet):
-    queryset=TipoMaterial.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
+    queryset=TipoMaterial.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela TipoMaterial".
     serializer_class=TipoMaterialSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
 
 class CarrinhoViewSet(viewsets.ModelViewSet):
@@ -143,6 +144,34 @@ class PerfilUsuarioView(generics.RetrieveAPIView):
         # Retorna magicamente os dados do dono do Token
         return self.request.user
 
+
+### DOWNLOAD SEGURO DO PDF
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def baixar_material(request, item_id):
+    try:
+        # Pega o item específico que o cliente quer baixar
+        item = ItemCarrinho.objects.get(id=item_id)
+
+        # Verifica se o carrinho é do usuário E está pago
+        if item.carrinho.usuario != request.user or not item.carrinho.confirmado:
+            return Response({"erro": "Acesso negado"}, status = status.HTTP_402_FORBIDDEN)
+
+        # Verifica se o produto tem um arquivo salvo
+        if not item.produto.arquivo:
+            return Response({"erro": "Arquivo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Entrega o arquivo para o navegador baixar
+        arquivo = item.produto.arquivo
+        return FileResponse(arquivo.open('rb'), as_attachment=True, filename=arquivo.name.split('/')[-1])
+
+    except ItemCarrinho.DoesNotExist:
+        return Response({"erro": "Item não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
 ### INFINITEPAY GERAR LINK
 
 @api_view(['POST'])
@@ -169,11 +198,11 @@ def gerar_link_infinitepay(request, carrinho_id):
         order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
         
         payload = {
-            "handle": "MINHA_TAG_AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "handle": "MINHA-TAG-AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
             "redirect_url": "http://localhost:5173/historico",
-            "webhook_url": "URL_DO_WEBHOOK_AQUI", 
+            "webhook_url": "NGROK-AQUI/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email
@@ -200,11 +229,11 @@ def gerar_link_infinitepay(request, carrinho_id):
 
 @api_view(['POST'])
 @permission_classes([AllowAny]) # Permite que os robôs da infinitepay, que não tem login nos dê o link de confirmação.
-def webhookinifinitepay(request):
+def webhookinfinitepay(request):
     try:
         # 1. Recebemos os dados da InfinitePay
         dados = request.data
-        print("\n 🔔 [WEBHOOK] Mensagem recebida da InifitePay:", dados)
+        print("\n 🔔 [WEBHOOK] Mensagem recebida da InfinitePay:", dados)
 
         if not dados:
             print("⚠️ [WEBHOOK] Mensagem chegou vazia!")
@@ -241,7 +270,7 @@ def webhookinifinitepay(request):
                 print(f"❌ [ERRO] Carrinho {carrinho_id} não encontrado no banco")
                 return Response({"erro": "Carrinho não encontrado"}, status=status.HTTP_404_NOT_FOUND)
         
-        return Response({"erro": "Foirmato de order_nsu inválido"},status=status.HTTP_400_BAD_REQUEST)
+        return Response({"erro": "Formato de order_nsu inválido"},status=status.HTTP_400_BAD_REQUEST)
     
     except Exception as e:
         print("❌ [ERRO GRAVE NO WEBHOOK]:",str(e))

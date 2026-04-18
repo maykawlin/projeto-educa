@@ -23,9 +23,10 @@ export function Cadastro({ setPaginaAtual }) {
             // 2. Enviando os dados para o Django
             // Atenção: Configurei para a rota /api/register/ (Ajuste se no seu Django o nome for diferente)
             await axios.post("http://127.0.0.1:8000/api/register/", {
-                username: username,
+                nome_completo: username,
                 email: email,
-                password: password,
+                senha: password,
+                confirmar_senha: confirmPassword
             });
 
             // Se o Django responder "Ok", mostramos a mensagem de sucesso
@@ -62,7 +63,7 @@ export function Cadastro({ setPaginaAtual }) {
             <form onSubmit={fazerCadastro} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 
                 <div>
-                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--cor-texto-principal)' }}>Nome de Usuário:</label>
+                    <label style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--cor-texto-principal)' }}>Nome de Completo:</label>
                     <input
                         type='text'
                         value={username}

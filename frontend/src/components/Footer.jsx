@@ -1,4 +1,4 @@
-export function Footer() {
+export function Footer({setPaginaAtual}) {
     const anoAtual = new Date().getFullYear(); // Pega o ano automaticamente para o Copyright
 
     return (
@@ -8,10 +8,12 @@ export function Footer() {
                 {/* Coluna 1: Sobre */}
                 <div className="footer-coluna">
                     <h3>📚 Sobre a Didáticos</h3>
-                    <p>
+                    <p style={{ textAlign: 'justify'}}>
                         Plataforma dedicada a professores apaixonados por ensinar. 
                         Compartilhamos materiais de alta qualidade para transformar 
-                        salas de aula em todo o Brasil.
+                        salas de aula em todo o Brasil. <span onClick={() => setPaginaAtual("quem_somos")} style={{ cursor: 'pointer', color: '#4CAF50', textDecoration: 'underline' }}>
+                        Nossa História (Quem Somos)
+                    </span>
                     </p>
                 </div>
 
@@ -29,7 +31,7 @@ export function Footer() {
                 {/* Coluna 3: Contato e WhatsApp */}
                 <div className="footer-coluna">
                     <h3>💬 Precisa de Ajuda?</h3>
-                    <p>
+                    <p style={{ textAlign: 'justify'}}>
                         Tem alguma dúvida sobre os materiais ou problemas com seu acesso? 
                         Fale diretamente com nossa equipe de suporte.
                     </p>
