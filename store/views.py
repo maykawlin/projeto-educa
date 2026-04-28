@@ -1,6 +1,7 @@
 # aqui você controla em python o banco de dados todas as solicitações que vem do frontend e o que você retorna
 # o serializer faz a mudança de linguagem do python para o sql
 import requests
+import os
 import uuid
 from django.http import FileResponse
 from django.contrib.auth.models import User
@@ -198,11 +199,11 @@ def gerar_link_infinitepay(request, carrinho_id):
         order_nsu_personalizado = f"PEDIDO-{carrinho.id}-{str(uuid.uuid4())[:8]}"
         
         payload = {
-            "handle": "SUA-TAG-AQUI", # ⚠️ ATENÇÃO: COLOQUE SUA TAG AQUI ⚠️
+            "handle": os.environ.get('INFINITEPAY_HANDLE'), # puxa os dados do arquivo .env
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
             "redirect_url": "http://localhost:5173/historico",
-            "webhook_url": "NGROK-AQUI/api/webhook/infinitepay/", 
+            "webhook_url": os.environ.get('WEBHOOK_URL'), # puxa os dados do arquivo .env
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email
