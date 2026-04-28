@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+import dj_database_url
 
 # Isso diz ao Django para procurar o arquivo .env e abrir as credenciais
 load_dotenv()
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
     'store',
     'rest_framework', # <-- O tradutor para JSON
     'corsheaders', # <-- O porteiro de segurança
@@ -83,10 +85,9 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
@@ -132,11 +133,21 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# URL para acessar os arquivos no navegador (ex: https://site.com/media/foto.jpg)
-MEDIA_URL = '/media/'
+# ==========================================
+# CONFIGURAÇÃO DE ARMAZENAMENTO NA NUVEM (BACKBLAZE)
+# ==========================================
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL')
 
-# Onde os arquivos ficam fisicamente no meu computador
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Configurações específicas para garantir compatibilidade e segurança
+AWS_S3_FILE_OVERWRITE = False  # Não apaga arquivos com o mesmo nome
+AWS_DEFAULT_ACL = None         # Mantém os arquivos privados como configuramos no Bucket
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Onde os arquivos serão acedidos (via código)
+MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/'
 
 
 # Configuração do CORS, comunicação Django com react
