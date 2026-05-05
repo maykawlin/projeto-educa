@@ -22,7 +22,7 @@ export function Cadastro({ setPaginaAtual }) {
         try {
             // 2. Enviando os dados para o Django
             // Atenção: Configurei para a rota /api/register/ (Ajuste se no seu Django o nome for diferente)
-            await axios.post("http://127.0.0.1:8000/api/register/", {
+            await axios.post("https://projeto-educa.onrender.com/api/register/", {
                 nome_completo: username,
                 email: email,
                 senha: password,

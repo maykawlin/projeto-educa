@@ -46,7 +46,7 @@ function App() {
         tentativas++;
         console.log(`Procurando pagamento no banco... Tentativa ${tentativas}`);
 
-        axios.get('http://127.0.0.1:8000/api/carrinho/historico/', {
+        axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/', {
           headers: { Authorization: `Bearer ${token}` }
         })
         .then(resposta => {
@@ -108,7 +108,7 @@ function App() {
     try {
       // Passo 2 - Enviar os dados do carrinho para o backend
       // Como o carrinho tem vários produtos, enviamos a lista inteira
-      const resposta = await axios.post('http://127.0.0.1:8000/api/carrinho/',
+      const resposta = await axios.post('https://projeto-educa.onrender.com/api/carrinho/',
                                         {produtos: carrinho},// o formato exato depende de como montamos o Serializer no Django
                                         {headers: {Authorization: `Bearer ${token}`}} // É aqui que enviamos o token para o backend reconhecer quem é o usuário
                                       );
@@ -121,7 +121,7 @@ function App() {
 
       // Passo 4 - Bater na porta nova da InfinitePay pedindo o link
       const respostaPagamento = await axios.post(
-                      `http://127.0.0.1:8000/api/pagar/${idDoCarrinho}/`,
+                      `https://projeto-educa.onrender.com/api/pagar/${idDoCarrinho}/`,
                       {}, // O corpo é vazio, o Django já sabe o que fazer com o ID
                       {headers: {Authorization: `Bearer ${token}`}}
       );
@@ -162,7 +162,7 @@ function App() {
 
   // 6. Busca de dados
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/produtos/')
+    axios.get('https://projeto-educa.onrender.com/api/produtos/')
       .then(response => setProdutos(response.data))
       .catch(erro => console.log("Erro: ", erro))
   }, [])
@@ -187,7 +187,7 @@ function App() {
   // 8. Função para visualizar o histórico do carrinho
   async function buscarHistorico() {
     try {
-      const resposta = await axios.get('http://127.0.0.1:8000/api/carrinho/historico/',
+      const resposta = await axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/',
         { headers: { Authorization: `Bearer ${token}` } } 
       );
       

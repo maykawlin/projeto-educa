@@ -8,7 +8,7 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
             // Mostra um feedback visual de que está baixando
             console.log('Iniciando download seguro ...');
 
-            const resposta = await axios.get(`http://127.0.0.1:8000/api/baixar-material/${itemId}/`,{
+            const resposta = await axios.get(`https://projeto-educa.onrender.com/api/baixar-material/${itemId}/`,{
                 headers: { Authorization:`Bearer ${token}`},
                 responseType: 'blob' // Isso diz ao axios que a resposta é um arquivo e não JSON
             });

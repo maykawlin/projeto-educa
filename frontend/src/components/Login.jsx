@@ -12,7 +12,7 @@ export function Login({setPaginaAtual, setToken}) {
 
         try {
             // Solicitando ao Django o Token
-            const resposta = await axios.post("http://127.0.0.1:8000/api/token/", {
+            const resposta = await axios.post("https://projeto-educa.onrender.com/api/token/", {
                 username: username,
                 password: password,
             });
