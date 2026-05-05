@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #Esse site (React) tem permissão de falar com a gente?
     'django.middleware.security.SecurityMiddleware', #Verifica se a conexão é segura (HTTPS).
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware', #Verifica se o usuário tem um cookie de sessão.
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware', #Verifica se é um ataque hacker de formulário.
@@ -126,6 +127,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# A "caixa" onde o Django vai juntar a decoração para o WhiteNoise entregar
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
