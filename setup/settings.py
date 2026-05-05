@@ -144,7 +144,14 @@ AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL')
 # Configurações específicas para garantir compatibilidade e segurança
 AWS_S3_FILE_OVERWRITE = False  # Não apaga arquivos com o mesmo nome
 AWS_DEFAULT_ACL = None         # Mantém os arquivos privados como configuramos no Bucket
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Onde os arquivos serão acedidos (via código)
 MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/'
