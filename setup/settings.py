@@ -167,6 +167,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",   
     "http://127.0.0.1:5173",
+    "https://projeto-educa-beta.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://projeto-educa-beta.vercel.app",
 ]
 
 REST_FRAMEWORK = {
