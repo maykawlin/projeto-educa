@@ -112,18 +112,37 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
         }}>
 
-        {/* LOGO */}
-        <div 
-          onClick={ () => setPaginaAtual("loja") } 
-          className="icone-animado"
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <img 
-            src={logo} 
-            alt="Logo Didáticos" 
-            style={{ height: '50px', width: 'auto', marginRight: '10px' }} 
-          />
-          <h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>
+        {/* ÁREA DA ESQUERDA: LOGO + QUEM SOMOS */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          
+          {/* LOGO */}
+          <div 
+            onClick={ () => setPaginaAtual("loja") } 
+            className="icone-animado"
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          >
+            <img 
+              src={logo} 
+              alt="Logo Didáticos" 
+              style={{ height: '50px', width: 'auto', marginRight: '10px' }} 
+            />
+            <h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>
+          </div>
+
+          {/* NOVO BOTÃO: QUEM SOMOS */}
+          <button 
+            onClick={() => setPaginaAtual("quem_somos")}
+            className="link-quem-somos"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: 'var(--cor-texto-secundario)', fontWeight: 'bold', fontSize: '16px',
+              padding: 0, textDecoration: 'underline transparent', transition: '0.3s'
+            }}
+            onMouseOver={(e) => e.target.style.color = 'var(--cor-primaria-azul)'}
+            onMouseOut={(e) => e.target.style.color = 'var(--cor-texto-secundario)'}
+          >
+            Quem Somos
+          </button>
         </div>
 
         {/* ÁREA DOS BOTÕES DA DIREITA */}

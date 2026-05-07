@@ -704,3 +704,66 @@ body {
   background-color: white;
   transform: scale(1.3); /* A bolinha ativa fica um pouco maior */
 }
+
+/* =========================================
+   13. RESPONSIVIDADE (CELULARES E TABLETS)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. Mata o "vazamento" da tela (faixa branca na direita) */
+  body, html {
+    overflow-x: hidden;
+  }
+
+  /* 2. Arruma o Cabeçalho para não esmagar os botões */
+  /* Coloca o logo/Quem somos em cima, e os botões de Login/Carrinho embaixo */
+  nav {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px !important;
+  }
+
+  /* 3. Faz os Filtros e a Vitrine ficarem em coluna (um embaixo do outro) */
+  .layout-loja {
+    flex-direction: column;
+  }
+
+  /* 4. Estica o painel de Filtros para ocupar a tela toda */
+  .sidebar-filtros {
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box; /* Garante que o padding não passe da tela */
+  }
+
+  /* 5. Coloca os produtos em 1 única coluna na vitrine (fotos grandes) */
+  .grid-produtos {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* 6. Ajusta o tamanho da imagem do card para não ficar gigante no celular */
+  .img-produto {
+    height: 220px;
+  }
+
+  /* 7. Esconde a decoração do Banner (que causa vazamento) e diminui título */
+  .banner-decoracao {
+    display: none;
+  }
+  .banner-titulo {
+    font-size: 26px;
+  }
+
+  /* 8. Estica o modal de Quick View para caber na tela do celular */
+  .modal-container {
+    flex-direction: column; /* Coloca a foto em cima e os detalhes embaixo */
+    overflow-y: auto;
+  }
+  .modal-imagem-container {
+    flex: none;
+    height: 250px; /* Altura fixa para a foto no topo do modal */
+  }
+  .modal-detalhes {
+    padding: 20px;
+  }
+}
