@@ -202,8 +202,8 @@ def gerar_link_infinitepay(request, carrinho_id):
             "handle": os.environ.get('INFINITEPAY_HANDLE'), # puxa os dados do arquivo .env
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
-            "redirect_url": "http://localhost:5173/historico",
-            "webhook_url": os.environ.get('WEBHOOK_URL'), # puxa os dados do arquivo .env
+            "redirect_url": "https://projeto-educa-beta.vercel.app/historico",
+            "webhook_url": "https://projeto-educa.onrender.com/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email

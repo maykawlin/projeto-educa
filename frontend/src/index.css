@@ -723,6 +723,13 @@ body {
     padding: 15px !important;
   }
 
+  /* Centraliza a área da Logo e do botão Quem Somos */
+  nav > div:first-child {
+    flex-direction: column;
+    gap: 10px !important;
+    text-align: center;
+  }
+
   /* 3. Faz os Filtros e a Vitrine ficarem em coluna (um embaixo do outro) */
   .layout-loja {
     flex-direction: column;
@@ -765,5 +772,20 @@ body {
   }
   .modal-detalhes {
     padding: 20px;
+  }
+  /* Arruma a pesquisa cortada */
+  .pesquisa-container {
+    width: 100%;
+    padding: 0 15px; 
+    box-sizing: border-box;
+  }
+  .input-pesquisa {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Esconde o "Quem Somos" do topo SÓ no celular (já tem no menu Olá Professor e no Footer) */
+  .link-quem-somos {
+    display: none;
   }
 }
