@@ -163,9 +163,9 @@ def baixar_material(request, item_id):
         if not item.produto.arquivo:
             return Response({"erro": "Arquivo não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Entrega o arquivo para o navegador baixar
-        arquivo = item.produto.arquivo
-        return FileResponse(arquivo.open('rb'), as_attachment=True, filename=arquivo.name.split('/')[-1])
+        # Em vez de baixar o arquivo no Render, 
+        # devolvemos o link seguro da Backblaze diretamente para o React!
+        return Response({"url_download": item.produto.arquivo.url}, status=status.HTTP_200_OK)
 
     except ItemCarrinho.DoesNotExist:
         return Response({"erro": "Item não encontrado."}, status=status.HTTP_404_NOT_FOUND)

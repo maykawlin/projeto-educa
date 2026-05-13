@@ -3,29 +3,22 @@ import axios from 'axios';
 export function Historico({ historicoCompras, setPaginaAtual, token }) {
 
     
-    async function fazerDownload(itemId, nomeArquivo) {
+    // Função atualizada para usar Links Seguros da Nuvem
+    async function fazerDownload(itemId) {
         try {
-            // Mostra um feedback visual de que está baixando
-            console.log('Iniciando download seguro ...');
+        // 1. Pede o Link VIP para o Django
+        const resposta = await axios.get(`https://projeto-educa.onrender.com/api/baixar-material/${itemId}/`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
 
-            const resposta = await axios.get(`https://projeto-educa.onrender.com/api/baixar-material/${itemId}/`,{
-                headers: { Authorization:`Bearer ${token}`},
-                responseType: 'blob' // Isso diz ao axios que a resposta é um arquivo e não JSON
-            });
+        // 2. O Django devolveu o link? Então abre ele em uma nova aba para iniciar o download!
+        if (resposta.data.url_download) {
+            window.open(resposta.data.url_download, '_blank');
+        }
 
-            // Cria um link fantasma na memória do navegador para forçar o download
-            const url = window.URL.createObjectURL(new Blob([resposta.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${nomeArquivo}.pdf`); //Dá o nome correto ao arquivo
-            document.body.appendChild(link);
-            link.click();
-
-            //Limpa a memória
-            link.parentNode.removeChild(link);
-        } catch(erro) {
-            console.error(erro);
-            alert("Erro ao baixar o arquivo. Tente fazer login novamente.")
+        } catch (erro) {
+        console.log("Erro ao baixar:", erro);
+        alert("Ops! Ocorreu um erro ao gerar seu link de download. Tente novamente.");
         }
     }   
 
