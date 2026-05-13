@@ -19,6 +19,9 @@ function App() {
   // 1. A memória do App
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
   const [ produtos, setProdutos ] = useState([]);
+  const [ urlProdutos, setUrlProdutos ] = useState('https://projeto-educa.onrender.com/api/produtos/');
+  const [ linkProxima, setLinkProxima ] = useState(null);
+  const [ linkAnterior, setLinkAnterior ] = useState(null);
   const [ carrinho, setCarrinho ] = useState(() => {
                                                     // Tenta ler o carrinho salvo no localStorage
                                                     const dadosSalvos = localStorage.getItem('carrinho');
@@ -160,12 +163,19 @@ function App() {
   // O "Number" garante que o texto "15.00" vire um número 15.00
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
-  // 6. Busca de dados
+  // 6. Busca de dados com paginação
   useEffect(() => {
-    axios.get('https://projeto-educa.onrender.com/api/produtos/')
-      .then(response => setProdutos(response.data))
+    // Usamos a variável urlProdutos em vez do link fixo
+    axios.get(urlProdutos)
+      .then(response => {
+        // Agora os produtos estão dentro da gaveta "results"
+        setProdutos(response.data.results);
+        // Guardamos os links da próxima página e da anterior
+        setLinkProxima(response.data.next);
+        setLinkAnterior(response.data.previous);
+      })
       .catch(erro => console.log("Erro: ", erro))
-  }, [])
+  }, [urlProdutos])
 
   // 7. Função que adicona ao carrinho
   function adicionarAoCarrinho(produtoClicado, origem='vitrine') {
@@ -238,6 +248,9 @@ function App() {
             busca={busca}
             setBusca={setBusca}
             adicionarAoCarrinho={adicionarAoCarrinho}
+            linkProxima={linkProxima}          
+            linkAnterior={linkAnterior}        
+            setUrlProdutos={setUrlProdutos}
           />
         ) : 
         

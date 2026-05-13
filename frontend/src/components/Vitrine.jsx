@@ -3,7 +3,7 @@ import { FiltrosLateral } from "./FiltrosLateral";
 import { ModalProduto } from "./ModalProduto"; 
 import { BannerPromocional } from "./BannerPromocional";
 
-export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
+export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca, linkProxima, linkAnterior, setUrlProdutos}) {
     
     // Memória dos Filtros
     const [filtrosSelecionados, setFiltrosSelecionados] = useState({
@@ -142,6 +142,32 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca}) {
                 />
             )}
 
+            {/* BOTÕES DE PAGINAÇÃO */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '40px', paddingBottom: '20px' }}>
+                
+                {/* Se o link anterior existir (não for null), mostra o botão Voltar */}
+                {linkAnterior && (
+                <button 
+                    onClick={() => setUrlProdutos(linkAnterior)} 
+                    className="btn-secundario"
+                >
+                    ⬅️ Página Anterior
+                </button>
+                )}
+
+                {/* Se o link da próxima existir, mostra o botão Avançar */}
+                {linkProxima && (
+                <button 
+                    onClick={() => setUrlProdutos(linkProxima)} 
+                    className="btn-secundario"
+                >
+                    Próxima Página ➡️
+                </button>
+                )}
+                
+            </div>
+
         </div>
+        
     );
 }
