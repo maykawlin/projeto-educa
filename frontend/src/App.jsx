@@ -165,14 +165,17 @@ function App() {
 
   // 6. Busca de dados com paginação
   useEffect(() => {
-    // Usamos a variável urlProdutos em vez do link fixo
     axios.get(urlProdutos)
       .then(response => {
-        // Agora os produtos estão dentro da gaveta "results"
-        setProdutos(response.data.results);
-        // Guardamos os links da próxima página e da anterior
-        setLinkProxima(response.data.next);
-        setLinkAnterior(response.data.previous);
+        // Se tiver "results", usa o results. Se não, usa a resposta inteira.
+        const dadosSeguros = response.data.results ? response.data.results : response.data;
+        
+        // Garante que é uma lista válida antes de salvar na memória (evita o erro do .filter)
+        setProdutos(Array.isArray(dadosSeguros) ? dadosSeguros : []);
+        
+        // Puxa os links de paginação (se existirem)
+        setLinkProxima(response.data.next || null);
+        setLinkAnterior(response.data.previous || null);
       })
       .catch(erro => console.log("Erro: ", erro))
   }, [urlProdutos])
