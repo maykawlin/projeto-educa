@@ -10,7 +10,7 @@ from .views import (CarrinhoViewSet, ProdutoViewSet,
                     baixar_material)
 
 router = routers.DefaultRouter()
-router.register(r'produtos', ProdutoViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
+router.register(r'produtos', ProdutoViewSet, basename='produtos') #(O r antes da string significa "Raw String", útil para caminhos web).
 router.register(r'disciplinas', DisciplinaViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
 router.register(r'nivel', NivelViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
 router.register(r'areas', AreaViewSet) #(O r antes da string significa "Raw String", útil para caminhos web).
