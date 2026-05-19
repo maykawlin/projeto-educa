@@ -11,8 +11,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework import filters
-from .models import Produto
-from .serializers import ProdutoSerializer
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
@@ -62,7 +60,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             
         # Garante que não venham produtos duplicados
         return queryset.distinct()
-        
+
 class DisciplinaViewSet(viewsets.ModelViewSet):
     queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Disciplina".
     serializer_class=DisciplinaSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
