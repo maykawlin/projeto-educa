@@ -19,11 +19,34 @@ from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
                          PerfilSerializer)
 
 class ProdutoViewSet(viewsets.ModelViewSet):
-    queryset=Produto.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
-    serializer_class=ProdutoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
-
+    serializer_class = ProdutoSerializer
+    
+    # Mantém a nossa busca por texto funcionando
     filter_backends = [filters.SearchFilter]
-    search_fields = ['titulo', 'descricao']
+    search_fields = ['titulo', 'descricao'] 
+
+    def get_queryset(self):
+        # 1. Começamos pegando TODOS os produtos do banco
+        queryset = Produto.objects.all()
+        
+        # 2. Olhamos para a URL para ver se o React mandou algum filtro 
+        niveis = self.request.query_params.get('nivel')
+        disciplinas = self.request.query_params.get('disciplina')
+        tipos = self.request.query_params.get('tipo')
+        
+        # 3. Aplicamos a "Tesoura" do SQL se o filtro existir
+        if niveis:
+            # O .split(',') transforma o texto '1,2' em uma lista ['1', '2']
+            # O __in avisa o banco: "Traga se o ID do nível estiver dentro dessa lista"
+            queryset = queryset.filter(nivel__id__in=niveis.split(','))
+            
+        if disciplinas:
+            queryset = queryset.filter(disciplina__id__in=disciplinas.split(','))
+            
+        if tipos:
+            queryset = queryset.filter(tipo__id__in=tipos.split(','))
+            
+        return queryset
 
 class DisciplinaViewSet(viewsets.ModelViewSet):
     queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Disciplina".
