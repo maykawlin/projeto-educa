@@ -24,6 +24,10 @@ export function Vitrine({
                 Vitrine de Produtos
             </h2>
 
+            {/* 1. O BANNER AGORA VEM PRIMEIRO (Se a busca estiver vazia) */}
+            {busca === "" && <BannerPromocional />}
+
+            {/* 2. A BARRA DE PESQUISA VEM LOGO ABAIXO */}
             <div className="pesquisa-container">
                 <input
                     type="text"
@@ -34,11 +38,7 @@ export function Vitrine({
                 />
             </div>
 
-            {/* Se a barra de busca estiver VAZIA, mostramos o Banner! */}
-            {busca === "" && <BannerPromocional />}
-
             <div className="layout-loja">
-                {/* O Filtro Lateral agora recebe os estados que vêm lá do App.jsx */}
                 <FiltrosLateral 
                     filtrosSelecionados={filtrosSelecionados} 
                     alternarFiltro={alternarFiltro} 
@@ -46,11 +46,9 @@ export function Vitrine({
 
                 <div className="conteudo-vitrine">
                     <div className="grid-produtos">
-                        {/* Mapeamento direto da lista inteligente vinda do Django */}
                         {produtos.map(produto => ( 
                             <div key={produto.id} className="card-produto">
                                 
-                                {/* GATILHO: Clicar na imagem abre o modal */}
                                 {produto.imagem_capa && ( 
                                     <img 
                                         src={produto.imagem_capa}
@@ -61,7 +59,6 @@ export function Vitrine({
                                     />
                                 )}
                                 
-                                {/* GATILHO: Clicar no título abre o modal */}
                                 <h3 
                                     style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--cor-texto-principal)', cursor: 'pointer' }}
                                     onClick={() => setProdutoModal(produto)} 
@@ -84,7 +81,6 @@ export function Vitrine({
                             </div>  
                         ))}
 
-                        {/* Se o banco de dados retornar vazio para os filtros, mostra o aviso */}
                         {produtos.length === 0 && (
                             <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--cor-texto-secundario)', padding: '40px 0' }}>
                                 Nenhum material encontrado com esses filtros. 😔
@@ -94,7 +90,6 @@ export function Vitrine({
                 </div>
             </div>
 
-            {/* DESENHO DO MODAL (Aparece se tiver produto na memória) */}
             {produtoModal && (
                 <ModalProduto 
                     produto={produtoModal} 
@@ -104,10 +99,7 @@ export function Vitrine({
                 />
             )}
 
-            {/* BOTÕES DE PAGINAÇÃO */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '40px', paddingBottom: '20px' }}>
-                
-                {/* Se o link anterior existir (não for null), mostra o botão Voltar */}
                 {linkAnterior && (
                     <button 
                         onClick={() => setUrlProdutos(linkAnterior)} 
@@ -117,7 +109,6 @@ export function Vitrine({
                     </button>
                 )}
 
-                {/* Se o link da próxima existir, mostra o botão Avançar */}
                 {linkProxima && (
                     <button 
                         onClick={() => setUrlProdutos(linkProxima)} 
@@ -126,9 +117,7 @@ export function Vitrine({
                         Próxima Página ➡️
                     </button>
                 )}
-                
             </div>
-
         </div>
     );
 }
