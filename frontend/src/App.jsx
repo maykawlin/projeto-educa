@@ -31,6 +31,9 @@ function App() {
                                                   });
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
   const [ busca, setBusca ] = useState("");
+  const [filtrosSelecionados, setFiltrosSelecionados] = useState({
+      nivel: [], disciplina: [], assunto: [], tipo: []
+  });
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado   
@@ -163,27 +166,56 @@ function App() {
   // O "Number" garante que o texto "15.00" vire um número 15.00
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
+  
   // =================================================================
-  // Montando a URL de busca quando o usuário digita
+  // LÓGICA DE FILTROS E BUSCA (Atualizada)
   // =================================================================
-  const carregarProdutos = () => {
-      let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
-      
-      // Se o usuário digitou algo na busca, adiciona o termo na URL
-      if (busca) urlBase += `search=${busca}&`;
-      
-      // Atualiza a memória da URL (isso vai engatilhar o passo 6 automaticamente!)
-      setUrlProdutos(urlBase);
-    };
+  
+  // Função que marca e desmarca a caixinha
+  function alternarFiltro(categoria, valor) {
+      setFiltrosSelecionados(memoriaAnterior => {
+          const listaAtual = memoriaAnterior[categoria];
+          if (listaAtual.includes(valor)) {
+              return { ...memoriaAnterior, [categoria]: listaAtual.filter(item => item !== valor) };
+          } else {
+              return { ...memoriaAnterior, [categoria]: [...listaAtual, valor] };
+          }
+      });
+  }
 
-  // Fica de olho na variável "busca". Sempre que ela mudar, roda a função acima.
+
+  const carregarProdutos = () => {
+    let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
+    
+    if (busca) urlBase += `search=${busca}&`;
+    
+    if (filtrosSelecionados.disciplina.length > 0) {
+        urlBase += `disciplina=${filtrosSelecionados.disciplina.join(',')}&`;
+    }
+    if (filtrosSelecionados.tipo.length > 0) {
+        urlBase += `tipo=${filtrosSelecionados.tipo.join(',')}&`;
+    }
+    if (filtrosSelecionados.nivel.length > 0) {
+        // A sua genialidade preservada: Traduz o texto visual para a sigla do Banco de Dados
+        const niveisBD = filtrosSelecionados.nivel.map(n => {
+            if (n === "Ensino Médio") return "EM";
+            if (n === "Ensino Fundamental II") return "EF";
+            return n;
+        });
+        urlBase += `nivel=${niveisBD.join(',')}&`;
+    }
+    
+    setUrlProdutos(urlBase);
+  };
+
+  // Fica de olho na busca E nos filtros. Se qualquer um mudar, gera URL nova!
   useEffect(() => {
     carregarProdutos();
-  }, [busca]);
+  }, [busca, filtrosSelecionados]);
   // =================================================================
 
 
-  
+
   // 6. Busca de dados com paginação
   useEffect(() => {
     axios.get(urlProdutos)
@@ -275,6 +307,8 @@ function App() {
             linkProxima={linkProxima}          
             linkAnterior={linkAnterior}        
             setUrlProdutos={setUrlProdutos}
+            filtrosSelecionados={filtrosSelecionados}
+            alternarFiltro={alternarFiltro}
           />
         ) : 
         
