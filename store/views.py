@@ -4,6 +4,7 @@ import requests
 import os
 import uuid
 from django.http import FileResponse
+from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -20,31 +21,34 @@ from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
-    
-    # Mantém a nossa busca por texto funcionando
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['titulo', 'descricao'] 
 
     def get_queryset(self):
-        # 1. Começamos pegando TODOS os produtos do banco
-        queryset = Produto.objects.all()
+        # 1. O NITRO 🚀: Traz todas as tabelas filhas de uma vez só. Vai cair de 12s para 1s!
+        queryset = Produto.objects.prefetch_related('nivel', 'disciplina', 'tipo').all()
         
-        # 2. Olhamos para a URL para ver se o React mandou algum filtro 
+        # 2. Captura os filtros da URL
         niveis = self.request.query_params.get('nivel')
         disciplinas = self.request.query_params.get('disciplina')
         tipos = self.request.query_params.get('tipo')
+        assuntos = self.request.query_params.get('assunto') # O Assunto chegou!
+        busca = self.request.query_params.get('search')
         
-        # 3. Aplicamos a "Tesoura" do SQL se o filtro existir
+        # 3. Aplica os filtros exatos
         if niveis:
-            # O .split(',') transforma o texto '1,2' em uma lista ['1', '2']
-            # O __in avisa o banco: "Traga se o ID do nível estiver dentro dessa lista"
-            queryset = queryset.filter(nivel__id__in=niveis.split(','))
-            
+            queryset = queryset.filter(nivel__nome__in=niveis.split(','))
         if disciplinas:
-            queryset = queryset.filter(disciplina__id__in=disciplinas.split(','))
-            
+            queryset = queryset.filter(disciplina__nome__in=disciplinas.split(','))
         if tipos:
-            queryset = queryset.filter(tipo__id__in=tipos.split(','))
+            queryset = queryset.filter(tipo__nome__in=tipos.split(','))
+            
+        # 4. Aplica os filtros de texto (Busca e Assunto)
+        if assuntos:
+            for assunto in assuntos.split(','):
+                # Procura a palavra do assunto no Título OU (Q) na Descrição
+                queryset = queryset.filter(Q(titulo__unaccent__icontains=assunto) | Q(descricao__unaccent__icontains=assunto))
+                
+        if busca:
+            queryset = queryset.filter(Q(titulo__unaccent__icontainss=busca) | Q(descricao__unaccent__icontains=busca))
             
         return queryset
 

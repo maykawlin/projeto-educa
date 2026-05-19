@@ -174,6 +174,10 @@ function App() {
         urlBase += `tipo=${filtrosSelecionados.tipo.join(',')}&`;
     }
     
+    if (filtrosSelecionados.assunto.length > 0) {
+        urlBase += `assunto=${filtrosSelecionados.assunto.join(',')}&`;
+    }
+
     if (filtrosSelecionados.nivel.length > 0) {
         const niveisBD = filtrosSelecionados.nivel.map(n => {
             if (n === "Ensino Médio") return "EM";
