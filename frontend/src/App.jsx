@@ -23,16 +23,14 @@ function App() {
   const [ linkProxima, setLinkProxima ] = useState(null);
   const [ linkAnterior, setLinkAnterior ] = useState(null);
   const [ carrinho, setCarrinho ] = useState(() => {
-                                                    // Tenta ler o carrinho salvo no localStorage
-                                                    const dadosSalvos = localStorage.getItem('carrinho');
-                                                    // Se tiver dados salvos, retorna-os como um array (JSON.parse)
-                                                    // Se não tiver, retorna uma lista vazia
-                                                    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
-                                                  });
+    const dadosSalvos = localStorage.getItem('carrinho');
+    return dadosSalvos ? JSON.parse(dadosSalvos) : [];
+  });
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
-  const [ busca, setBusca ] = useState("");
   
-  // 🌟 MEMÓRIA CENTRAL DOS FILTROS (Centralizada no App para comunicação com o Django)
+  // 🌟 MEMÓRIAS DE BUSCA, FILTROS E CARREGAMENTO
+  const [ busca, setBusca ] = useState("");
+  const [ carregando, setCarregando ] = useState(false); // Estado de Loading
   const [filtrosSelecionados, setFiltrosSelecionados] = useState({
       nivel: [],
       disciplina: [],
@@ -41,10 +39,10 @@ function App() {
   });
 
   const [token,setToken] = useState(localStorage.getItem("token"));
-  const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
-  const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado   
+  const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); 
+  const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); 
   
-  // O "Porteiro" - Monitora o Webhook da InfinitePay após a tentativa de compra
+  // O "Porteiro" - Monitora o Webhook da InfinitePay
   useEffect(() => {
     const idPendente = localStorage.getItem("carrinhoPendente");
 
@@ -52,9 +50,8 @@ function App() {
       console.log("🕵️‍♂️ Porteiro ativado: Procurando confirmação do pedido", idPendente);
       
       let tentativas = 0;
-      const maxTentativas = 5; // Vai tentar 5 vezes (total de 10 segundos)
+      const maxTentativas = 5; 
 
-      // Cria um "relógio" que repete a pergunta a cada 2 segundos
       const checarPagamento = setInterval(() => {
         tentativas++;
         console.log(`Procurando pagamento no banco... Tentativa ${tentativas}`);
@@ -68,23 +65,20 @@ function App() {
 
           if (pagamentoConfirmado) {
             console.log("✅ Pagamento confirmado pelo Django! Esvaziando carrinho...");
-            setCarrinho([]); // Limpa o carrinho de verdade
-            localStorage.removeItem("carrinhoPendente"); // Rasga o aviso
+            setCarrinho([]); 
+            localStorage.removeItem("carrinhoPendente"); 
             
-            // Joga o cliente direto pro histórico dele
             setHistoricoCompras(historico);
             setPaginaAtual("historico"); 
-            
-            // Para o relógio, já achamos!
             clearInterval(checarPagamento); 
           } else if (tentativas >= maxTentativas) {
             console.log("❌ O webhook demorou muito. Desistindo de procurar automaticamente.");
-            clearInterval(checarPagamento); // Para o relógio para não ficar rodando para sempre
+            clearInterval(checarPagamento); 
           }
         })
         .catch(erro => {
           console.log("Erro ao checar pagamento:", erro);
-          clearInterval(checarPagamento); // Se der erro no Django, para o relógio
+          clearInterval(checarPagamento); 
         });
 
       }, 2000); 
@@ -93,20 +87,19 @@ function App() {
     }
   }, [token]); 
 
-  // 2. Salva no LocalStorage toda vez que o carrinho mudar
+  // Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
   }, [carrinho]); 
 
-  // 3. Função para remover um item do carrinho
+  // Função para remover um item do carrinho
   function removerDoCarrinho(indexParaRemover) {
     const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
     setCarrinho(novaLista);
   }
 
-  // 4. Função que dispara a finalização da compra na InfinitePay
+  // Função que dispara a finalização da compra na InfinitePay
   async function finalizarCompra() {
-    console.log("Olha o que tem no meu carrinho:", carrinho);
     if (!token) {
       alert("Faça o login para finalizar a compra!");
       setPaginaAtual("login"); 
@@ -114,7 +107,6 @@ function App() {
     }
 
     try {
-      // Envia os dados do carrinho para o backend
       const resposta = await axios.post('https://projeto-educa.onrender.com/api/carrinho/',
                                         {produtos: carrinho},
                                         {headers: {Authorization: `Bearer ${token}`}} 
@@ -123,7 +115,6 @@ function App() {
       const idDoCarrinho = resposta.data.id;
       localStorage.setItem('carrinhoPendente', idDoCarrinho);
 
-      // Pede o link de checkout para a InfinitePay através do Django
       const respostaPagamento = await axios.post(
                       `https://projeto-educa.onrender.com/api/pagar/${idDoCarrinho}/`,
                       {}, 
@@ -140,7 +131,6 @@ function App() {
 
     } catch (erro) {
       console.log("Erro ao salvar no banco: ", erro);
-
       if (erro.response && erro.response.status === 401) {
         alert("Sua sessão expirou. Por favor, faça o login novamente.");
         localStorage.removeItem("token"); 
@@ -152,7 +142,7 @@ function App() {
     }
   }
 
-  // 5. Calcula o total financeiro do carrinho
+  // Calcula o total financeiro do carrinho
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
 
@@ -160,7 +150,6 @@ function App() {
   // 🌟 MÓDULO INTELIGENTE DE FILTRAGEM (INTEGRADO COM BACKEND)
   // =================================================================
   
-  // Função que marca e desmarca a caixinha dos filtros laterais
   function alternarFiltro(categoria, valor) {
       setFiltrosSelecionados(memoriaAnterior => {
           const listaAtual = memoriaAnterior[categoria];
@@ -172,7 +161,6 @@ function App() {
       });
   }
 
-  // Constrói a URL dinamicamente injetando a busca por texto e caixas marcadas
   const carregarProdutos = () => {
     let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
     
@@ -198,26 +186,36 @@ function App() {
     setUrlProdutos(urlBase);
   };
 
-  // Monitor de Ações: Se digitar algo ou clicar num checkbox, reconstrói o link
+  // O "Vigia" com Debounce (Atraso Inteligente)
   useEffect(() => {
-    carregarProdutos();
-  }, [busca, filtrosSelecionados]);
-  // =================================================================
+    const cronometro = setTimeout(() => {
+      carregarProdutos();
+    }, 800); 
 
+    return () => clearTimeout(cronometro);
+  }, [busca, filtrosSelecionados]); 
 
-  // 6. Busca efetiva dos dados com paginação e regras automáticas anti-crash
+  // Busca Efetiva com aviso de Carregamento
   useEffect(() => {
+    setCarregando(true); // Avisa: "Comecei a buscar!"
+
     axios.get(urlProdutos)
       .then(response => {
         const dadosSeguros = response.data.results ? response.data.results : response.data;
         setProdutos(Array.isArray(dadosSeguros) ? dadosSeguros : []);
         setLinkProxima(response.data.next || null);
         setLinkAnterior(response.data.previous || null);
+        
+        setCarregando(false); // Avisa: "Terminei de buscar!"
       })
-      .catch(erro => console.log("Erro: ", erro))
+      .catch(erro => {
+        console.log("Erro: ", erro);
+        setCarregando(false); 
+      });
   }, [urlProdutos])
 
-  // 7. Função que adiciona um item ao carrinho flutuante
+  // =================================================================
+
   function adicionarAoCarrinho(produtoClicado, origem='vitrine') {
     const produtoComOrigem = { ...produtoClicado, origem_venda: origem };
     setCarrinho([...carrinho, produtoComOrigem]);
@@ -227,7 +225,6 @@ function App() {
     }, 3000);
   }
 
-  // 8. Função para puxar o histórico de compras liberado do Django
   async function buscarHistorico() {
     try {
       const resposta = await axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/',
@@ -278,6 +275,7 @@ function App() {
             setUrlProdutos={setUrlProdutos}
             filtrosSelecionados={filtrosSelecionados}
             alternarFiltro={alternarFiltro}
+            carregando={carregando} // Passando a prop para a Vitrine
           />
         ) : 
         paginaAtual === "login" ? (
@@ -389,15 +387,16 @@ function App() {
         )}   
       </div>
       
-      {/* Gaveta do Mini Carrinho Lateral */}
-      {miniCarrinhoAberto && (
-        <MiniCarrinho 
-          carrinho={carrinho} 
-          removerDoCarrinho={removerDoCarrinho} 
-          fechar={() => setMiniCarrinhoAberto(false)} 
-          irParaCheckout={() => setPaginaAtual("carrinho")} 
-        />
-      )}
+      <div style={{ position: 'relative', zIndex: 9999 }}>
+        {miniCarrinhoAberto && (
+          <MiniCarrinho 
+            carrinho={carrinho} 
+            removerDoCarrinho={removerDoCarrinho} 
+            fechar={() => setMiniCarrinhoAberto(false)} 
+            irParaCheckout={() => setPaginaAtual("carrinho")} 
+          />
+        )}
+      </div>
       
       <Footer setPaginaAtual={setPaginaAtual}/>
     </div>
