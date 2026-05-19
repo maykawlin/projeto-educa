@@ -7,16 +7,16 @@ export function Vitrine({
     produtos, 
     adicionarAoCarrinho, 
     busca, 
-    setBusca, 
+    alterarBusca, 
     linkProxima, 
     linkAnterior, 
     setUrlProdutos,
     filtrosSelecionados,
     alternarFiltro,
-    carregando // Recebe o estado de carregamento do App.jsx
+    limparFiltros,
+    carregando 
 }) {
     
-    // Guarda o produto que vai aparecer no Modal (null = fechado)
     const [produtoModal, setProdutoModal] = useState(null);
 
     return (
@@ -25,16 +25,14 @@ export function Vitrine({
                 Vitrine de Produtos
             </h2>
 
-            {/* O BANNER AGORA APARECE SEMPRE NO TOPO */}
             <BannerPromocional />
 
-            {/* BARRA DE PESQUISA (Abaixo do Banner) */}
             <div className="pesquisa-container">
                 <input
                     type="text"
                     placeholder="🔍 O que você está buscando?"
                     value={busca}
-                    onChange={(e) => setBusca(e.target.value)}
+                    onChange={(e) => alterarBusca(e.target.value)}
                     className="input-pesquisa"
                 />
             </div>
@@ -43,12 +41,11 @@ export function Vitrine({
                 <FiltrosLateral 
                     filtrosSelecionados={filtrosSelecionados} 
                     alternarFiltro={alternarFiltro} 
+                    limparFiltros={limparFiltros}
                 />
 
                 <div className="conteudo-vitrine">
                     <div className="grid-produtos">
-                        
-                        {/* SE ESTIVER CARREGANDO, MOSTRA O AVISO VISUAL */}
                         {carregando ? (
                             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 0' }}>
                                 <h3 style={{ color: 'var(--cor-primaria-azul)', fontSize: '24px' }}>
@@ -59,11 +56,9 @@ export function Vitrine({
                                 </p>
                             </div>
                         ) : (
-                            /* SE NÃO ESTIVER CARREGANDO, RENDERIZA OS PRODUTOS */
                             <>
                                 {produtos.map(produto => ( 
                                     <div key={produto.id} className="card-produto">
-                                        
                                         {produto.imagem_capa && ( 
                                             <img 
                                                 src={produto.imagem_capa}
@@ -73,18 +68,15 @@ export function Vitrine({
                                                 style={{cursor: 'pointer'}} 
                                             />
                                         )}
-                                        
                                         <h3 
                                             style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--cor-texto-principal)', cursor: 'pointer' }}
                                             onClick={() => setProdutoModal(produto)} 
                                         >
                                             {produto.titulo}
                                         </h3>
-                                        
                                         <p style={{ margin: '0 0 15px 0', fontSize: '20px', fontWeight: 'bold', color: 'var(--cor-primaria-verde)' }}>
                                             R$ {produto.preco}
                                         </p>
-                                        
                                         <div style={{ marginTop: 'auto' }}>
                                             <button 
                                                 onClick={() => adicionarAoCarrinho(produto)}
@@ -96,7 +88,6 @@ export function Vitrine({
                                     </div>  
                                 ))}
 
-                                {/* Se a lista vier vazia após o filtro, mostra mensagem */}
                                 {produtos.length === 0 && (
                                     <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--cor-texto-secundario)', padding: '40px 0' }}>
                                         Nenhum material encontrado com esses filtros. 😔
@@ -104,12 +95,10 @@ export function Vitrine({
                                 )}
                             </>
                         )}
-                        
                     </div>
                 </div>
             </div>
 
-            {/* MODAL DE PRODUTO */}
             {produtoModal && (
                 <ModalProduto 
                     produto={produtoModal} 
@@ -119,23 +108,15 @@ export function Vitrine({
                 />
             )}
 
-            {/* BOTÕES DE PAGINAÇÃO (Só mostra se não estiver carregando e houver links) */}
             {!carregando && (
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '40px', paddingBottom: '20px' }}>
                     {linkAnterior && (
-                        <button 
-                            onClick={() => setUrlProdutos(linkAnterior)} 
-                            className="btn-secundario"
-                        >
+                        <button onClick={() => setUrlProdutos(linkAnterior)} className="btn-secundario">
                             ⬅️ Página Anterior
                         </button>
                     )}
-
                     {linkProxima && (
-                        <button 
-                            onClick={() => setUrlProdutos(linkProxima)} 
-                            className="btn-secundario"
-                        >
+                        <button onClick={() => setUrlProdutos(linkProxima)} className="btn-secundario">
                             Próxima Página ➡️
                         </button>
                     )}

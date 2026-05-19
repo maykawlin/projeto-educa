@@ -11,6 +11,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework import filters
+from .models import Produto
+from .serializers import ProdutoSerializer
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
@@ -21,19 +23,21 @@ from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
+    
+    # IMPORTANTE: Sem filter_backends ou search_fields!
 
     def get_queryset(self):
-        # 1. O NITRO 🚀: Traz todas as tabelas filhas de uma vez só. Vai cair de 12s para 1s!
+        # 1. O NITRO: Traz as tabelas relacionadas rapidamente
         queryset = Produto.objects.prefetch_related('nivel', 'disciplina', 'tipo').all()
         
-        # 2. Captura os filtros da URL
+        # 2. Captura a URL
         niveis = self.request.query_params.get('nivel')
         disciplinas = self.request.query_params.get('disciplina')
         tipos = self.request.query_params.get('tipo')
-        assuntos = self.request.query_params.get('assunto') # O Assunto chegou!
+        assuntos = self.request.query_params.get('assunto')
         busca = self.request.query_params.get('search')
         
-        # 3. Aplica os filtros exatos
+        # 3. Filtros Exatos Laterais
         if niveis:
             queryset = queryset.filter(nivel__nome__in=niveis.split(','))
         if disciplinas:
@@ -41,17 +45,24 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         if tipos:
             queryset = queryset.filter(tipo__nome__in=tipos.split(','))
             
-        # 4. Aplica os filtros de texto (Busca e Assunto)
+        # 4. Filtros de Texto (O unaccent entra em ação aqui)
         if assuntos:
             for assunto in assuntos.split(','):
-                # Procura a palavra do assunto no Título OU (Q) na Descrição
-                queryset = queryset.filter(Q(titulo__unaccent__icontains=assunto) | Q(descricao__unaccent__icontains=assunto))
+                queryset = queryset.filter(
+                    Q(titulo__unaccent__icontains=assunto) | 
+                    Q(descricao__unaccent__icontains=assunto)
+                )
                 
+        # 5. Barra de Pesquisa Principal
         if busca:
-            queryset = queryset.filter(Q(titulo__unaccent__icontainss=busca) | Q(descricao__unaccent__icontains=busca))
+            queryset = queryset.filter(
+                Q(titulo__unaccent__icontains=busca) | 
+                Q(descricao__unaccent__icontains=busca)
+            )
             
-        return queryset
-
+        # Garante que não venham produtos duplicados
+        return queryset.distinct()
+        
 class DisciplinaViewSet(viewsets.ModelViewSet):
     queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Disciplina".
     serializer_class=DisciplinaSerializer #Significado: "Use esta classe para transformar os produtos em JSON".

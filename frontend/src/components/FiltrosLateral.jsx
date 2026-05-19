@@ -1,4 +1,4 @@
-export function FiltrosLateral({ filtrosSelecionados, alternarFiltro }) {
+export function FiltrosLateral({ filtrosSelecionados, alternarFiltro, limparFiltros }) {
     
     // O nosso "Dicionário" inteligente. 
     // O React só vai ler as listas das disciplinas que estiverem marcadas!
@@ -11,9 +11,20 @@ export function FiltrosLateral({ filtrosSelecionados, alternarFiltro }) {
 
     return (
         <div className="sidebar-filtros">
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: 'var(--cor-texto-principal)' }}>
-                Filtros
-            </h3>
+            
+            {/* CABEÇALHO DOS FILTROS (Com o Botão de Limpar) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: 0, color: 'var(--cor-texto-principal)' }}>
+                    Filtros
+                </h3>
+                <button 
+                    onClick={limparFiltros} 
+                    className="btn-secundario" 
+                    style={{ padding: '5px 10px', fontSize: '12px' }}
+                >
+                    Limpar Tudo
+                </button>
+            </div>
 
             {/* Filtro de Nível */}
             <div className="grupo-filtro">
