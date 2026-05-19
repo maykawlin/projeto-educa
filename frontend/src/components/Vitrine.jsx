@@ -87,7 +87,7 @@ export function Vitrine({ produtos, adicionarAoCarrinho, busca, setBusca, linkPr
 
                 <div className="conteudo-vitrine">
                     <div className="grid-produtos">
-                        {produtosFiltrados.map(produto => ( 
+                        {produtos.map(produto => ( 
                             <div key={produto.id} className="card-produto">
                                 
                                 {/* 3. GATILHO: Clicar na imagem abre o modal */}

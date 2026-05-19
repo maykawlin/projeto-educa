@@ -3,10 +3,10 @@ export function FiltrosLateral({ filtrosSelecionados, alternarFiltro }) {
     // O nosso "Dicionário" inteligente. 
     // O React só vai ler as listas das disciplinas que estiverem marcadas!
     const bancoDeAssuntos = {
-        "Física": ["Cinemática", "Dinâmica", "Ondulatória", "Termometria", "Termodinâmica", "Eletrostática", "Eletrodinâmica", "Física Moderna"],
+        "Física": ["Cinemática", "Dinâmica", "Energia", "Gravitação Universal", "Ondulatória", "Termometria", "Caloriemtria", "Termodinâmica", "Eletrostática", "Eletrodinâmica", "Magnetismo", "Eletromagnetismo", "Física Moderna"],
         "Química": ["Estequiometria", "Termoquímica", "Tabela Periódica", "Química Orgânica"],
-        "Biologia": ["Citologia", "Genética", "Ecologia", "Evolução"],
-        "Núcleo Integrativo": ["Projeto de Vida", "Protagonismo Juvenil"]
+        "Biologia": ["Biologia Celular", "Bioquímica", "Reinos", "Zoologia", "Botânica", "Histologia", "Embriologia", "Fisiologia Humana", "Genética", "Evolução", "Ecologia"],
+        "Integração Curricular": ["Projeto de Vida", "Protagonismo Juvenil", "Iniciação Científica", "Eletiva", "Pós-Médio", "Prática Experimental"]
     };
 
     return (
@@ -84,16 +84,19 @@ export function FiltrosLateral({ filtrosSelecionados, alternarFiltro }) {
             <div className="grupo-filtro">
                 <h4>Tipo de Material</h4>
                 <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Slides (Teoria)")} onChange={() => alternarFiltro('tipo', 'Slides (Teoria)')} /> Slides (Teoria)
+                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Slide")} onChange={() => alternarFiltro('tipo', 'Slide')} /> Slide
                 </label>
                 <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("PDF (Teoria)")} onChange={() => alternarFiltro('tipo', 'PDF (Teoria)')} /> PDF (Teoria)
+                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("EBook")} onChange={() => alternarFiltro('tipo', 'EBook')} /> EBook
                 </label>
                 <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Listas de Exercícios")} onChange={() => alternarFiltro('tipo', 'Listas de Exercícios')} /> Listas de Exercícios
+                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Lista de Exercícios")} onChange={() => alternarFiltro('tipo', 'Lista de Exercícios')} /> Lista de Exercícios
                 </label>
                 <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Laboratório (Prática)")} onChange={() => alternarFiltro('tipo', 'Laboratório (Prática)')} /> Laboratório (Prática)
+                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Resumo")} onChange={() => alternarFiltro('tipo', 'Resumo')} /> Resumo
+                </label>
+                <label className="opcao-filtro">
+                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Aulas Práticas")} onChange={() => alternarFiltro('tipo', 'Aulas Práticas')} /> Aulas Práticas
                 </label>
             </div>
         </div>
