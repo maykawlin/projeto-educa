@@ -163,6 +163,27 @@ function App() {
   // O "Number" garante que o texto "15.00" vire um número 15.00
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
+  // =================================================================
+  // Montando a URL de busca quando o usuário digita
+  // =================================================================
+  const carregarProdutos = () => {
+      let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
+      
+      // Se o usuário digitou algo na busca, adiciona o termo na URL
+      if (busca) urlBase += `search=${busca}&`;
+      
+      // Atualiza a memória da URL (isso vai engatilhar o passo 6 automaticamente!)
+      setUrlProdutos(urlBase);
+    };
+
+  // Fica de olho na variável "busca". Sempre que ela mudar, roda a função acima.
+  useEffect(() => {
+    carregarProdutos();
+  }, [busca]);
+  // =================================================================
+
+
+  
   // 6. Busca de dados com paginação
   useEffect(() => {
     axios.get(urlProdutos)

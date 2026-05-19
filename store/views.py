@@ -9,6 +9,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from rest_framework import filters
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from .models import Area, Disciplina, Nivel, TipoMaterial, Produto, Carrinho, ItemCarrinho
@@ -20,6 +21,9 @@ from .serializer import (AreaSerializer, DisciplinaSerializer, NivelSerializer,
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset=Produto.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Produto".
     serializer_class=ProdutoSerializer #Significado: "Use esta classe para transformar os produtos em JSON".
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['titulo', 'descricao']
 
 class DisciplinaViewSet(viewsets.ModelViewSet):
     queryset=Disciplina.objects.all() #Significado: "Quando alguém chamar essa View, pegue todos os objetos da tabela Disciplina".
