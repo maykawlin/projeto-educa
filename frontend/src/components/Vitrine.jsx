@@ -25,7 +25,7 @@ export function Vitrine({
             </h2>
 
             {/* 1. O BANNER AGORA VEM PRIMEIRO (Se a busca estiver vazia) */}
-            {busca === "" && <BannerPromocional />}
+            <BannerPromocional />
 
             {/* 2. A BARRA DE PESQUISA VEM LOGO ABAIXO */}
             <div className="pesquisa-container">

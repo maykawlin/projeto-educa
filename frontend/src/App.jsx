@@ -13,10 +13,10 @@ import { Footer } from "./components/Footer";
 import { QuemSomos} from "./components/QuemSomos";
 
 // ---------------------------------------------------
-// COMPONENTE x: ......
+// COMPONENTE PRINCIPAL DA APLICAÇÃO
 // ---------------------------------------------------
 function App() {
-  // 1. A memória do App
+  // 1. A memória global do App
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
   const [ produtos, setProdutos ] = useState([]);
   const [ urlProdutos, setUrlProdutos ] = useState('https://projeto-educa.onrender.com/api/produtos/');
@@ -25,19 +25,26 @@ function App() {
   const [ carrinho, setCarrinho ] = useState(() => {
                                                     // Tenta ler o carrinho salvo no localStorage
                                                     const dadosSalvos = localStorage.getItem('carrinho');
-                                                    // Se tiver dados salvos, retorna eles como um array (JSON.parse)
+                                                    // Se tiver dados salvos, retorna-os como um array (JSON.parse)
                                                     // Se não tiver, retorna uma lista vazia
                                                     return dadosSalvos ? JSON.parse(dadosSalvos) : [];
                                                   });
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
   const [ busca, setBusca ] = useState("");
+  
+  // 🌟 MEMÓRIA CENTRAL DOS FILTROS (Centralizada no App para comunicação com o Django)
   const [filtrosSelecionados, setFiltrosSelecionados] = useState({
-      nivel: [], disciplina: [], assunto: [], tipo: []
+      nivel: [],
+      disciplina: [],
+      assunto: [], 
+      tipo: []
   });
+
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); // Para mostrar a notificação do carrinho
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); // Para controlar se o mini carrinho está aberto ou fechado   
   
+  // O "Porteiro" - Monitora o Webhook da InfinitePay após a tentativa de compra
   useEffect(() => {
     const idPendente = localStorage.getItem("carrinhoPendente");
 
@@ -72,7 +79,7 @@ function App() {
             clearInterval(checarPagamento); 
           } else if (tentativas >= maxTentativas) {
             console.log("❌ O webhook demorou muito. Desistindo de procurar automaticamente.");
-            clearInterval(checarPagamento); // Para o relógio para não ficar rodando pra sempre
+            clearInterval(checarPagamento); // Para o relógio para não ficar rodando para sempre
           }
         })
         .catch(erro => {
@@ -80,69 +87,53 @@ function App() {
           clearInterval(checarPagamento); // Se der erro no Django, para o relógio
         });
 
-      }, 2000); // 2000 milissegundos = 2 segundos de intervalo
+      }, 2000); 
 
-      // Isso garante que se o cliente sair do site do nada, o relógio desliga sozinho
       return () => clearInterval(checarPagamento);
     }
-  }, []); // O array vazio significa para rodar apenas quando o site abrir/recarregar
+  }, [token]); 
 
   // 2. Salva no LocalStorage toda vez que o carrinho mudar
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
-  }, [carrinho]); // <--- O array de dependência diz: "Vigie a variável carrinho"
+  }, [carrinho]); 
 
   // 3. Função para remover um item do carrinho
   function removerDoCarrinho(indexParaRemover) {
-    // O filter cria uma nova lista
-    // "index" é a posição do item na lista, (0, 1, 2, 3...)
-    // Se a posição for diferente da que quero apagar, o item fica.
     const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
     setCarrinho(novaLista);
   }
 
-  // 4. Função que simula a finalização da compra
+  // 4. Função que dispara a finalização da compra na InfinitePay
   async function finalizarCompra() {
     console.log("Olha o que tem no meu carrinho:", carrinho);
-    // Passo 1: O usuário tem o token?
     if (!token) {
       alert("Faça o login para finalizar a compra!");
-      setPaginaAtual("login"); // Manda para a tela de login
-      return; // Para a função aqui, não continua para os próximos passos
+      setPaginaAtual("login"); 
+      return; 
     }
 
     try {
-      // Passo 2 - Enviar os dados do carrinho para o backend
-      // Como o carrinho tem vários produtos, enviamos a lista inteira
+      // Envia os dados do carrinho para o backend
       const resposta = await axios.post('https://projeto-educa.onrender.com/api/carrinho/',
-                                        {produtos: carrinho},// o formato exato depende de como montamos o Serializer no Django
-                                        {headers: {Authorization: `Bearer ${token}`}} // É aqui que enviamos o token para o backend reconhecer quem é o usuário
+                                        {produtos: carrinho},
+                                        {headers: {Authorization: `Bearer ${token}`}} 
                                       );
 
-      // Passo 3 - O Django nos devolve os dados do carrinho criado. Vamos pegar o ID dele!
       const idDoCarrinho = resposta.data.id;
-      
-      // Salva o carrinho no armazenamento do navegador casa o cliente desista da compra quando for pagar
       localStorage.setItem('carrinhoPendente', idDoCarrinho);
 
-      // Passo 4 - Bater na porta nova da InfinitePay pedindo o link
+      // Pede o link de checkout para a InfinitePay através do Django
       const respostaPagamento = await axios.post(
                       `https://projeto-educa.onrender.com/api/pagar/${idDoCarrinho}/`,
-                      {}, // O corpo é vazio, o Django já sabe o que fazer com o ID
+                      {}, 
                       {headers: {Authorization: `Bearer ${token}`}}
       );
 
-      // Passo 5 - Pegamos o link devolvido pela InfinitePay
       const linkDeCheckout = respostaPagamento.data.url_pagamento;
 
-      // Se a InfinitePay nos deu o link com sucesso...
       if (linkDeCheckout) {
-                
-        // 🚀 O REDIRECIONAMENTO MÁGICO 🚀
-        // O comando window.location.href tira o cliente do seu site e joga ele
-        // na tela segura da InfinitePay para digitar o cartão ou escanear o PIX!
         window.location.href = linkDeCheckout;
-        
       } else {
         alert("Ops! Não conseguimos gerar o link de pagamento. Tente novamente.");
       }
@@ -150,28 +141,26 @@ function App() {
     } catch (erro) {
       console.log("Erro ao salvar no banco: ", erro);
 
-      // Se o token venceu, o Django devolve um erro 401 (Unauthorized)
       if (erro.response && erro.response.status === 401) {
         alert("Sua sessão expirou. Por favor, faça o login novamente.");
-        localStorage.removeItem("token"); // Limpa o token vencido
+        localStorage.removeItem("token"); 
         setToken(null); 
-        setPaginaAtual("login"); // Manda para a tela de login
+        setPaginaAtual("login"); 
       } else {
         alert("Ops! Ocorreu um erro ao processar seu carrinho. Tente novamente.");
       }
     }
   }
 
-  // 5. Calcula o total do carrinho
-  // O "Number" garante que o texto "15.00" vire um número 15.00
+  // 5. Calcula o total financeiro do carrinho
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
-  
+
   // =================================================================
-  // LÓGICA DE FILTROS E BUSCA (Atualizada)
+  // 🌟 MÓDULO INTELIGENTE DE FILTRAGEM (INTEGRADO COM BACKEND)
   // =================================================================
   
-  // Função que marca e desmarca a caixinha
+  // Função que marca e desmarca a caixinha dos filtros laterais
   function alternarFiltro(categoria, valor) {
       setFiltrosSelecionados(memoriaAnterior => {
           const listaAtual = memoriaAnterior[categoria];
@@ -183,7 +172,7 @@ function App() {
       });
   }
 
-
+  // Constrói a URL dinamicamente injetando a busca por texto e caixas marcadas
   const carregarProdutos = () => {
     let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
     
@@ -192,11 +181,12 @@ function App() {
     if (filtrosSelecionados.disciplina.length > 0) {
         urlBase += `disciplina=${filtrosSelecionados.disciplina.join(',')}&`;
     }
+    
     if (filtrosSelecionados.tipo.length > 0) {
         urlBase += `tipo=${filtrosSelecionados.tipo.join(',')}&`;
     }
+    
     if (filtrosSelecionados.nivel.length > 0) {
-        // A sua genialidade preservada: Traduz o texto visual para a sigla do Banco de Dados
         const niveisBD = filtrosSelecionados.nivel.map(n => {
             if (n === "Ensino Médio") return "EM";
             if (n === "Ensino Fundamental II") return "EF";
@@ -208,58 +198,43 @@ function App() {
     setUrlProdutos(urlBase);
   };
 
-  // Fica de olho na busca E nos filtros. Se qualquer um mudar, gera URL nova!
+  // Monitor de Ações: Se digitar algo ou clicar num checkbox, reconstrói o link
   useEffect(() => {
     carregarProdutos();
   }, [busca, filtrosSelecionados]);
   // =================================================================
 
 
-
-  // 6. Busca de dados com paginação
+  // 6. Busca efetiva dos dados com paginação e regras automáticas anti-crash
   useEffect(() => {
     axios.get(urlProdutos)
       .then(response => {
-        // Se tiver "results", usa o results. Se não, usa a resposta inteira.
         const dadosSeguros = response.data.results ? response.data.results : response.data;
-        
-        // Garante que é uma lista válida antes de salvar na memória (evita o erro do .filter)
         setProdutos(Array.isArray(dadosSeguros) ? dadosSeguros : []);
-        
-        // Puxa os links de paginação (se existirem)
         setLinkProxima(response.data.next || null);
         setLinkAnterior(response.data.previous || null);
       })
       .catch(erro => console.log("Erro: ", erro))
   }, [urlProdutos])
 
-  // 7. Função que adicona ao carrinho
+  // 7. Função que adiciona um item ao carrinho flutuante
   function adicionarAoCarrinho(produtoClicado, origem='vitrine') {
-
-    // Clone do produto e a etiqueta de origem
     const produtoComOrigem = { ...produtoClicado, origem_venda: origem };
-
-    setCarrinho([...carrinho,produtoComOrigem]);
-
-    // Mostra o produto na notificação
+    setCarrinho([...carrinho, produtoComOrigem]);
     setUltimoProdutoAdicionado(produtoComOrigem);
-
-    // Esconde a notificação depois de 3 segundos
     setTimeout(() => {
       setUltimoProdutoAdicionado(null);
     }, 3000);
   }
 
-  // 8. Função para visualizar o histórico do carrinho
+  // 8. Função para puxar o histórico de compras liberado do Django
   async function buscarHistorico() {
     try {
       const resposta = await axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/',
         { headers: { Authorization: `Bearer ${token}` } } 
       );
-      
       setHistoricoCompras(resposta.data);
       setPaginaAtual("historico");
-
     } catch(erro) {
       console.log("Erro ao acessar o histórico: ", erro);
       if (erro.response && erro.response.status === 401) {
@@ -273,10 +248,9 @@ function App() {
     }
   }
 
-  // 9. Renderização/Desenho da tela/ O que aparece para o usuário
+  // 9. Renderização das Telas (Visual do Usuário)
   return (
     <div>
-      
       <Navegacao
         setPaginaAtual={setPaginaAtual}
         tamanhoCarrinho={carrinho.length}
@@ -288,17 +262,12 @@ function App() {
 
       <hr />
 
-      {/*Notificação flutuante se houver um produto adicionado */}
       {ultimoProdutoAdicionado && (
         <NotificacaoCarrinho produto={ultimoProdutoAdicionado} />
       )}
 
-      {/* Conteúdo da página atual (Renderização Condicional) */}
       <div style={{ padding: '20px'}}>
-
         { paginaAtual === "loja" ? (
-
-          // OPÇÃO A: Se for a loja, mostrar os produtos
           <Vitrine
             produtos={produtos}
             busca={busca}
@@ -311,41 +280,29 @@ function App() {
             alternarFiltro={alternarFiltro}
           />
         ) : 
-        
-        // OPÇÃO B: Aqui vai mostar os campos para colocar o login no miolo da página
         paginaAtual === "login" ? (
           <Login setPaginaAtual={setPaginaAtual} setToken={setToken}/>
         ) : 
-
-        // OPÇÃO EXTRA: A tela de Cadastro
         paginaAtual === "cadastro" ? (
           <Cadastro setPaginaAtual={setPaginaAtual} />
         ) :
-        
-        // OPÇÃO D: Mostrar o Histórico de Compras
         paginaAtual === "historico" ? (
           <Historico 
             historicoCompras={historicoCompras} 
             setPaginaAtual={setPaginaAtual} 
             token={token}
           />
-        
         ) :
-        
-        // OPÇÃO E: Mostrar o Perfil
         paginaAtual === "perfil" ? (
           <Perfil token={token} />
         ) : 
-
-        // OPÇÃO F: A página Quem Somos
         paginaAtual === "quem_somos" ? (
           <QuemSomos setPaginaAtual={setPaginaAtual} />
         ) : (
-          // OPÇÃO C: Se for o carrinho, mostrar os itens do carrinho
+          /* TELA DO CARRINHO DE COMPRAS COMPLETO */
           <div>
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Seu Carrinho de Compras</h2>
 
-            {/* Se o carrinho estiver vazio, mostrar uma mensagem */}
             {carrinho.length === 0 ? (
               <p>Seu carrinho está vazio. Volte para a loja!</p>
             ) : (
@@ -357,13 +314,12 @@ function App() {
                       marginBottom: '15px', 
                       borderRadius: 'var(--borda-arredondada)',
                       backgroundColor: 'var(--cor-fundo-card)',
-                      display: 'flex', /* Coloca os elementos lado a lado */
-                      alignItems: 'center', /* Centraliza verticalmente */
-                      gap: '20px', /* Espaço entre a imagem, texto e botão */
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '20px', 
                       boxShadow: 'var(--sombra-suave)'
                     }}
                   >
-                    {/* 1. A IMAGEM DO PRODUTO */}
                     <img 
                       src={item.imagem_capa} 
                       alt={item.titulo} 
@@ -375,7 +331,6 @@ function App() {
                       }} 
                     />
 
-                    {/* 2. OS TEXTOS (O flex: 1 faz essa parte crescer e empurrar o botão pra direita) */}
                     <div style={{ flex: 1 }}>
                       <h3 style={{ margin: '0 0 10px 0', color: 'var(--cor-texto-principal)' }}>
                         {item.titulo}
@@ -385,7 +340,6 @@ function App() {
                       </p>
                     </div>
 
-                    {/* 3. O BOTÃO DE EXCLUIR */}
                     <button 
                       onClick={() => removerDoCarrinho(index)}
                       className="btn-perigo"
@@ -396,7 +350,6 @@ function App() {
                   </div>
                 ))}
 
-                {/* Total do carrinho) */}
                 <div style={{ marginTop: '20px', fontSize: '20px', fontWeight: 'bold'}}>
                   Total: R$ {total.toFixed(2)}
                 </div>
@@ -404,7 +357,6 @@ function App() {
               </div>
             )}
             
-            {/* Aviso de compra segura */}
             {carrinho.length > 0 && (
               <div style={{
                 marginTop: '25px',
@@ -422,7 +374,6 @@ function App() {
               </div>
             )}
 
-            {/* Botão que simula finalizar compra */}
             <button
               onClick={finalizarCompra}
               className="btn-primario"
@@ -435,24 +386,22 @@ function App() {
             </button>
          
           </div> 
-
         )}   
       </div>
       
-        {/* Se a memória for true, desenha a gaveta */}
-        {miniCarrinhoAberto && (
-          <MiniCarrinho 
-            carrinho={carrinho} 
-            removerDoCarrinho={removerDoCarrinho} 
-            fechar={() => setMiniCarrinhoAberto(false)} 
-            irParaCheckout={() => setPaginaAtual("carrinho")} 
-          />
-        )}
+      {/* Gaveta do Mini Carrinho Lateral */}
+      {miniCarrinhoAberto && (
+        <MiniCarrinho 
+          carrinho={carrinho} 
+          removerDoCarrinho={removerDoCarrinho} 
+          fechar={() => setMiniCarrinhoAberto(false)} 
+          irParaCheckout={() => setPaginaAtual("carrinho")} 
+        />
+      )}
       
-
       <Footer setPaginaAtual={setPaginaAtual}/>
     </div>
   );
 }
 
-export default App; 
+export default App;
