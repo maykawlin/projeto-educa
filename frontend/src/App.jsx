@@ -229,7 +229,10 @@ function App() {
       />
       <hr />
       {ultimoProdutoAdicionado && (
-        <NotificacaoCarrinho produto={ultimoProdutoAdicionado} />
+        <NotificacaoCarrinho 
+            produto={ultimoProdutoAdicionado} 
+            abrirCarrinho={() => setMiniCarrinhoAberto(true)} 
+        />
       )}
       <div style={{ padding: '20px'}}>
         { paginaAtual === "loja" ? (
