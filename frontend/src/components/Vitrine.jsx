@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiltrosLateral } from "./FiltrosLateral";
 import { ModalProduto } from "./ModalProduto"; 
 import { BannerPromocional } from "./BannerPromocional";
@@ -19,6 +19,30 @@ export function Vitrine({
     
     const [produtoModal, setProdutoModal] = useState(null);
 
+    // =========================================================
+    // 📱 UX MOBILE: Controle de exibição dos filtros no celular
+    // =========================================================
+    
+    // 1. O React descobre se é celular (tela menor que 768 pixels)
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    // 2. Controla se a gaveta de filtros está aberta ou fechada no celular
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+    // O "Olheiro" do tamanho da tela: se o usuário virar o celular ou encolher o navegador
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // 🌟 O TOQUE MÁGICO: Se o usuário digitar na busca, esconde os filtros na hora!
+    useEffect(() => {
+        if (busca !== "" && isMobile) {
+            setMostrarFiltros(false);
+        }
+    }, [busca, isMobile]);
+    // =========================================================
+
     return (
         <div>
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>
@@ -37,12 +61,30 @@ export function Vitrine({
                 />
             </div>
 
+            {/* BOTÃO DE FILTROS MOBILE (Só aparece se estiver no celular) */}
+            {isMobile && (
+                <button
+                    onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                    className={mostrarFiltros ? "btn-perigo" : "btn-secundario"}
+                    style={{ width: '100%', marginBottom: '20px', padding: '10px', fontSize: '16px', fontWeight: 'bold' }}
+                >
+                    {mostrarFiltros ? "❌ Ocultar Filtros" : "⚙️ Mostrar Filtros"}
+                </button>
+            )}
+
             <div className="layout-loja">
-                <FiltrosLateral 
-                    filtrosSelecionados={filtrosSelecionados} 
-                    alternarFiltro={alternarFiltro} 
-                    limparFiltros={limparFiltros}
-                />
+                
+                {/* LÓGICA DE EXIBIÇÃO: 
+                    Só desenha a barra lateral se for Computador (!isMobile) 
+                    OU se for celular e o usuário apertou o botão (mostrarFiltros) 
+                */}
+                {(!isMobile || mostrarFiltros) && (
+                    <FiltrosLateral 
+                        filtrosSelecionados={filtrosSelecionados} 
+                        alternarFiltro={alternarFiltro} 
+                        limparFiltros={limparFiltros}
+                    />
+                )}
 
                 <div className="conteudo-vitrine">
                     <div className="grid-produtos">
