@@ -50,7 +50,7 @@ export function FiltrosLateral({ filtrosSelecionados, alternarFiltro, limparFilt
                     <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Biologia")} onChange={() => alternarFiltro('disciplina', 'Biologia')} /> Biologia
                 </label>
                 <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Integração curricular")} onChange={() => alternarFiltro('disciplina', 'Integração curricular')} /> Integração curricular
+                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Integração Curricular")} onChange={() => alternarFiltro('disciplina', 'Integração Curricular')} /> Integração Curricular
                 </label>
             </div>
 
