@@ -11,6 +11,8 @@ import { Cadastro } from "./components/Cadastro";
 import { Perfil } from "./components/Perfil";
 import { Footer } from "./components/Footer";
 import { QuemSomos} from "./components/QuemSomos";
+import { EsqueciSenha } from "./components/EsqueciSenha";
+import { ResetarSenha } from "./components/ResetarSenha";
 
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
@@ -70,6 +72,15 @@ function App() {
       return () => clearInterval(checarPagamento);
     }
   }, [token]); 
+
+  // Se a pessoa clicou no link do e-mail, forçamos a página a ser "resetar_senha"
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paginaUrl = urlParams.get('pagina');
+    if (paginaUrl === 'resetar') {
+        setPaginaAtual('resetar_senha');
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
@@ -255,6 +266,12 @@ function App() {
         ) : 
         paginaAtual === "cadastro" ? (
           <Cadastro setPaginaAtual={setPaginaAtual} />
+        ) :
+        paginaAtual === "esqueci_senha" ? (
+          <EsqueciSenha setPaginaAtual={setPaginaAtual} />
+        ) :
+        paginaAtual === "resetar_senha" ? (
+          <ResetarSenha setPaginaAtual={setPaginaAtual} />
         ) :
         paginaAtual === "historico" ? (
           <Historico 

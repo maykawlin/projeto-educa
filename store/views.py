@@ -6,6 +6,11 @@ import uuid
 from django.http import FileResponse
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
@@ -316,3 +321,60 @@ def webhookinfinitepay(request):
     except Exception as e:
         print("❌ [ERRO GRAVE NO WEBHOOK]:",str(e))
         return Response({'erro': "Erro interno"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+### RECUPERAÇÃO DE SENHA
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def solicitar_redefinicao_senha(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'erro': 'Fornece um email.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # Por segurança, devolvemos sucesso mesmo que o email não exista para não dar pistas a hackers
+        return Response({'mensagem': 'Se o email existir, um link será enviado.'}, status=status.HTTP_200_OK)
+
+    # 1. Gera um código único e a identificação do utilizador
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    
+    # 2. O link inteligente que vai cair diretamente no teu App.jsx na Vercel
+    link_reset = f"https://projeto-educa-beta.vercel.app/?pagina=resetar&uid={uid}&token={token}"
+
+    # 3. Envia o e-mail
+    assunto = "Redefinição de Senha - Didáticos"
+    mensagem = f"Olá {user.first_name or user.username},\n\nRecebemos um pedido para redefinir a tua senha.\nClica no link abaixo para criares uma nova senha:\n\n{link_reset}\n\nSe não pediste isto, podes ignorar este e-mail."
+    
+    send_mail(assunto, mensagem, settings.EMAIL_HOST_USER, [user.email])
+
+    return Response({'mensagem': 'Se o email existir, um link será enviado.'}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def confirmar_redefinicao_senha(request):
+    uidb64 = request.data.get('uid')
+    token = request.data.get('token')
+    nova_senha = request.data.get('nova_senha')
+
+    if not all([uidb64, token, nova_senha]):
+        return Response({'erro': 'Dados incompletos.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    # Se o utilizador existir e o token de segurança for válido...
+    if user is not None and default_token_generator.check_token(user, token):
+        user.set_password(nova_senha) # Criptografa a nova senha
+        user.save()
+        return Response({'mensagem': 'Senha atualizada com sucesso!'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'erro': 'Este link é inválido ou já expirou.'}, status=status.HTTP_400_BAD_REQUEST)
