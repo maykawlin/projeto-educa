@@ -124,9 +124,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             <img 
               src={logo} 
               alt="Logo Didáticos" 
-              style={{ height: '50px', width: 'auto', marginRight: '10px' }} 
+              style={{ height: '75px', width: 'auto', marginRight: '10px' }} 
             />
-            <h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>
+            {/*<h2 style={{ margin: 0, color: 'var(--cor-primaria-azul)' }}>Didáticos</h2>*/}
           </div>
 
           {/* NOVO BOTÃO: QUEM SOMOS */}
