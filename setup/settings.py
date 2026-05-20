@@ -192,3 +192,16 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1), # O token vale por 1 dia
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7), # Tempo para renovar sem pedir a senha novamente
 }
+
+
+
+# ==========================================
+# CONFIGURAÇÕES DE E-MAIL (SMTP DO GMAIL)
+# ==========================================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# Vamos puxar o seu e-mail e a senha especial do arquivo .env por segurança!
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER') 
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
