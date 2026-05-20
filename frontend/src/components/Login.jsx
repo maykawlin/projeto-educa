@@ -29,7 +29,7 @@ export function Login({setPaginaAtual, setToken}) {
             setPaginaAtual('loja');            
         } catch (error) {
             console.log(error);
-            setErro('Usuário ou senha incorretos. Tente novamente.')
+            setErro('Usuário ou senha incorretos. Tenta novamente.')
         }
     }
 
@@ -42,7 +42,7 @@ export function Login({setPaginaAtual, setToken}) {
             borderRadius:'8px',
         }}> 
             {/* Campo para os dados de login */}
-            <h2 style={{ color: 'var(--cor-primaria-azul)'}}>Acesse sua conta</h2>
+            <h2 style={{ color: 'var(--cor-primaria-azul)'}}>Acede à tua conta</h2>
 
             {/* Mostra mensagem de erro se a senha estiver errada */}
             {erro && <p style={{color:'red', fontWeight:'bold'}}>{erro}</p>}
@@ -76,16 +76,23 @@ export function Login({setPaginaAtual, setToken}) {
                     />
                 </div>
                 
-                {/* BOTÃO DE ESQUECI A SENHA */}
+                {/* BOTÃO DE ESQUECI A SENHA (CORRIGIDO) */}
                 <div style={{ textAlign: 'right', marginTop: '5px', marginBottom: '15px' }}>
-                    <a 
-                        href="https://wa.me/55SEUNUMEROAQUI?text=Olá!%20Esqueci%20minha%20senha%20na%20plataforma%20e%20preciso%20de%20ajuda." 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ fontSize: '12px', color: 'var(--cor-texto-secundario)', textDecoration: 'none' }}
+                    <button 
+                        type="button" 
+                        onClick={() => setPaginaAtual("esqueci_senha")} 
+                        style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            color: 'var(--cor-texto-secundario)', 
+                            cursor: 'pointer', 
+                            fontSize: '12px', 
+                            textDecoration: 'underline',
+                            padding: 0
+                        }}
                     >
-                        Esqueceu a senha?
-                    </a>
+                        Esqueceste a senha?
+                    </button>
                 </div>
 
                 {/*Botão de Entrar */}
@@ -100,15 +107,14 @@ export function Login({setPaginaAtual, setToken}) {
                 </button>
             </form>
             <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
-                <span style={{ color: '#666' }}>Não tem uma conta? </span>
+                <span style={{ color: '#666' }}>Não tens uma conta? </span>
                 <span 
                     onClick={() => setPaginaAtual("cadastro")} 
                     style={{ color: '#007BFF', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'underline' }}
                 >
-                    Cadastre-se grátis.
+                    Regista-te grátis.
                 </span>
             </div>
         </div>
     )
 }
-
