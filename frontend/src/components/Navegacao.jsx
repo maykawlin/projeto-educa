@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import logo from '../assets/logotipo.jpeg';
+import logo from '../assets/logo_em_cores.png';
 
 // ==========================================
 // 🌟 COMPONENTE DO MENU FLUTUANTE (Dropdown)
