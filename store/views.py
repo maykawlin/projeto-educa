@@ -1,6 +1,7 @@
 # aqui você controla em python o banco de dados todas as solicitações que vem do frontend e o que você retorna
 # o serializer faz a mudança de linguagem do python para o sql
 import requests
+import resend
 import os
 import uuid
 from django.http import FileResponse
@@ -350,7 +351,18 @@ def solicitar_redefinicao_senha(request):
     assunto = "Redefinição de Senha - Didáticos"
     mensagem = f"Olá {user.first_name or user.username},\n\nRecebemos um pedido para redefinir a tua senha.\nClica no link abaixo para criares uma nova senha:\n\n{link_reset}\n\nSe não pediste isto, podes ignorar este e-mail."
     
-    send_mail(assunto, mensagem, settings.EMAIL_HOST_USER, [user.email])
+    resend.api_key = os.environ.get('RESEND_API_KEY')
+    
+    try:
+        r = resend.Emails.send({
+            "from": "onboarding@resend.dev", # E-mail temporário de testes do Resend
+            "to": user.email,
+            "subject": assunto,
+            "text": mensagem
+        })
+        print("E-mail enviado via Resend:", r)
+    except Exception as e:
+        print("Erro ao enviar pelo Resend:", e)
 
     return Response({'mensagem': 'Se o email existir, um link será enviado.'}, status=status.HTTP_200_OK)
 
