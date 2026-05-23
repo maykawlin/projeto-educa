@@ -13,6 +13,7 @@ import { Footer } from "./components/Footer";
 import { QuemSomos} from "./components/QuemSomos";
 import { EsqueciSenha } from "./components/EsqueciSenha";
 import { ResetarSenha } from "./components/ResetarSenha";
+import { AtivarConta } from "./components/AtivarConta";
 
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
@@ -73,12 +74,14 @@ function App() {
     }
   }, [token]); 
 
-  // Se a pessoa clicou no link do e-mail, forçamos a página a ser "resetar_senha"
+  // Se a pessoa clicou no link do e-mail, forçamos a página para resetar ou ativar conta
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paginaUrl = urlParams.get('pagina');
     if (paginaUrl === 'resetar') {
         setPaginaAtual('resetar_senha');
+    } else if (paginaUrl === 'ativar_conta') {
+        setPaginaAtual('ativar_conta');
     }
   }, []);
 
@@ -272,6 +275,9 @@ function App() {
         ) :
         paginaAtual === "resetar_senha" ? (
           <ResetarSenha setPaginaAtual={setPaginaAtual} />
+        ) :
+        paginaAtual === "ativar_conta" ? (
+          <AtivarConta setPaginaAtual={setPaginaAtual} />
         ) :
         paginaAtual === "historico" ? (
           <Historico 

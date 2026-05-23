@@ -7,7 +7,6 @@ export function Cadastro({ setPaginaAtual }) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [erro, setErro] = useState("");
-    const [sucesso, setSucesso] = useState(false);
 
     async function fazerCadastro(e) {
         e.preventDefault(); // Evita que a página recarregue
@@ -21,7 +20,6 @@ export function Cadastro({ setPaginaAtual }) {
 
         try {
             // 2. Enviando os dados para o Django
-            // Atenção: Configurei para a rota /api/register/ (Ajuste se no seu Django o nome for diferente)
             await axios.post("https://projeto-educa.onrender.com/api/register/", {
                 nome_completo: username,
                 email: email,
@@ -29,13 +27,11 @@ export function Cadastro({ setPaginaAtual }) {
                 confirmar_senha: confirmPassword
             });
 
-            // Se o Django responder "Ok", mostramos a mensagem de sucesso
-            setSucesso(true);
+            // Se o Django responder "Ok", avisamos o usuário sobre o e-mail
+            alert("✅ Cadastro realizado com sucesso! Verifique sua caixa de entrada (e pasta de spam) para ativar sua conta antes de fazer o login.");
             
-            // Depois de 2 segundos, mandamos ele para a tela de Login para entrar na conta nova
-            setTimeout(() => {
-                setPaginaAtual("login");
-            }, 2000);
+            // Mandamos o usuário direto para a tela de Login
+            setPaginaAtual("login");
 
         } catch (error) {
             console.log(error);
@@ -56,9 +52,8 @@ export function Cadastro({ setPaginaAtual }) {
                 Junte-se à maior plataforma para professores do Brasil.
             </p>
 
-            {/* Mensagens de Erro ou Sucesso */}
+            {/* Mensagem de Erro */}
             {erro && <p style={{ color: 'red', fontWeight: 'bold', fontSize: '14px', marginBottom: '15px' }}>❌ {erro}</p>}
-            {sucesso && <p style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px', marginBottom: '15px' }}>✅ Conta criada com sucesso! Redirecionando...</p>}
 
             <form onSubmit={fazerCadastro} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 
