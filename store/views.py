@@ -149,9 +149,59 @@ class ItemCarrinhoViewSet(viewsets.ModelViewSet):
 
 class RegistroUsuarioView(generics.CreateAPIView):
     queryset = User.objects.all()
-    # AllowAny significa que qualquer pessoa (mesmo sem estar logada) pode acessar essa rota para criar a conta
     permission_classes = (AllowAny,) 
     serializer_class = RegistroSerializer
+
+    def perform_create(self, serializer):
+        # 1. Salva o usuário no banco, mas como INATIVO
+        user = serializer.save()
+        user.is_active = False
+        user.save()
+
+        # 2. Gera o token seguro de ativação
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        
+        # 3. Cria o link que vai abrir o React
+        link_ativacao = f"https://projeto-educa-beta.vercel.app/?pagina=ativar_conta&uid={uid}&token={token}"
+
+        # 4. Envia o e-mail via Resend
+        assunto = "Ative sua conta - Didáticos"
+        mensagem = f"Olá {user.first_name or user.username},\n\nBem-vindo(a) à Didáticos!\nPor favor, clique no link abaixo para confirmar seu e-mail e ativar sua conta:\n\n{link_ativacao}\n\nSe você não se cadastrou, ignore este e-mail."
+        
+        resend.api_key = os.environ.get('RESEND_API_KEY')
+        try:
+            resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": user.email,
+                "subject": assunto,
+                "text": mensagem
+            })
+        except Exception as e:
+            print("Erro ao enviar email de ativação:", e)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def ativar_conta(request):
+    uidb64 = request.data.get('uid')
+    token = request.data.get('token')
+
+    if not all([uidb64, token]):
+        return Response({'erro': 'Dados incompletos.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return Response({'mensagem': 'Conta ativada com sucesso!'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'erro': 'O link é inválido ou já expirou.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MudarSenhaView(generics.UpdateAPIView):
@@ -349,8 +399,7 @@ def solicitar_redefinicao_senha(request):
 
     # 3. Envia o e-mail
     assunto = "Redefinição de Senha - Didáticos"
-    mensagem = f"Olá {user.first_name or user.username},\n\nRecebemos um pedido para redefinir a tua senha.\nClica no link abaixo para criares uma nova senha:\n\n{link_reset}\n\nSe não pediste isto, podes ignorar este e-mail."
-    
+    mensagem = f"Olá {user.first_name or user.username},\n\nRecebemos um pedido para redefinir a sua senha.\nClique no link abaixo para criar uma nova senha:\n\n{link_reset}\n\nSe você não solicitou isso, pode ignorar este e-mail."
     resend.api_key = os.environ.get('RESEND_API_KEY')
     
     try:
