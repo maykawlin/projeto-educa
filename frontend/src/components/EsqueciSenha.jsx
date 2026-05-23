@@ -11,9 +11,9 @@ export function EsqueciSenha({ setPaginaAtual }) {
         setCarregando(true);
         try {
             await axios.post('https://projeto-educa.onrender.com/api/esqueci-senha/', { email });
-            setMensagem("E-mail enviado! Verifica a tua caixa de entrada e também a pasta de spam.");
+            setMensagem("E-mail enviado! Verifique sua caixa de entrada e também a pasta de spam.");
         } catch (erro) {
-            setMensagem("Ocorreu um erro ao enviar o e-mail. Tenta novamente.");
+            setMensagem("Ocorreu um erro ao enviar o e-mail. Tente novamente.");
         }
         setCarregando(false);
     }
@@ -29,14 +29,14 @@ export function EsqueciSenha({ setPaginaAtual }) {
             ) : (
                 <form onSubmit={enviarPedido} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                     <p style={{ color: 'var(--cor-texto-secundario)', fontSize: '14px', textAlign: 'center' }}>
-                        Digita o e-mail associado à tua conta. Enviaremos um link seguro para criares uma nova senha.
+                        Digite o e-mail associado à sua conta. Enviaremos um link seguro para você criar uma nova senha.
                     </p>
-                    <input type="email" placeholder="O teu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                    <input type="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
                     <button type="submit" className="btn-primario" disabled={carregando}>
-                        {carregando ? "A enviar..." : "Enviar Link de Recuperação"}
+                        {carregando ? "Enviando..." : "Enviar Link de Recuperação"}
                     </button>
                     <button type="button" onClick={() => setPaginaAtual("login")} className="link-quem-somos" style={{ marginTop: '10px', background: 'none', border: 'none', color: 'var(--cor-primaria-azul)', cursor: 'pointer', textDecoration: 'underline' }}>
-                        Cancelei, quero voltar ao Login
+                        Cancelar, quero voltar ao Login
                     </button>
                 </form>
             )}

@@ -7,13 +7,9 @@ export function ResetarSenha({ setPaginaAtual }) {
     const [carregando, setCarregando] = useState(false);
     const [tokens, setTokens] = useState({ uid: "", token: "" });
 
-    // Assim que a tela abre, o React procura as chaves secretas escondidas na URL!
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        setTokens({
-            uid: urlParams.get('uid'),
-            token: urlParams.get('token')
-        });
+        setTokens({ uid: urlParams.get('uid'), token: urlParams.get('token') });
     }, []);
 
     async function salvarNovaSenha(e) {
@@ -21,13 +17,11 @@ export function ResetarSenha({ setPaginaAtual }) {
         setCarregando(true);
         try {
             await axios.post('https://projeto-educa.onrender.com/api/resetar-senha/', { 
-                uid: tokens.uid, 
-                token: tokens.token, 
-                nova_senha: novaSenha 
+                uid: tokens.uid, token: tokens.token, nova_senha: novaSenha 
             });
             setMensagem("✅ Senha atualizada com sucesso!");
         } catch (erro) {
-            setMensagem("❌ Erro: O link expirou ou é inválido. Pede um novo link.");
+            setMensagem("❌ Erro: O link expirou ou é inválido. Peça um novo link.");
         }
         setCarregando(false);
     }
@@ -42,9 +36,9 @@ export function ResetarSenha({ setPaginaAtual }) {
                 </div>
             ) : (
                 <form onSubmit={salvarNovaSenha} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <input type="password" placeholder="Digita a tua nova senha" value={novaSenha} onChange={(e) => setNovaSenha(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} minLength="6" />
+                    <input type="password" placeholder="Digite sua nova senha" value={novaSenha} onChange={(e) => setNovaSenha(e.target.value)} required style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }} minLength="6" />
                     <button type="submit" className="btn-primario" disabled={carregando}>
-                        {carregando ? "A salvar..." : "Guardar Nova Senha"}
+                        {carregando ? "Salvando..." : "Salvar Nova Senha"}
                     </button>
                 </form>
             )}
