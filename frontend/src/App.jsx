@@ -14,6 +14,7 @@ import { QuemSomos} from "./components/QuemSomos";
 import { EsqueciSenha } from "./components/EsqueciSenha";
 import { ResetarSenha } from "./components/ResetarSenha";
 import { AtivarConta } from "./components/AtivarConta";
+import { TermosDeUso } from "./components/TermosDeUso";
 
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
@@ -291,6 +292,9 @@ function App() {
         ) : 
         paginaAtual === "quem_somos" ? (
           <QuemSomos setPaginaAtual={setPaginaAtual} />
+        ) : 
+        paginaAtual === "termos" ? (
+          <TermosDeUso setPaginaAtual={setPaginaAtual} />
         ) : (
           <div>
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Seu Carrinho de Compras</h2>

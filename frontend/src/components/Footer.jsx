@@ -17,14 +17,30 @@ export function Footer({setPaginaAtual}) {
                     </p>
                 </div>
 
-                {/* Coluna 2: Links */}
+                {/* Coluna 2: Links Rápidos (AGORA FUNCIONANDO!) */}
                 <div className="footer-coluna">
                     <h3>🔗 Links Rápidos</h3>
-                    <ul>
-                        <li>Início</li>
-                        <li>Como funciona</li>
-                        <li>Termos de Uso</li>
-                        <li>Política de Privacidade</li>
+                    <ul style={{ listStyleType: 'none', padding: 0 }}>
+                        <li style={{ marginBottom: '10px' }}>
+                            <span onClick={() => setPaginaAtual("loja")} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--cor-texto-principal)' }}>
+                                Início
+                            </span>
+                        </li>
+                        <li style={{ marginBottom: '10px' }}>
+                            <span onClick={() => setPaginaAtual("quem_somos")} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--cor-texto-principal)' }}>
+                                Como funciona
+                            </span>
+                        </li>
+                        <li style={{ marginBottom: '10px' }}>
+                            <span onClick={() => setPaginaAtual("termos")} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--cor-texto-principal)' }}>
+                                Termos de Uso
+                            </span>
+                        </li>
+                        <li>
+                            <span onClick={() => setPaginaAtual("termos")} style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--cor-texto-principal)' }}>
+                                Política de Privacidade
+                            </span>
+                        </li>
                     </ul>
                 </div>
 
@@ -36,7 +52,7 @@ export function Footer({setPaginaAtual}) {
                         Fale diretamente com nossa equipe de suporte.
                     </p>
                     
-                    {/* link do WhatsApp */}
+                    {/* link do WhatsApp (Lembre-se de mudar o número depois para o seu!) */}
                     <a 
                         href="https://wa.me/5511999999999?text=Olá!%20Estou%20na%20loja%20Didáticos%20e%20preciso%20de%20ajuda." 
                         target="_blank" 
