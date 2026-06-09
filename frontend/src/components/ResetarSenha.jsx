@@ -16,7 +16,7 @@ export function ResetarSenha({ setPaginaAtual }) {
         e.preventDefault();
         setCarregando(true);
         try {
-            await axios.post('https://projeto-educa.onrender.com/api/resetar-senha/', { 
+            await axios.post('https://api.materialdidaticos.com.br/api/resetar-senha/', { 
                 uid: tokens.uid, token: tokens.token, nova_senha: novaSenha 
             });
             setMensagem("✅ Senha atualizada com sucesso!");

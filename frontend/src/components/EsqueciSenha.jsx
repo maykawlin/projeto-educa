@@ -10,7 +10,7 @@ export function EsqueciSenha({ setPaginaAtual }) {
         e.preventDefault();
         setCarregando(true);
         try {
-            await axios.post('https://projeto-educa.onrender.com/api/esqueci-senha/', { email });
+            await axios.post('https://api.materialdidaticos.com.br/api/esqueci-senha/', { email });
             setMensagem("E-mail enviado! Verifique sua caixa de entrada e também a pasta de spam.");
         } catch (erro) {
             setMensagem("Ocorreu um erro ao enviar o e-mail. Tente novamente.");

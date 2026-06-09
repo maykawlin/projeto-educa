@@ -20,7 +20,7 @@ export function Cadastro({ setPaginaAtual }) {
 
         try {
             // 2. Enviando os dados para o Django
-            await axios.post("https://projeto-educa.onrender.com/api/register/", {
+            await axios.post("https://api.materialdidaticos.com.br/api/register/", {
                 nome_completo: username,
                 email: email,
                 senha: password,

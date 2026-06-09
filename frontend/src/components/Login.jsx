@@ -11,7 +11,7 @@ export function Login({setPaginaAtual, setToken}) {
         setErro(""); 
 
         try {
-            const resposta = await axios.post("https://projeto-educa.onrender.com/api/token/", {
+            const resposta = await axios.post("https://api.materialdidaticos.com.br/api/token/", {
                 username: username,
                 password: password,
             });

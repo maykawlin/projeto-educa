@@ -19,7 +19,7 @@ import { TermosDeUso } from "./components/TermosDeUso";
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
   const [ produtos, setProdutos ] = useState([]);
-  const [ urlProdutos, setUrlProdutos ] = useState('https://projeto-educa.onrender.com/api/produtos/');
+  const [ urlProdutos, setUrlProdutos ] = useState('https://api.materialdidaticos.com.br/api/produtos/');
   const [ linkProxima, setLinkProxima ] = useState(null);
   const [ linkAnterior, setLinkAnterior ] = useState(null);
   const [ carrinho, setCarrinho ] = useState(() => {
@@ -50,7 +50,7 @@ function App() {
       const maxTentativas = 5; 
       const checarPagamento = setInterval(() => {
         tentativas++;
-        axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/', {
+        axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/', {
           headers: { Authorization: `Bearer ${token}` }
         })
         .then(resposta => {
@@ -102,7 +102,7 @@ function App() {
       return; 
     }
     try {
-      const resposta = await axios.post('https://projeto-educa.onrender.com/api/carrinho/',
+      const resposta = await axios.post('https://api.materialdidaticos.com.br/api/carrinho/',
                                         {produtos: carrinho},
                                         {headers: {Authorization: `Bearer ${token}`}} 
                                       );
@@ -110,7 +110,7 @@ function App() {
       localStorage.setItem('carrinhoPendente', idDoCarrinho);
 
       const respostaPagamento = await axios.post(
-                      `https://projeto-educa.onrender.com/api/pagar/${idDoCarrinho}/`,
+                      `https://api.materialdidaticos.com.br/api/pagar/${idDoCarrinho}/`,
                       {}, 
                       {headers: {Authorization: `Bearer ${token}`}}
       );
@@ -164,7 +164,7 @@ function App() {
   }
 
   const carregarProdutos = () => {
-    let urlBase = 'https://projeto-educa.onrender.com/api/produtos/?';
+    let urlBase = 'https://api.materialdidaticos.com.br/api/produtos/?';
     
     if (busca) urlBase += `search=${busca}&`;
     if (filtrosSelecionados.disciplina.length > 0) urlBase += `disciplina=${filtrosSelecionados.disciplina.join(',')}&`;
@@ -215,7 +215,7 @@ function App() {
 
   async function buscarHistorico() {
     try {
-      const resposta = await axios.get('https://projeto-educa.onrender.com/api/carrinho/historico/',
+      const resposta = await axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/',
         { headers: { Authorization: `Bearer ${token}` } } 
       );
       setHistoricoCompras(resposta.data);

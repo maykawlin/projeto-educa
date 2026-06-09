@@ -7,7 +7,7 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
     async function fazerDownload(itemId) {
         try {
         // 1. Pede o Link VIP para o Django
-        const resposta = await axios.get(`https://projeto-educa.onrender.com/api/baixar-material/${itemId}/`, {
+        const resposta = await axios.get(`https://api.materialdidaticos.com.br/api/baixar-material/${itemId}/`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 

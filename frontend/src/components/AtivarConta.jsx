@@ -11,7 +11,7 @@ export function AtivarConta({ setPaginaAtual }) {
         const token = urlParams.get('token');
 
         if (uid && token) {
-            axios.post('https://projeto-educa.onrender.com/api/ativar-conta/', { uid, token })
+            axios.post('https://api.materialdidaticos.com.br/api/ativar-conta/', { uid, token })
                 .then(resposta => {
                     setMensagem("✅ " + resposta.data.mensagem);
                     setSucesso(true);

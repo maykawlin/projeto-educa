@@ -20,7 +20,7 @@ export function Perfil({ token }) {
 
         async function buscarDadosDoPerfil() {
             try {
-                const resposta = await axios.get("https://projeto-educa.onrender.com/api/perfil/", {
+                const resposta = await axios.get("https://api.materialdidaticos.com.br/api/perfil/", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setDadosUsuario(resposta.data);
@@ -47,7 +47,7 @@ export function Perfil({ token }) {
         }
 
         try {
-            await axios.put("https://projeto-educa.onrender.com/api/mudar-senha/", {
+            await axios.put("https://api.materialdidaticos.com.br/api/mudar-senha/", {
                 senha_atual: senhaAtual,
                 nova_senha: novaSenha
             }, {

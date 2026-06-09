@@ -299,7 +299,7 @@ def gerar_link_infinitepay(request, carrinho_id):
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
             "redirect_url": "https://projeto-educa-beta.vercel.app/",
-            "webhook_url": "https://projeto-educa.onrender.com/api/webhook/infinitepay/", 
+            "webhook_url": "https://api.materialdidaticos.com.br/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
                 "email": request.user.email
