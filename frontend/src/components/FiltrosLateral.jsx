@@ -4,7 +4,7 @@ export function FiltrosLateral({ filtrosSelecionados, alternarFiltro, limparFilt
     // O React só vai ler as listas das disciplinas que estiverem marcadas!
     const bancoDeAssuntos = {
         "Física": ["Cinemática", "Dinâmica", "Energia", "Gravitação Universal", "Ondulatória", "Termometria", "Caloriemtria", "Termodinâmica", "Eletrostática", "Eletrodinâmica", "Magnetismo", "Eletromagnetismo", "Física Moderna"],
-        "Química": ["Estequiometria", "Termoquímica", "Tabela Periódica", "Química Orgânica"],
+        "Química": ["Matéria e Atomística", "Tabela Periódica", "Ligações Químicas", "Forças Intermoleculares", "Funções Inorgânicas", "Reações Químicas e Estequiometria", "Soluções", "Termoquímica", "Cinética Química", "Equilíbrio Químico", "Eletroquímica", "Química Orgânica", "Química Ambiental"],
         "Biologia": ["Biologia Celular", "Bioquímica", "Reinos", "Zoologia", "Botânica", "Histologia", "Embriologia", "Fisiologia Humana", "Genética", "Evolução", "Ecologia"],
         "Integração Curricular": ["Projeto de Vida", "Protagonismo Juvenil", "Iniciação Científica", "Eletiva", "Pós-Médio", "Prática Experimental"]
     };
