@@ -163,23 +163,49 @@ class RegistroUsuarioView(generics.CreateAPIView):
         token = default_token_generator.make_token(user)
         
         # 3. Cria o link que vai abrir o React
-        link_ativacao = f"https://projeto-educa-beta.vercel.app/?pagina=ativar_conta&uid={uid}&token={token}"
+        link_ativacao = f"https://materialdidaticos.com.br/?pagina=ativar_conta&uid={uid}&token={token}"
 
         # 4. Envia o e-mail via Resend
-        assunto = "Ative sua conta - Didáticos"
-        mensagem = f"Olá {user.first_name or user.username},\n\nBem-vindo(a) à Didáticos!\nPor favor, clique no link abaixo para confirmar seu e-mail e ativar sua conta:\n\n{link_ativacao}\n\nSe você não se cadastrou, ignore este e-mail."
+        assunto = "Confirme seu cadastro na Didáticos!"
+        #mensagem = f"Olá {user.first_name or user.username},\n\nBem-vindo(a) à Didáticos!\nPor favor, clique no link abaixo para confirmar seu e-mail e ativar sua conta:\n\n{link_ativacao}\n\nSe você não se cadastrou, ignore este e-mail."
+        html = f"""
+                <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                    <h2 style="color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">Olá, professor(a)! Seja muito bem-vindo(a).</h2>
+                    <p>Sua conta foi criada com sucesso na plataforma <strong>Didáticos</strong>.</p>
+                    <p>Para começarmos com total segurança e liberar o seu acesso ao catálogo e ao carrinho de compras, precisamos apenas que confirme que este é o seu e-mail institucional ou de uso diário.</p>
+                    
+                    <div style="margin: 30px 0; text-align: center;">
+                        <a href="{link_ativacao}" 
+                           style="padding: 14px 28px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            Confirmar e Ativar Minha Conta
+                        </a>
+                    </div>
+                    
+                    <p style="font-size: 13px; color: #7f8c8d; background-color: #f9f9f9; padding: 10px; border-radius: 4px;">
+                        Se o botão acima não funcionar, copie e cole o link a seguir no seu navegador:<br>
+                        <span style="color: #2980b9; word-break: break-all;">{link_ativacao}</span>
+                    </p>
+                    
+                    <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
+                    <p>Um grande abraço,<br><strong>Equipe Didáticos</strong></p>
+                </div>
+                """
         
+
         resend.api_key = os.environ.get('RESEND_API_KEY')
         try:
             resend.Emails.send({
-                "from": "onboarding@resend.dev",
+                "from": "Material Didáticos <suporte@materialdidaticos.com.br>",
                 "to": user.email,
                 "subject": assunto,
-                "text": mensagem
+                #"text": mensagem
+                "html":html
             })
+            print(f"E-mail de ativação com token enviado para: {user.email}")
         except Exception as e:
             print("Erro ao enviar email de ativação:", e)
 
+    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -298,7 +324,7 @@ def gerar_link_infinitepay(request, carrinho_id):
             "handle": os.environ.get('INFINITEPAY_HANDLE'), # puxa os dados do arquivo .env
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
-            "redirect_url": "https://projeto-educa-beta.vercel.app/",
+            "redirect_url": "https://materialdidaticos.com.br/",
             "webhook_url": "https://api.materialdidaticos.com.br/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
@@ -360,6 +386,47 @@ def webhookinfinitepay(request):
 
                 print(f"✅ [SUCESSO] Carrinho {carrinho_id} atualizado para PAGO")
 
+                # Captura o objeto de usuário associado ao carrinho de forma limpa
+                user = carrinho.usuario
+
+                # Configura a chave da porta do Resend ANTES de enviar o recibo
+                resend.api_key = os.environ.get('RESEND_API_KEY')
+
+                # Disparo automático do Recibo de Compra com o novo remetente homologado
+                try:
+                    resend.Emails.send({
+                        "from": "Material Didáticos <suporte@materialdidaticos.com.br>",
+                        "to": user.email,
+                        "subject": f"Pagamento Aprovado! Seu pedido #{carrinho.id} foi liberado 📚",
+                        "html": f"""
+                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 10px;">Tudo certo com o seu pagamento!</h2>
+                            <p>Olá, {user.first_name}!</p>
+                            <p>Seu pagamento foi confirmado. Seus materiais didáticos já estão totalmente liberados e disponíveis para download na sua área restrita.</p>
+                            
+                            <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #27ae60;">
+                                <p style="margin: 0;"><strong>Número do Pedido:</strong> #{carrinho.id}</p>
+                                <p style="margin: 5px 0 0 0;"><strong>Status do Acesso:</strong> Liberado / Pronto para Download</p>
+                            </div>
+
+                            <div style="margin: 25px 0; text-align: center;">
+                                <a href="https://materialdidaticos.com.br/?pagina=historico" 
+                                style="padding: 12px 24px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                                    Acessar Meus Materiais
+                                </a>
+                            </div>
+                            
+                            <p style="font-size: 14px; color: #555;">Caso encontre qualquer dificuldade no download dos arquivos ou precise de suporte técnico, basta responder diretamente a este e-mail.</p>
+                            <br>
+                            <p>Boas aulas,<br><strong>Equipe Material Didáticos</strong></p>
+                        </div>
+                        """
+                    })
+                    print(f"Recibo transacional do pedido #{carrinho.id} enviado para: {user.email}")
+
+                except Exception as e:
+                    print(f"Falha ao disparar e-mail de recibo para o pedido #{carrinho.id}: {e}")
+
                 # A InfinitePay exige uma resposta rápida com 200 OK
                 return Response({"mensagem": "Webhook processado com sucesso"}, status=status.HTTP_200_OK)
 
@@ -395,7 +462,7 @@ def solicitar_redefinicao_senha(request):
     token = default_token_generator.make_token(user)
     
     # 2. O link inteligente que vai cair diretamente no teu App.jsx na Vercel
-    link_reset = f"https://projeto-educa-beta.vercel.app/?pagina=resetar&uid={uid}&token={token}"
+    link_reset = f"https://materialdidaticos.com.br/?pagina=resetar&uid={uid}&token={token}"
 
     # 3. Envia o e-mail
     assunto = "Redefinição de Senha - Didáticos"
@@ -404,7 +471,7 @@ def solicitar_redefinicao_senha(request):
     
     try:
         r = resend.Emails.send({
-            "from": "onboarding@resend.dev", # E-mail temporário de testes do Resend
+            "from": "Material Didáticos <suporte@materialdidaticos.com.br>",
             "to": user.email,
             "subject": assunto,
             "text": mensagem
