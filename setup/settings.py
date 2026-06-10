@@ -176,6 +176,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://projeto-educa-beta.vercel.app",
+    "https://materialdidaticos.com.br",
 ]
 
 REST_FRAMEWORK = {
