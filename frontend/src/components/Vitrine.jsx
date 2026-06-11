@@ -14,54 +14,39 @@ export function Vitrine({
     filtrosSelecionados,
     alternarFiltro,
     limparFiltros,
-    carregando 
+    carregando,
+    buscaAtiva // 👈 RECEBENDO AVISO DA BARRA DO HEADER
 }) {
     
     const [produtoModal, setProdutoModal] = useState(null);
 
-    // =========================================================
-    // 📱 UX MOBILE: Controle de exibição dos filtros no celular
-    // =========================================================
-    
-    // 1. O React descobre se é celular (tela menor que 768 pixels)
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    // 2. Controla se a gaveta de filtros está aberta ou fechada no celular
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
-    // O "Olheiro" do tamanho da tela: se o usuário virar o celular ou encolher o navegador
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // 🌟 O TOQUE MÁGICO: Se o usuário digitar na busca, esconde os filtros na hora!
     useEffect(() => {
         if (busca !== "" && isMobile) {
             setMostrarFiltros(false);
         }
     }, [busca, isMobile]);
-    // =========================================================
 
     return (
         <div>
+            {/* TÍTULO ALTERADO */}
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>
-                Vitrine de Produtos
+                Página Inicial
             </h2>
 
-            <BannerPromocional />
+            {/* ESCONDE O CARROSSEL SE ESTIVER BUSCANDO */}
+            {(!buscaAtiva && busca === "") && (
+                <BannerPromocional />
+            )}
 
-            <div className="pesquisa-container">
-                <input
-                    type="text"
-                    placeholder="🔍 O que você está buscando?"
-                    value={busca}
-                    onChange={(e) => alterarBusca(e.target.value)}
-                    className="input-pesquisa"
-                />
-            </div>
-
-            {/* BOTÃO DE FILTROS MOBILE (Só aparece se estiver no celular) */}
             {isMobile && (
                 <button
                     onClick={() => setMostrarFiltros(!mostrarFiltros)}
@@ -74,10 +59,6 @@ export function Vitrine({
 
             <div className="layout-loja">
                 
-                {/* LÓGICA DE EXIBIÇÃO: 
-                    Só desenha a barra lateral se for Computador (!isMobile) 
-                    OU se for celular e o usuário apertou o botão (mostrarFiltros) 
-                */}
                 {(!isMobile || mostrarFiltros) && (
                     <FiltrosLateral 
                         filtrosSelecionados={filtrosSelecionados} 

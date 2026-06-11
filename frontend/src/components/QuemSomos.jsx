@@ -58,7 +58,7 @@ export function QuemSomos({ setPaginaAtual }) {
             {/* BOTÃO DE VOLTAR */}
             <div style={{ textAlign: 'center', marginTop: '50px' }}>
                 <button onClick={() => setPaginaAtual("loja")} className="btn-primario" style={{ padding: '12px 30px', fontSize: '16px' }}>
-                    ⬅️ Voltar para a Vitrine
+                    ⬅️ Voltar para a Loja
                 </button>
             </div>
 

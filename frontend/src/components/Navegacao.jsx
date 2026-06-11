@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import logo from '../assets/logo_em_cores_v3.png';
+import logo from '../assets/logo_em_cores_v2.png';
 
 // ==========================================
 // 🌟 COMPONENTE DO MENU FLUTUANTE (Dropdown)
@@ -18,15 +18,17 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
         return () => document.removeEventListener("mousedown", cliqueFora);
     }, []);
 
+    const estiloOpcaoMenu = {
+        background: 'none', border: 'none', padding: '15px 20px', textAlign: 'left', cursor: 'pointer', 
+        fontSize: '15px', width: '100%', color: 'var(--cor-texto-principal)', transition: 'background-color 0.2s',
+    };
+
     return (
         <div style={{ position: 'relative', display: 'inline-block' }} ref={menuRef}>
             <button
                 onClick={() => setMenuAberto(!menuAberto)}
                 className="btn-secundario"
-                style={{ 
-                    display: 'flex', alignItems: 'center', gap: '8px', 
-                    cursor: 'pointer', padding: '8px 15px'
-                }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 15px' }}
             >
                 👤 <span className="texto-oculto-mobile">Olá, Professor(a)</span> {menuAberto ? '▴' : '▾'}
             </button>
@@ -63,17 +65,11 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
     );
 }
 
-const estiloOpcaoMenu = {
-    background: 'none', border: 'none', padding: '15px 20px', textAlign: 'left', cursor: 'pointer', 
-    fontSize: '15px', width: '100%', color: 'var(--cor-texto-principal)', transition: 'background-color 0.2s',
-};
-
 // ==========================================
 // 🚀 SEU COMPONENTE DE NAVEGAÇÃO PRINCIPAL
 // ==========================================
 export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico, abrirMiniCarrinho, busca, alterarBusca, setBuscaAtiva }) {
     
-    // 📱 Lógica Responsiva
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -88,11 +84,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
       setPaginaAtual("loja");
     }
 
-    const estiloLink = {
-        background: 'none', border: 'none', cursor: 'pointer', color: 'var(--cor-texto-secundario)', 
-        fontWeight: 'bold', fontSize: '16px', padding: '5px 10px', textDecoration: 'none', transition: '0.3s'
-    };
-
     return (
       <nav style={{ 
         position: 'sticky', top: 0, zIndex: 1000, background: '#fff', 
@@ -101,28 +92,32 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         display: 'flex', flexDirection: 'column', gap: '10px'
       }}>
 
-        {/* ANDAR SUPERIOR: Logo + Botões da Direita */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             
-            {/* Esquerda: Logo + Links Desktop */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <div onClick={() => setPaginaAtual("loja")} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    <img src={logo} alt="Logo Didáticos" style={{ height: isMobile ? '50px' : '70px', width: 'auto' }} />
+                {/* 🌟 LOGO COM EFEITO E TAMANHO MAIOR */}
+                <div 
+                    onClick={() => setPaginaAtual("loja")} 
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                    <img src={logo} alt="Logo Didáticos" style={{ height: isMobile ? '65px' : '100px', width: 'auto' }} />
                 </div>
 
                 {!isMobile && (
                     <>
-                        <button onClick={() => setPaginaAtual("loja")} style={estiloLink} onMouseOver={(e) => e.target.style.color = 'var(--cor-primaria-azul)'} onMouseOut={(e) => e.target.style.color = 'var(--cor-texto-secundario)'}>
+                        {/* 🌟 BOTÕES COM ESTILO SECUNDÁRIO */}
+                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
                             Página Inicial
                         </button>
-                        <button onClick={() => setPaginaAtual("quem_somos")} style={estiloLink} onMouseOver={(e) => e.target.style.color = 'var(--cor-primaria-azul)'} onMouseOut={(e) => e.target.style.color = 'var(--cor-texto-secundario)'}>
+                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px' }}>
                             Quem Somos
                         </button>
                     </>
                 )}
             </div>
 
-            {/* Centro: Barra de Pesquisa (Apenas Desktop) */}
             {!isMobile && (
                 <div style={{ flex: 1, maxWidth: '500px', margin: '0 20px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -136,7 +131,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
             )}
 
-            {/* Direita: Botões */}
             <div style={{ display: "flex", gap: isMobile ? "8px" : "15px", alignItems: "center" }}>
                 <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isMobile ? '8px 10px' : '8px 15px' }}>
                     🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
@@ -153,7 +147,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             </div>
         </div>
 
-        {/* ANDAR INFERIOR: Barra de Pesquisa (Apenas Mobile) */}
         {isMobile && (
             <div style={{ width: '100%' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
