@@ -42,6 +42,8 @@ function App() {
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); 
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); 
+
+  const [buscaAtiva, setBuscaAtiva] = useState(false);
   
   // O Porteiro
   useEffect(() => {
@@ -248,8 +250,12 @@ function App() {
         setToken={setToken}
         buscarHistorico={buscarHistorico}
         abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
+        busca={busca}               
+        alterarBusca={alterarBusca} 
+        setBuscaAtiva={setBuscaAtiva}
       />
-      <hr />
+      
+      
       {ultimoProdutoAdicionado && (
         <NotificacaoCarrinho 
             produto={ultimoProdutoAdicionado} 
@@ -270,6 +276,7 @@ function App() {
             alternarFiltro={alternarFiltro}
             limparFiltros={limparFiltros}
             carregando={carregando}
+            buscaAtiva={buscaAtiva}
           />
         ) : 
         paginaAtual === "login" ? (
