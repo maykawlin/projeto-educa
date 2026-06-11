@@ -93,6 +93,11 @@ function App() {
     } else if (paginaUrl === 'sucesso') { 
         setPaginaAtual('sucesso');
     }
+
+    if (paginaUrl) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
   }, []);
 
   useEffect(() => {
