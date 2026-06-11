@@ -339,7 +339,7 @@ function App() {
                 fontSize: '14px', color: 'var(--cor-texto-secundario)', lineHeight: '1.5'
               }}>
                 <p style={{margin: 0}}>
-                  🔒 <strong>Pagamento 100% seguro.</strong> Fique tranquilo(a), é a nossa conta oficial!
+                  🔒 <strong>Pagamento 100% seguro.</strong> Fique tranquilo(a), é a nossa conta oficial! Por conta de taxas e impostos optamos por operar no modelo MEI no nome de um dos nossos fundadores, Maycon Kawlin.
                 </p>
               </div>
             )}
