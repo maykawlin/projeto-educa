@@ -324,7 +324,7 @@ def gerar_link_infinitepay(request, carrinho_id):
             "handle": os.environ.get('INFINITEPAY_HANDLE'), # puxa os dados do arquivo .env
             "order_nsu": order_nsu_personalizado,
             "items": itens_payload,
-            "redirect_url": "https://materialdidaticos.com.br/",
+            "redirect_url": "https://materialdidaticos.com.br/?pagina=sucesso",
             "webhook_url": "https://api.materialdidaticos.com.br/api/webhook/infinitepay/", 
             "customer": {
                 "name": request.user.first_name or request.user.username,
@@ -416,7 +416,7 @@ def webhookinfinitepay(request):
                                 </a>
                             </div>
                             
-                            <p style="font-size: 14px; color: #555;">Caso encontre qualquer dificuldade no download dos arquivos ou precise de suporte técnico, basta responder diretamente a este e-mail.</p>
+                            <p style="font-size: 14px; color: #555;">Caso encontre qualquer dificuldade no download dos arquivos ou precise de suporte técnico, basta responder diretamente para didaticoss@gmail.com.</p>
                             <br>
                             <p>Boas aulas,<br><strong>Equipe Material Didáticos</strong></p>
                         </div>

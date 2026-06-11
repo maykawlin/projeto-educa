@@ -15,6 +15,7 @@ import { EsqueciSenha } from "./components/EsqueciSenha";
 import { ResetarSenha } from "./components/ResetarSenha";
 import { AtivarConta } from "./components/AtivarConta";
 import { TermosDeUso } from "./components/TermosDeUso";
+import { Sucesso } from "./components/Sucesso";
 
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
@@ -77,12 +78,18 @@ function App() {
 
   // Se a pessoa clicou no link do e-mail, forçamos a página para resetar ou ativar conta
   useEffect(() => {
+
     const urlParams = new URLSearchParams(window.location.search);
     const paginaUrl = urlParams.get('pagina');
+
     if (paginaUrl === 'resetar') {
         setPaginaAtual('resetar_senha');
     } else if (paginaUrl === 'ativar_conta') {
         setPaginaAtual('ativar_conta');
+    } else if (paginaUrl === 'historico') { 
+        setPaginaAtual('historico');
+    } else if (paginaUrl === 'sucesso') { 
+        setPaginaAtual('sucesso');
     }
   }, []);
 
@@ -295,6 +302,9 @@ function App() {
         ) : 
         paginaAtual === "termos" ? (
           <TermosDeUso setPaginaAtual={setPaginaAtual} />
+        ) : 
+        paginaAtual === "sucesso" ? (  
+          <Sucesso setPaginaAtual={setPaginaAtual} />
         ) : (
           <div>
             <h2 style={{ color: 'var(--cor-primaria-azul)', marginBottom: '20px' }}>Seu Carrinho de Compras</h2>
