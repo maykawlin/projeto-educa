@@ -32,7 +32,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         # 1. O NITRO: Traz as tabelas relacionadas rapidamente
-        queryset = Produto.objects.prefetch_related('nivel', 'disciplina', 'tipo').all()
+        queryset = Produto.objects.prefetch_related('nivel', 'disciplina', 'tipo').all().order_by('-id')
         
         # 2. Captura a URL
         niveis = self.request.query_params.get('nivel')
@@ -332,7 +332,7 @@ def gerar_link_infinitepay(request, carrinho_id):
             }
         }
         
-        url_infinitepay = "https://api.infinitepay.io/invoices/public/checkout/links"
+        url_infinitepay = "https://api.checkout.infinitepay.io/links"
         headers = { "Content-Type": "application/json" }
         
         resposta = requests.post(url_infinitepay, json=payload, headers=headers)
