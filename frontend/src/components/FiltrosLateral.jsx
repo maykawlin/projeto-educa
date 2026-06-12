@@ -1,114 +1,137 @@
+import { useState } from "react";
+
 export function FiltrosLateral({ filtrosSelecionados, alternarFiltro, limparFiltros }) {
     
-    // O nosso "Dicionário" inteligente. 
-    // O React só vai ler as listas das disciplinas que estiverem marcadas!
+    // Memórias para controlar quais abas da sanfona estão abertas
+    const [nivelAberto, setNivelAberto] = useState("");
+    const [disciplinaAberta, setDisciplinaAberta] = useState("");
+    const [serieAberta, setSerieAberta] = useState("");
+
+    // O nosso "Dicionário" com a Hierarquia Exata (Agora com Integração Curricular restaurada!)
     const bancoDeAssuntos = {
-        "Física": ["Cinemática", "Dinâmica", "Energia", "Gravitação Universal", "Ondulatória", "Termometria", "Caloriemtria", "Termodinâmica", "Eletrostática", "Eletrodinâmica", "Magnetismo", "Eletromagnetismo", "Física Moderna"],
-        "Química": ["Matéria e Atomística", "Tabela Periódica", "Ligações Químicas", "Forças Intermoleculares", "Funções Inorgânicas", "Reações Químicas e Estequiometria", "Soluções", "Termoquímica", "Cinética Química", "Equilíbrio Químico", "Eletroquímica", "Química Orgânica", "Química Ambiental"],
-        "Biologia": ["Biologia Celular", "Bioquímica", "Reinos", "Zoologia", "Botânica", "Histologia", "Embriologia", "Fisiologia Humana", "Genética", "Evolução", "Ecologia"],
-        "Integração Curricular": ["Projeto de Vida", "Protagonismo Juvenil", "Iniciação Científica", "Eletiva", "Pós-Médio", "Prática Experimental"]
+        "Ensino Médio": {
+            "Física": ["Cinemática", "Dinâmica", "Energia", "Gravitação Universal", "Ondulatória", "Termometria", "Calorimetria", "Termodinâmica", "Eletrostática", "Eletrodinâmica", "Magnetismo", "Eletromagnetismo", "Física Moderna"],
+            "Química": ["Matéria e Atomística", "Tabela Periódica", "Ligações Químicas", "Forças Intermoleculares", "Funções Inorgânicas", "Reações Químicas e Estequiometria", "Soluções", "Termoquímica", "Cinética Química", "Equilíbrio Químico", "Eletroquímica", "Química Orgânica", "Química Ambiental"],
+            "Biologia": ["Biologia Celular", "Bioquímica", "Reinos", "Zoologia", "Botânica", "Histologia", "Embriologia", "Fisiologia Humana", "Genética", "Evolução", "Ecologia"],
+            "Integração Curricular": ["Projeto de Vida", "Protagonismo Juvenil", "Iniciação Científica", "Eletiva", "Pós-Médio", "Prática Experimental"]
+        },
+        "Ensino Fundamental II": {
+            "Ciências": {
+                "6º Ano EF": ["Células", "Sistema Solar", "Atmosfera e Litosfera", "Misturas"],
+                "7º Ano EF": ["Máquinas Simples", "Vírus e Bactérias", "Reino Vegetal", "Ecossistemas", "Calor e Temperatura"],
+                "8º Ano EF": ["Corpo Humano", "Eletricidade", "Clima e Tempo", "Sistema Reprodutor"],
+                "9º Ano EF": ["Física Clássica", "Química Básica", "Genética Básica", "Evolução"]
+            }
+        }
     };
 
+    const estiloGrupo = { marginBottom: '15px', borderBottom: '1px solid var(--cor-borda)', paddingBottom: '10px' };
+    const estiloLinha = { display: 'flex', alignItems: 'center', cursor: 'pointer', margin: '8px 0' };
+    const txtPonteiro = { cursor: 'pointer', flex: 1 };
+
     return (
-        <div className="sidebar-filtros">
+        <div className="sidebar-filtros" style={{ backgroundColor: '#fff', borderRadius: '8px' }}>
             
-            {/* CABEÇALHO DOS FILTROS (Com o Botão de Limpar) */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ margin: 0, color: 'var(--cor-texto-principal)' }}>
-                    Filtros
-                </h3>
-                <button 
-                    onClick={limparFiltros} 
-                    className="btn-secundario" 
-                    style={{ padding: '5px 10px', fontSize: '12px' }}
-                >
+                <h3 style={{ margin: 0, color: 'var(--cor-texto-principal)' }}>Filtros</h3>
+                <button onClick={limparFiltros} className="btn-secundario" style={{ padding: '5px 10px', fontSize: '12px' }}>
                     Limpar Tudo
                 </button>
             </div>
 
-            {/* Filtro de Nível */}
-            <div className="grupo-filtro">
-                <h4>Nível de Ensino</h4>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.nivel.includes("Ensino Fundamental II")} onChange={() => alternarFiltro('nivel', 'Ensino Fundamental II')} /> Ensino Fundamental II
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.nivel.includes("Ensino Médio")} onChange={() => alternarFiltro('nivel', 'Ensino Médio')} /> Ensino Médio
-                </label>
-            </div>
+            {/* Renderização Inteligente da Árvore */}
+            {Object.keys(bancoDeAssuntos).map(nivel => (
+                <div key={nivel} style={estiloGrupo}>
+                    {/* 1. NÍVEL (Ex: Ensino Médio) */}
+                    <div style={{ ...estiloLinha, color: 'var(--cor-primaria-azul)', fontWeight: 'bold' }}>
+                        <input 
+                            type="checkbox" 
+                            checked={filtrosSelecionados.nivel.includes(nivel)}
+                            onChange={() => alternarFiltro('nivel', nivel)}
+                            style={{ marginRight: '8px' }}
+                        />
+                        <span style={txtPonteiro} onClick={() => setNivelAberto(nivelAberto === nivel ? "" : nivel)}>
+                            {nivel} {nivelAberto === nivel ? "▴" : "▾"}
+                        </span>
+                    </div>
 
-            {/* Filtro de Disciplina */}
-            <div className="grupo-filtro">
-                <h4>Disciplina</h4>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Física")} onChange={() => alternarFiltro('disciplina', 'Física')} /> Física
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Química")} onChange={() => alternarFiltro('disciplina', 'Química')} /> Química
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Biologia")} onChange={() => alternarFiltro('disciplina', 'Biologia')} /> Biologia
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.disciplina.includes("Integração Curricular")} onChange={() => alternarFiltro('disciplina', 'Integração Curricular')} /> Integração Curricular
-                </label>
-            </div>
+                    {/* 2. DISCIPLINAS (Se o Nível estiver aberto) */}
+                    {nivelAberto === nivel && Object.keys(bancoDeAssuntos[nivel]).map(disciplina => (
+                        <div key={disciplina} style={{ marginLeft: '20px' }}>
+                            <div style={{ ...estiloLinha, color: 'var(--cor-texto-principal)' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={filtrosSelecionados.disciplina.includes(disciplina)}
+                                    onChange={() => alternarFiltro('disciplina', disciplina)}
+                                    style={{ marginRight: '8px' }}
+                                />
+                                <span style={txtPonteiro} onClick={() => setDisciplinaAberta(disciplinaAberta === disciplina ? "" : disciplina)}>
+                                    {disciplina} {disciplinaAberta === disciplina ? "▴" : "▾"}
+                                </span>
+                            </div>
 
-            {/* Filtro de Assunto (DINÂMICO) */}
-            <div className="grupo-filtro">
-                <h4>Assunto</h4>
-                
-                {/* Se nenhuma disciplina estiver marcada, mostra o aviso */}
-                {filtrosSelecionados.disciplina.length === 0 ? (
-                    <p style={{ fontSize: '12px', color: 'var(--cor-texto-secundario)', margin: 0 }}>
-                        Selecione uma disciplina primeiro para ver os assuntos.
-                    </p>
-                ) : (
-                    /* Se tiver disciplina marcada, fazemos um loop para mostrar os assuntos dela */
-                    filtrosSelecionados.disciplina.map(disciplinaAtiva => {
-                        // Pega a lista de assuntos dessa disciplina no nosso dicionário
-                        const assuntosDessaDisciplina = bancoDeAssuntos[disciplinaAtiva];
-                        
-                        // Se existir assuntos cadastrados no dicionário, desenha na tela
-                        if (assuntosDessaDisciplina) {
-                            return (
-                                <div key={disciplinaAtiva} style={{ marginBottom: '10px' }}>
-                                    <strong style={{ fontSize: '12px', color: 'var(--cor-primaria-azul)' }}>↳ {disciplinaAtiva}</strong>
-                                    {assuntosDessaDisciplina.map(assunto => (
-                                        <label key={assunto} className="opcao-filtro" style={{ marginLeft: '10px', marginTop: '5px' }}>
+                            {/* 3A. ASSUNTOS DO ENSINO MÉDIO (Pula a série) */}
+                            {nivel === "Ensino Médio" && disciplinaAberta === disciplina && bancoDeAssuntos[nivel][disciplina].map(assunto => (
+                                <label key={assunto} style={{ ...estiloLinha, marginLeft: '25px', fontSize: '13px', color: 'var(--cor-texto-secundario)' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={filtrosSelecionados.assunto.includes(assunto)}
+                                        onChange={() => alternarFiltro('assunto', assunto)}
+                                        style={{ marginRight: '8px' }}
+                                    />
+                                    {assunto}
+                                </label>
+                            ))}
+
+                            {/* 3B. SÉRIES DO ENSINO FUNDAMENTAL */}
+                            {nivel === "Ensino Fundamental II" && disciplinaAberta === disciplina && Object.keys(bancoDeAssuntos[nivel][disciplina]).map(serie => (
+                                <div key={serie} style={{ marginLeft: '20px' }}>
+                                    <div style={{ ...estiloLinha, fontSize: '14px', color: 'var(--cor-texto-principal)' }}>
+                                        <input 
+                                            type="checkbox" 
+                                            // A Série do EF é um NÍVEL no seu Banco de Dados!
+                                            checked={filtrosSelecionados.nivel.includes(serie)}
+                                            onChange={() => alternarFiltro('nivel', serie)}
+                                            style={{ marginRight: '8px' }}
+                                        />
+                                        <span style={txtPonteiro} onClick={() => setSerieAberta(serieAberta === serie ? "" : serie)}>
+                                            {serie} {serieAberta === serie ? "▴" : "▾"}
+                                        </span>
+                                    </div>
+
+                                    {/* 4. ASSUNTOS DA SÉRIE ESPECÍFICA */}
+                                    {serieAberta === serie && bancoDeAssuntos[nivel][disciplina][serie].map(assunto => (
+                                        <label key={assunto} style={{ ...estiloLinha, marginLeft: '25px', fontSize: '13px', color: 'var(--cor-texto-secundario)' }}>
                                             <input 
                                                 type="checkbox" 
                                                 checked={filtrosSelecionados.assunto.includes(assunto)}
                                                 onChange={() => alternarFiltro('assunto', assunto)}
-                                            /> {assunto}
+                                                style={{ marginRight: '8px' }}
+                                            />
+                                            {assunto}
                                         </label>
                                     ))}
                                 </div>
-                            );
-                        }
-                        return null; // Se não tiver assunto cadastrado, não faz nada
-                    })
-                )}
-            </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            ))}
 
-            {/* Filtro de Tipo */}
-            <div className="grupo-filtro">
-                <h4>Tipo de Material</h4>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Slide")} onChange={() => alternarFiltro('tipo', 'Slide')} /> Slide
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("EBook")} onChange={() => alternarFiltro('tipo', 'EBook')} /> EBook
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Lista de Exercícios")} onChange={() => alternarFiltro('tipo', 'Lista de Exercícios')} /> Lista de Exercícios
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Resumo")} onChange={() => alternarFiltro('tipo', 'Resumo')} /> Resumo
-                </label>
-                <label className="opcao-filtro">
-                    <input type="checkbox" checked={filtrosSelecionados.tipo.includes("Aulas Práticas")} onChange={() => alternarFiltro('tipo', 'Aulas Práticas')} /> Aulas Práticas
-                </label>
+            {/* Filtro de Tipo Mantido Intacto do seu Original */}
+            <div className="grupo-filtro" style={{ marginTop: '20px' }}>
+                <h4 style={{ color: 'var(--cor-primaria-azul)' }}>Tipo de Material</h4>
+                {["Slide", "EBook", "Lista de Exercícios", "Resumo", "Aulas Práticas"].map(tipo => (
+                    <label key={tipo} className="opcao-filtro" style={{ display: 'block', margin: '8px 0', fontSize: '14px' }}>
+                        <input 
+                            type="checkbox" 
+                            checked={filtrosSelecionados.tipo.includes(tipo)} 
+                            onChange={() => alternarFiltro('tipo', tipo)} 
+                            style={{ marginRight: '8px' }} 
+                        /> 
+                        {tipo}
+                    </label>
+                ))}
             </div>
         </div>
     );

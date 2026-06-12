@@ -186,12 +186,17 @@ function App() {
     if (filtrosSelecionados.assunto.length > 0) urlBase += `assunto=${filtrosSelecionados.assunto.join(',')}&`;
     
     if (filtrosSelecionados.nivel.length > 0) {
-        const niveisBD = filtrosSelecionados.nivel.map(n => {
-            if (n === "Ensino Médio") return "EM";
-            if (n === "Ensino Fundamental II") return "EF";
-            return n;
+        let niveisExatos = [];
+        filtrosSelecionados.nivel.forEach(n => {
+            if (n === "Ensino Médio") {
+                niveisExatos.push("1º Ano EM", "2º Ano EM", "3º Ano EM");
+            } else if (n === "Ensino Fundamental II") {
+                niveisExatos.push("6º Ano EF", "7º Ano EF", "8º Ano EF", "9º Ano EF");
+            } else {
+                niveisExatos.push(n); // Isso garante que cliques específicos (ex: "6º Ano EF") também funcionem
+            }
         });
-        urlBase += `nivel=${niveisBD.join(',')}&`;
+        urlBase += `nivel=${niveisExatos.join(',')}&`;
     }
     setUrlProdutos(urlBase);
   };
