@@ -49,8 +49,7 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
                     <button onClick={() => { setPaginaAtual("quem_somos"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         👋 Quem Somos Nós
                     </button>
-                    <button 
-                        onClick={() => { setPaginaAtual("como_funciona"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
+                    <button onClick={() => { setPaginaAtual("como_funciona"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         ❓ Como Funciona
                     </button>
                     <button onClick={() => { setPaginaAtual("perfil"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
@@ -74,13 +73,17 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
 // ==========================================
 export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico, abrirMiniCarrinho, busca, alterarBusca, setBuscaAtiva }) {
     
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    // 🌟 3 ESTÁGIOS DE RESPONSIVIDADE
+    const [larguraTela, setLarguraTela] = useState(window.innerWidth);
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        const handleResize = () => setLarguraTela(window.innerWidth);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    const isMobile = larguraTela <= 768;
+    const isTablet = larguraTela <= 1100; // O Ponto exato onde os botões começam a espremer a pesquisa
 
     function fazerLogout() {
       localStorage.removeItem("token");
@@ -96,22 +99,23 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         display: 'flex', flexDirection: 'column', gap: '10px'
       }}>
 
+        {/* ANDAR SUPERIOR: Logo + Botões */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                {/* 🌟 LOGO COM EFEITO E TAMANHO MAIOR */}
                 <div 
                     onClick={() => setPaginaAtual("loja")} 
                     style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }}
                     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
-                    <img src={logo} alt="Logo Didáticos" style={{ height: isMobile ? '65px' : '100px', width: 'auto' }} />
+                    {/* A logo fica um pouquinho menor no tablet para dar mais espaço */}
+                    <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
                 </div>
 
-                {!isMobile && (
+                {/* Os links centrais somem em telas médias/celulares (já existem no MenuUsuario) */}
+                {!isTablet && (
                     <>
-                        {/* 🌟 BOTÕES COM ESTILO SECUNDÁRIO */}
                         <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
                             Página Inicial
                         </button>
@@ -125,7 +129,8 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 )}
             </div>
 
-            {!isMobile && (
+            {/* BARRA DE PESQUISA (Apenas para telas gigantes - Fica no centro) */}
+            {!isTablet && (
                 <div style={{ flex: 1, maxWidth: '500px', margin: '0 20px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <span style={{ position: 'absolute', left: '15px', fontSize: '18px' }}>🔍</span>
@@ -154,8 +159,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             </div>
         </div>
 
-        {isMobile && (
-            <div style={{ width: '100%' }}>
+        {/* ANDAR INFERIOR: Barra de Pesquisa (Aparece embaixo em Tablets e Celulares) */}
+        {isTablet && (
+            <div style={{ width: '100%', marginTop: '5px' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                     <span style={{ position: 'absolute', left: '15px', fontSize: '18px' }}>🔍</span>
                     <input 

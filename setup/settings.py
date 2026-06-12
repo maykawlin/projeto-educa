@@ -186,7 +186,7 @@ REST_FRAMEWORK = {
     # Liga a paginação por número de página
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # Quantos materiais aparecem por página?
-    'PAGE_SIZE': 9,
+    'PAGE_SIZE': 12,
 }
 
 # Define o tempo de validade do acesso ao site com o Token
