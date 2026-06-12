@@ -83,7 +83,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
     }, []);
 
     const isMobile = larguraTela <= 768;
-    const isTablet = larguraTela <= 1100; // O Ponto exato onde os botões começam a espremer a pesquisa
+    const isTablet = larguraTela <= 1300; // O Ponto exato onde os botões começam a espremer a pesquisa
 
     function fazerLogout() {
       localStorage.removeItem("token");
