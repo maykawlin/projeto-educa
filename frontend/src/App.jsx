@@ -16,6 +16,7 @@ import { ResetarSenha } from "./components/ResetarSenha";
 import { AtivarConta } from "./components/AtivarConta";
 import { TermosDeUso } from "./components/TermosDeUso";
 import { Sucesso } from "./components/Sucesso";
+import { ComoFunciona } from "./components/ComoFunciona";
 
 function App() {
   const [ paginaAtual, setPaginaAtual ] = useState("loja");
@@ -103,6 +104,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
   }, [carrinho]); 
+
+  // ROLAGEM AUTOMÁTICA PARA O TOPO SEMPRE QUE A PÁGINA MUDAR
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [paginaAtual]);
 
   function removerDoCarrinho(indexParaRemover) {
     const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
@@ -320,6 +326,9 @@ function App() {
         paginaAtual === "termos" ? (
           <TermosDeUso setPaginaAtual={setPaginaAtual} />
         ) : 
+        paginaAtual === "como_funciona" ? (
+          <ComoFunciona setPaginaAtual={setPaginaAtual} />
+        ) :
         paginaAtual === "sucesso" ? (  
           <Sucesso setPaginaAtual={setPaginaAtual} />
         ) : (

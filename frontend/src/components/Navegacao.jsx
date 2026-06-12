@@ -49,6 +49,10 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
                     <button onClick={() => { setPaginaAtual("quem_somos"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         👋 Quem Somos Nós
                     </button>
+                    <button 
+                        onClick={() => { setPaginaAtual("como_funciona"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
+                        ❓ Como Funciona
+                    </button>
                     <button onClick={() => { setPaginaAtual("perfil"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         ⚙️ Meus Dados
                     </button>
@@ -113,6 +117,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                         </button>
                         <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px' }}>
                             Quem Somos
+                        </button>
+                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                            Como Funciona
                         </button>
                     </>
                 )}
