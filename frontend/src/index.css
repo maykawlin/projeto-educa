@@ -2,20 +2,17 @@
    1. VARIÁVEIS GLOBAIS (O DNA da Marca)
    ========================================= */
 :root {
-  /* Cores extraídas do Logotipo */
   --cor-primaria-azul: #0D4F8B;   /* Azul escuro do "D" */
   --cor-secundaria-azul: #008DDA; /* Azul claro da página */
   --cor-primaria-verde: #23A41A;  /* Verde vibrante do notebook */
   --cor-destaque-roxo: #8C3BFF;   /* Roxo da estrelinha */
 
-  /* Cores de Fundo e Texto */
   --cor-fundo: #F8F9FA; 
   --cor-fundo-card: #FFFFFF;
   --cor-texto-principal: #333333;
   --cor-texto-secundario: #666666;
   --cor-borda: #E0E0E0;
 
-  /* Efeitos e Animações */
   --sombra-suave: 0 4px 6px rgba(0, 0, 0, 0.05);
   --sombra-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
   --borda-arredondada: 8px;
@@ -179,14 +176,8 @@ body {
 }
 
 @keyframes deslizarParaEsquerda {
-  from { 
-    transform: translateX(100%); 
-    opacity: 0; 
-  }
-  to { 
-    transform: translateX(0); 
-    opacity: 1; 
-  }
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 /* =========================================
@@ -400,7 +391,7 @@ body {
 @keyframes slideInModal { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* =========================================
-   11. RODAPÉ (FOOTER) - LIMPO E ÚNICO!
+   11. RODAPÉ (FOOTER)
    ========================================= */
 .footer-container {
   background-color: var(--cor-primaria-azul); 
@@ -579,16 +570,15 @@ body {
    13. BOTÃO VOLTAR AO TOPO (FLUTUANTE DIREITO)
    ========================================= */
 .btn-topo {
-  position: fixed; /* É ISSO QUE FAZ ELE ACOMPANHAR A ROLAGEM */
+  position: fixed;
   bottom: 30px;
   right: 30px;
-  background-color: var(--cor-primaria-verde);
+  background-color: var(--cor-secundaria-azul); /* 🌟 MUDANÇA AQUI: Agora usa a cor azul do botão! */
   color: white;
   border: none;
-  border-radius: 50%; /* CÍRCULO PERFEITO */
+  border-radius: 50%; 
   width: 55px;
   height: 55px;
-  font-size: 24px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 9999;
@@ -599,7 +589,7 @@ body {
 }
 
 .btn-topo:hover {
-  background-color: #1C8614;
+  background-color: var(--cor-primaria-azul); /* 🌟 Fica azul escuro ao passar o mouse */
   transform: translateY(-5px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
@@ -674,12 +664,10 @@ body {
     display: none;
   }
   
-  /* Deixa o botão redondo flutuante menorzinho no celular */
   .btn-topo {
     bottom: 20px;
     right: 20px;
     width: 45px;
     height: 45px;
-    font-size: 20px;
   }
 }

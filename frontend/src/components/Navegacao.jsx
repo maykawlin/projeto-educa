@@ -81,9 +81,8 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // 🌟 OS SEUS LIMITES PERSONALIZADOS
-    const isMobile = larguraTela <= 750; // Celular
-    const isTablet = larguraTela <= 1300; // Onde a pesquisa desce
+    const isMobile = larguraTela <= 750;
+    const isTablet = larguraTela <= 1300; 
 
     function fazerLogout() {
       localStorage.removeItem("token");
@@ -93,7 +92,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
     return (
       <nav style={{ 
-        position: isMobile ? 'static' : 'sticky', // Rola solto no celular, fixa no PC
+        position: isMobile ? 'static' : 'sticky', 
         top: 0, 
         zIndex: 1000, 
         background: '#fff', 
@@ -102,9 +101,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         display: 'flex', flexDirection: 'column', gap: '10px'
       }}>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+        {/* 🌟 MUDANÇA AQUI: Adicionado flexWrap e gap:20px para os itens nunca se esmagarem */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', width: '100%', gap: '20px' }}>
             
-            {/* LADO ESQUERDO: Logo + Grupo de Botões bem alinhados */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
                 <div 
                     onClick={() => setPaginaAtual("loja")} 
@@ -115,7 +114,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                     <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
                 </div>
 
-                {/* A CAIXA FORTE: Mantém os botões separados sempre por 12px e evita que eles se esmaguem */}
                 {!isMobile && (
                     <div style={{ display: 'flex', gap: '12px' }}>
                         <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
@@ -131,9 +129,8 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 )}
             </div>
 
-            {/* PESQUISA CENTRO: Aparece só em telas grandes (> 1300px) */}
             {!isTablet && (
-                <div style={{ flex: 1, maxWidth: '400px', margin: '0 20px' }}>
+                <div style={{ flex: 1, maxWidth: '400px', margin: '0 20px', minWidth: '250px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <span style={{ position: 'absolute', left: '15px', fontSize: '18px' }}>🔍</span>
                         <input 
@@ -145,7 +142,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
             )}
 
-            {/* LADO DIREITO: Carrinho e Perfil */}
             <div style={{ display: "flex", gap: isMobile ? "8px" : "15px", alignItems: "center", flexShrink: 0 }}>
                 <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isMobile ? '8px 10px' : '8px 15px' }}>
                     🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
@@ -162,7 +158,6 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             </div>
         </div>
 
-        {/* PESQUISA INFERIOR: Aparece quando a tela diminui (<= 1300px) */}
         {isTablet && (
             <div style={{ width: '100%', marginTop: '5px' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>

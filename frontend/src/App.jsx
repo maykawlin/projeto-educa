@@ -30,14 +30,10 @@ function App() {
   });
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
   
-  // 🌟 MEMÓRIAS DE BUSCA E FILTROS
   const [ busca, setBusca ] = useState("");
   const [ carregando, setCarregando ] = useState(false); 
   const [filtrosSelecionados, setFiltrosSelecionados] = useState({
-      nivel: [],
-      disciplina: [],
-      assunto: [], 
-      tipo: []
+      nivel: [], disciplina: [], assunto: [], tipo: []
   });
 
   const [token,setToken] = useState(localStorage.getItem("token"));
@@ -45,10 +41,8 @@ function App() {
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); 
   const [buscaAtiva, setBuscaAtiva] = useState(false);
 
-  // 🌟 NOVO: ESTADO DO BOTÃO DE SUBIR
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
   
-  // O Porteiro
   useEffect(() => {
     const idPendente = localStorage.getItem("carrinhoPendente");
     if (idPendente && token) {
@@ -81,43 +75,30 @@ function App() {
     }
   }, [token]); 
 
-  // Se a pessoa clicou no link do e-mail, forçamos a página para resetar ou ativar conta
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const paginaUrl = urlParams.get('pagina');
 
-    if (paginaUrl === 'resetar') {
-        setPaginaAtual('resetar_senha');
-    } else if (paginaUrl === 'ativar_conta') {
-        setPaginaAtual('ativar_conta');
-    } else if (paginaUrl === 'historico') { 
-        setPaginaAtual('historico');
-    } else if (paginaUrl === 'sucesso') { 
-        setPaginaAtual('sucesso');
-    }
+    if (paginaUrl === 'resetar') setPaginaAtual('resetar_senha');
+    else if (paginaUrl === 'ativar_conta') setPaginaAtual('ativar_conta');
+    else if (paginaUrl === 'historico') setPaginaAtual('historico');
+    else if (paginaUrl === 'sucesso') setPaginaAtual('sucesso');
 
-    if (paginaUrl) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    if (paginaUrl) window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
   }, [carrinho]); 
 
-  // ROLAGEM AUTOMÁTICA PARA O TOPO SEMPRE QUE A PÁGINA MUDAR
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [paginaAtual]);
 
-  // 🌟 NOVO: O OLHEIRO DA ROLAGEM PARA O BOTÃO FLUTUANTE
   useEffect(() => {
     const escutarRolagem = () => {
-      if (window.scrollY > 300) {
-        setMostrarBotaoTopo(true);
-      } else {
-        setMostrarBotaoTopo(false);
-      }
+      if (window.scrollY > 300) setMostrarBotaoTopo(true);
+      else setMostrarBotaoTopo(false);
     };
     window.addEventListener("scroll", escutarRolagem);
     return () => window.removeEventListener("scroll", escutarRolagem);
@@ -144,22 +125,16 @@ function App() {
 
       const respostaPagamento = await axios.post(
                       `https://api.materialdidaticos.com.br/api/pagar/${idDoCarrinho}/`,
-                      {}, 
-                      {headers: {Authorization: `Bearer ${token}`}}
+                      {}, {headers: {Authorization: `Bearer ${token}`}}
       );
 
       const linkDeCheckout = respostaPagamento.data.url_pagamento;
-      if (linkDeCheckout) {
-        window.location.href = linkDeCheckout;
-      } else {
-        alert("Ops! Não conseguimos gerar o link de pagamento. Tente novamente.");
-      }
+      if (linkDeCheckout) window.location.href = linkDeCheckout;
+      else alert("Ops! Não conseguimos gerar o link de pagamento. Tente novamente.");
     } catch (erro) {
       if (erro.response && erro.response.status === 401) {
         alert("Sua sessão expirou. Por favor, faça o login novamente.");
-        localStorage.removeItem("token"); 
-        setToken(null); 
-        setPaginaAtual("login"); 
+        localStorage.removeItem("token"); setToken(null); setPaginaAtual("login"); 
       } else {
         alert("Ops! Ocorreu um erro ao processar seu carrinho. Tente novamente.");
       }
@@ -168,25 +143,17 @@ function App() {
 
   const total = carrinho.reduce((soma, item) => soma + Number(item.preco), 0);
 
-  // =================================================================
-  // 🌟 MÓDULO INTELIGENTE DE FILTRAGEM 
-  // =================================================================
   function alterarBusca(texto) {
       setBusca(texto);
-      if (texto !== "") {
-          setFiltrosSelecionados({ nivel: [], disciplina: [], assunto: [], tipo: [] });
-      }
+      if (texto !== "") setFiltrosSelecionados({ nivel: [], disciplina: [], assunto: [], tipo: [] });
   }
 
   function alternarFiltro(categoria, valor) {
       setBusca(""); 
       setFiltrosSelecionados(memoriaAnterior => {
           const listaAtual = memoriaAnterior[categoria];
-          if (listaAtual.includes(valor)) {
-              return { ...memoriaAnterior, [categoria]: [] }; 
-          } else {
-              return { ...memoriaAnterior, [categoria]: [valor] }; 
-          }
+          if (listaAtual.includes(valor)) return { ...memoriaAnterior, [categoria]: [] }; 
+          else return { ...memoriaAnterior, [categoria]: [valor] }; 
       });
   }
 
@@ -197,7 +164,6 @@ function App() {
 
   const carregarProdutos = () => {
     let urlBase = 'https://api.materialdidaticos.com.br/api/produtos/?';
-    
     if (busca) urlBase += `search=${busca}&`;
     if (filtrosSelecionados.disciplina.length > 0) urlBase += `disciplina=${filtrosSelecionados.disciplina.join(',')}&`;
     if (filtrosSelecionados.tipo.length > 0) urlBase += `tipo=${filtrosSelecionados.tipo.join(',')}&`;
@@ -206,13 +172,9 @@ function App() {
     if (filtrosSelecionados.nivel.length > 0) {
         let niveisExatos = [];
         filtrosSelecionados.nivel.forEach(n => {
-            if (n === "Ensino Médio") {
-                niveisExatos.push("1º Ano EM", "2º Ano EM", "3º Ano EM");
-            } else if (n === "Ensino Fundamental II") {
-                niveisExatos.push("6º Ano EF", "7º Ano EF", "8º Ano EF", "9º Ano EF");
-            } else {
-                niveisExatos.push(n); 
-            }
+            if (n === "Ensino Médio") niveisExatos.push("1º Ano EM", "2º Ano EM", "3º Ano EM");
+            else if (n === "Ensino Fundamental II") niveisExatos.push("6º Ano EF", "7º Ano EF", "8º Ano EF", "9º Ano EF");
+            else niveisExatos.push(n); 
         });
         urlBase += `nivel=${niveisExatos.join(',')}&`;
     }
@@ -220,9 +182,7 @@ function App() {
   };
 
   useEffect(() => {
-    const cronometro = setTimeout(() => {
-      carregarProdutos();
-    }, 800); 
+    const cronometro = setTimeout(() => { carregarProdutos(); }, 800); 
     return () => clearTimeout(cronometro);
   }, [busca, filtrosSelecionados]); 
 
@@ -236,18 +196,14 @@ function App() {
         setLinkAnterior(response.data.previous || null);
         setCarregando(false); 
       })
-      .catch(erro => {
-        setCarregando(false); 
-      });
+      .catch(erro => { setCarregando(false); });
   }, [urlProdutos])
 
   function adicionarAoCarrinho(produtoClicado, origem='vitrine') {
     const produtoComOrigem = { ...produtoClicado, origem_venda: origem };
     setCarrinho([...carrinho, produtoComOrigem]);
     setUltimoProdutoAdicionado(produtoComOrigem);
-    setTimeout(() => {
-      setUltimoProdutoAdicionado(null);
-    }, 3000);
+    setTimeout(() => { setUltimoProdutoAdicionado(null); }, 3000);
   }
 
   async function buscarHistorico() {
@@ -260,9 +216,7 @@ function App() {
     } catch(erro) {
       if (erro.response && erro.response.status === 401) {
         alert("Sua sessão expirou. Por favor, faça o login novamente.");
-        localStorage.removeItem("token"); 
-        setToken(null); 
-        setPaginaAtual("login"); 
+        localStorage.removeItem("token"); setToken(null); setPaginaAtual("login"); 
       } else {
         alert("Ops! Ocorreu um erro ao buscar seu histórico. Tente novamente.");
       }
@@ -272,75 +226,44 @@ function App() {
   return (
     <div>
       <Navegacao
-        setPaginaAtual={setPaginaAtual}
-        tamanhoCarrinho={carrinho.length}
-        token={token}
-        setToken={setToken}
-        buscarHistorico={buscarHistorico}
-        abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
-        busca={busca}               
-        alterarBusca={alterarBusca} 
-        setBuscaAtiva={setBuscaAtiva}
+        setPaginaAtual={setPaginaAtual} tamanhoCarrinho={carrinho.length} token={token} setToken={setToken}
+        buscarHistorico={buscarHistorico} abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
+        busca={busca} alterarBusca={alterarBusca} setBuscaAtiva={setBuscaAtiva}
       />
       
       {ultimoProdutoAdicionado && (
-        <NotificacaoCarrinho 
-            produto={ultimoProdutoAdicionado} 
-            abrirCarrinho={() => setMiniCarrinhoAberto(true)} 
-        />
+        <NotificacaoCarrinho produto={ultimoProdutoAdicionado} abrirCarrinho={() => setMiniCarrinhoAberto(true)} />
       )}
+
       <div style={{ padding: '20px'}}>
         { paginaAtual === "loja" ? (
           <Vitrine
-            produtos={produtos}
-            busca={busca}
-            alterarBusca={alterarBusca}
-            adicionarAoCarrinho={adicionarAoCarrinho}
-            linkProxima={linkProxima}          
-            linkAnterior={linkAnterior}        
-            setUrlProdutos={setUrlProdutos}
-            filtrosSelecionados={filtrosSelecionados}
-            alternarFiltro={alternarFiltro}
-            limparFiltros={limparFiltros}
-            carregando={carregando}
-            buscaAtiva={buscaAtiva}
+            produtos={produtos} busca={busca} alterarBusca={alterarBusca} adicionarAoCarrinho={adicionarAoCarrinho}
+            linkProxima={linkProxima} linkAnterior={linkAnterior} setUrlProdutos={setUrlProdutos}
+            filtrosSelecionados={filtrosSelecionados} alternarFiltro={alternarFiltro} limparFiltros={limparFiltros}
+            carregando={carregando} buscaAtiva={buscaAtiva}
           />
-        ) : 
-        paginaAtual === "login" ? (
+        ) : paginaAtual === "login" ? (
           <Login setPaginaAtual={setPaginaAtual} setToken={setToken}/>
-        ) : 
-        paginaAtual === "cadastro" ? (
+        ) : paginaAtual === "cadastro" ? (
           <Cadastro setPaginaAtual={setPaginaAtual} />
-        ) :
-        paginaAtual === "esqueci_senha" ? (
+        ) : paginaAtual === "esqueci_senha" ? (
           <EsqueciSenha setPaginaAtual={setPaginaAtual} />
-        ) :
-        paginaAtual === "resetar_senha" ? (
+        ) : paginaAtual === "resetar_senha" ? (
           <ResetarSenha setPaginaAtual={setPaginaAtual} />
-        ) :
-        paginaAtual === "ativar_conta" ? (
+        ) : paginaAtual === "ativar_conta" ? (
           <AtivarConta setPaginaAtual={setPaginaAtual} />
-        ) :
-        paginaAtual === "historico" ? (
-          <Historico 
-            historicoCompras={historicoCompras} 
-            setPaginaAtual={setPaginaAtual} 
-            token={token}
-          />
-        ) :
-        paginaAtual === "perfil" ? (
+        ) : paginaAtual === "historico" ? (
+          <Historico historicoCompras={historicoCompras} setPaginaAtual={setPaginaAtual} token={token} />
+        ) : paginaAtual === "perfil" ? (
           <Perfil token={token} />
-        ) : 
-        paginaAtual === "quem_somos" ? (
+        ) : paginaAtual === "quem_somos" ? (
           <QuemSomos setPaginaAtual={setPaginaAtual} />
-        ) : 
-        paginaAtual === "termos" ? (
+        ) : paginaAtual === "termos" ? (
           <TermosDeUso setPaginaAtual={setPaginaAtual} />
-        ) : 
-        paginaAtual === "como_funciona" ? (
+        ) : paginaAtual === "como_funciona" ? (
           <ComoFunciona setPaginaAtual={setPaginaAtual} />
-        ) :
-        paginaAtual === "sucesso" ? (  
+        ) : paginaAtual === "sucesso" ? (  
           <Sucesso setPaginaAtual={setPaginaAtual} />
         ) : (
           <div>
@@ -392,23 +315,16 @@ function App() {
 
       <div style={{ position: 'relative', zIndex: 9999 }}>
         {miniCarrinhoAberto && (
-          <MiniCarrinho 
-            carrinho={carrinho} 
-            removerDoCarrinho={removerDoCarrinho} 
-            fechar={() => setMiniCarrinhoAberto(false)} 
-            irParaCheckout={() => setPaginaAtual("carrinho")} 
-          />
+          <MiniCarrinho carrinho={carrinho} removerDoCarrinho={removerDoCarrinho} fechar={() => setMiniCarrinhoAberto(false)} irParaCheckout={() => setPaginaAtual("carrinho")} />
         )}
       </div>
 
-      {/* 🌟 AQUI ESTÁ O BOTÃO FLUTUANTE QUE SÓ APARECE QUANDO VOCÊ ROLA PARA BAIXO */}
+      {/* 🌟 MUDANÇA AQUI: Ícone SVG profissional em vez de emoji */}
       {mostrarBotaoTopo && (
-        <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-            className="btn-topo"
-            title="Voltar ao topo"
-        >
-            ⬆️
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="btn-topo" title="Voltar ao topo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
         </button>
       )}
 
