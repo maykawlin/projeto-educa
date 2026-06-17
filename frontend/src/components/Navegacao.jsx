@@ -101,13 +101,13 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         display: 'flex', flexDirection: 'column', gap: '10px'
       }}>
 
-        {/* 🌟 MUDANÇA AQUI: Adicionado flexWrap e gap:20px para os itens nunca se esmagarem */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', width: '100%', gap: '20px' }}>
+        {/* 🌟 MUDANÇA AQUI: Sem 'flexWrap: wrap'. Todo mundo preso na mesma linha! */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '15px' }}>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexShrink: 0 }}>
                 <div 
                     onClick={() => setPaginaAtual("loja")} 
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s', flexShrink: 0 }}
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }}
                     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
@@ -115,7 +115,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
 
                 {!isMobile && (
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
                         <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
                             Página Inicial
                         </button>
@@ -129,8 +129,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 )}
             </div>
 
+            {/* Pesquisa permite flexibilidade (flex: 1) para encolher se necessário sem quebrar a linha */}
             {!isTablet && (
-                <div style={{ flex: 1, maxWidth: '400px', margin: '0 20px', minWidth: '250px' }}>
+                <div style={{ flex: 1, maxWidth: '400px', margin: '0 10px', minWidth: '150px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <span style={{ position: 'absolute', left: '15px', fontSize: '18px' }}>🔍</span>
                         <input 
