@@ -45,6 +45,7 @@ function App() {
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); 
 
   const [buscaAtiva, setBuscaAtiva] = useState(false);
+  const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
   
   // O Porteiro
   useEffect(() => {
@@ -114,6 +115,19 @@ function App() {
     const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
     setCarrinho(novaLista);
   }
+
+  // CONTROLA SE O BOTÃO DE SUBIR APARECE OU NÃO
+  useEffect(() => {
+    const escutarRolagem = () => {
+      if (window.scrollY > 300) {
+        setMostrarBotaoTopo(true);
+      } else {
+        setMostrarBotaoTopo(false);
+      }
+    };
+    window.addEventListener("scroll", escutarRolagem);
+    return () => window.removeEventListener("scroll", escutarRolagem);
+  }, []);
 
   async function finalizarCompra() {
     if (!token) {
@@ -388,6 +402,18 @@ function App() {
           />
         )}
       </div>
+      
+      {/* O BOTÃO FLUTUANTE */}
+      {mostrarBotaoTopo && (
+        <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+            className="btn-topo"
+            title="Voltar ao topo"
+        >
+            ⬆️
+        </button>
+      )}
+
       <Footer setPaginaAtual={setPaginaAtual}/>
     </div>
   );

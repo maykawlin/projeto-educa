@@ -113,6 +113,21 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                     <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
                 </div>
 
+
+                {!isMobile && (
+                    <>
+                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                            Página Inicial
+                        </button>
+                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                            Quem Somos
+                        </button>
+                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                            Como Funciona
+                        </button>
+                    </>
+                )}
+
                 {/* Os links centrais somem em telas médias/celulares (já existem no MenuUsuario) */}
                 {!isTablet && (
                     <>
