@@ -73,7 +73,6 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
 // ==========================================
 export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, buscarHistorico, abrirMiniCarrinho, busca, alterarBusca, setBuscaAtiva }) {
     
-    // 🌟 3 ESTÁGIOS DE RESPONSIVIDADE
     const [larguraTela, setLarguraTela] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -82,8 +81,9 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const isMobile = larguraTela <= 768;
-    const isTablet = larguraTela <= 1300; // O Ponto exato onde os botões começam a espremer a pesquisa
+    // 🌟 OS SEUS LIMITES PERSONALIZADOS
+    const isMobile = larguraTela <= 750; // Celular
+    const isTablet = larguraTela <= 1300; // Onde a pesquisa desce
 
     function fazerLogout() {
       localStorage.removeItem("token");
@@ -93,13 +93,15 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
     return (
       <nav style={{ 
-        position: 'sticky', top: 0, zIndex: 1000, background: '#fff', 
+        position: isMobile ? 'static' : 'sticky', // Rola solto no celular, fixa no PC
+        top: 0, 
+        zIndex: 1000, 
+        background: '#fff', 
         padding: isMobile ? '10px' : '10px 20px', 
         boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
         display: 'flex', flexDirection: 'column', gap: '10px'
       }}>
 
-        {/* ANDAR SUPERIOR: Logo + Botões */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -109,27 +111,11 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
-                    {/* A logo fica um pouquinho menor no tablet para dar mais espaço */}
                     <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
                 </div>
 
-
+                {/* BOTÕES NAVEGAÇÃO: Aparecem sempre, a menos que seja celular (isMobile) */}
                 {!isMobile && (
-                    <>
-                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
-                            Página Inicial
-                        </button>
-                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px' }}>
-                            Quem Somos
-                        </button>
-                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px' }}>
-                            Como Funciona
-                        </button>
-                    </>
-                )}
-
-                {/* Os links centrais somem em telas médias/celulares (já existem no MenuUsuario) */}
-                {!isTablet && (
                     <>
                         <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
                             Página Inicial
@@ -144,7 +130,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 )}
             </div>
 
-            {/* BARRA DE PESQUISA (Apenas para telas gigantes - Fica no centro) */}
+            {/* PESQUISA CENTRO: Aparece só em telas grandes (> 1300px) */}
             {!isTablet && (
                 <div style={{ flex: 1, maxWidth: '500px', margin: '0 20px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -174,7 +160,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
             </div>
         </div>
 
-        {/* ANDAR INFERIOR: Barra de Pesquisa (Aparece embaixo em Tablets e Celulares) */}
+        {/* PESQUISA INFERIOR: Aparece quando a tela diminui (<= 1300px) */}
         {isTablet && (
             <div style={{ width: '100%', marginTop: '5px' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
