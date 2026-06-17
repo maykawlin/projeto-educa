@@ -104,35 +104,36 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            {/* LADO ESQUERDO: Logo + Grupo de Botões bem alinhados */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
                 <div 
                     onClick={() => setPaginaAtual("loja")} 
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }}
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s', flexShrink: 0 }}
                     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
                     <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
                 </div>
 
-                {/* BOTÕES NAVEGAÇÃO: Aparecem sempre, a menos que seja celular (isMobile) */}
+                {/* A CAIXA FORTE: Mantém os botões separados sempre por 12px e evita que eles se esmaguem */}
                 {!isMobile && (
-                    <>
-                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
                             Página Inicial
                         </button>
-                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
                             Quem Somos
                         </button>
-                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px' }}>
+                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
                             Como Funciona
                         </button>
-                    </>
+                    </div>
                 )}
             </div>
 
             {/* PESQUISA CENTRO: Aparece só em telas grandes (> 1300px) */}
             {!isTablet && (
-                <div style={{ flex: 1, maxWidth: '500px', margin: '0 20px' }}>
+                <div style={{ flex: 1, maxWidth: '400px', margin: '0 20px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <span style={{ position: 'absolute', left: '15px', fontSize: '18px' }}>🔍</span>
                         <input 
@@ -144,7 +145,8 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
             )}
 
-            <div style={{ display: "flex", gap: isMobile ? "8px" : "15px", alignItems: "center" }}>
+            {/* LADO DIREITO: Carrinho e Perfil */}
+            <div style={{ display: "flex", gap: isMobile ? "8px" : "15px", alignItems: "center", flexShrink: 0 }}>
                 <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isMobile ? '8px 10px' : '8px 15px' }}>
                     🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
                 </button>
@@ -154,7 +156,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 ) : (
                     <>
                         <button onClick={() => setPaginaAtual("login")} className="btn-secundario" style={{ padding: isMobile ? '8px 10px' : '8px 15px' }}>Login</button>
-                        {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario">Criar Conta</button>}
+                        {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario" style={{ whiteSpace: 'nowrap' }}>Criar Conta</button>}
                     </>
                 )}
             </div>

@@ -30,7 +30,7 @@ function App() {
   });
   const [ historicoCompras, setHistoricoCompras ] = useState([]);
   
-  // 🌟 MEMÓRIAS DE BUSCA, FILTROS E CARREGAMENTO
+  // 🌟 MEMÓRIAS DE BUSCA E FILTROS
   const [ busca, setBusca ] = useState("");
   const [ carregando, setCarregando ] = useState(false); 
   const [filtrosSelecionados, setFiltrosSelecionados] = useState({
@@ -43,8 +43,9 @@ function App() {
   const [token,setToken] = useState(localStorage.getItem("token"));
   const [ultimoProdutoAdicionado, setUltimoProdutoAdicionado] = useState(null); 
   const [miniCarrinhoAberto, setMiniCarrinhoAberto] = useState(false); 
-
   const [buscaAtiva, setBuscaAtiva] = useState(false);
+
+  // 🌟 NOVO: ESTADO DO BOTÃO DE SUBIR
   const [mostrarBotaoTopo, setMostrarBotaoTopo] = useState(false);
   
   // O Porteiro
@@ -82,7 +83,6 @@ function App() {
 
   // Se a pessoa clicou no link do e-mail, forçamos a página para resetar ou ativar conta
   useEffect(() => {
-
     const urlParams = new URLSearchParams(window.location.search);
     const paginaUrl = urlParams.get('pagina');
 
@@ -99,7 +99,6 @@ function App() {
     if (paginaUrl) {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
-    
   }, []);
 
   useEffect(() => {
@@ -111,12 +110,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [paginaAtual]);
 
-  function removerDoCarrinho(indexParaRemover) {
-    const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
-    setCarrinho(novaLista);
-  }
-
-  // CONTROLA SE O BOTÃO DE SUBIR APARECE OU NÃO
+  // 🌟 NOVO: O OLHEIRO DA ROLAGEM PARA O BOTÃO FLUTUANTE
   useEffect(() => {
     const escutarRolagem = () => {
       if (window.scrollY > 300) {
@@ -128,6 +122,11 @@ function App() {
     window.addEventListener("scroll", escutarRolagem);
     return () => window.removeEventListener("scroll", escutarRolagem);
   }, []);
+
+  function removerDoCarrinho(indexParaRemover) {
+    const novaLista = carrinho.filter((item, index) => index !== indexParaRemover);
+    setCarrinho(novaLista);
+  }
 
   async function finalizarCompra() {
     if (!token) {
@@ -172,7 +171,6 @@ function App() {
   // =================================================================
   // 🌟 MÓDULO INTELIGENTE DE FILTRAGEM 
   // =================================================================
-  
   function alterarBusca(texto) {
       setBusca(texto);
       if (texto !== "") {
@@ -213,7 +211,7 @@ function App() {
             } else if (n === "Ensino Fundamental II") {
                 niveisExatos.push("6º Ano EF", "7º Ano EF", "8º Ano EF", "9º Ano EF");
             } else {
-                niveisExatos.push(n); // Isso garante que cliques específicos (ex: "6º Ano EF") também funcionem
+                niveisExatos.push(n); 
             }
         });
         urlBase += `nivel=${niveisExatos.join(',')}&`;
@@ -284,7 +282,6 @@ function App() {
         alterarBusca={alterarBusca} 
         setBuscaAtiva={setBuscaAtiva}
       />
-      
       
       {ultimoProdutoAdicionado && (
         <NotificacaoCarrinho 
@@ -392,6 +389,7 @@ function App() {
           </div> 
         )}   
       </div>
+
       <div style={{ position: 'relative', zIndex: 9999 }}>
         {miniCarrinhoAberto && (
           <MiniCarrinho 
@@ -402,8 +400,8 @@ function App() {
           />
         )}
       </div>
-      
-      {/* O BOTÃO FLUTUANTE */}
+
+      {/* 🌟 AQUI ESTÁ O BOTÃO FLUTUANTE QUE SÓ APARECE QUANDO VOCÊ ROLA PARA BAIXO */}
       {mostrarBotaoTopo && (
         <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
