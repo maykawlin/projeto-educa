@@ -4,7 +4,7 @@ import logo from '../assets/logo_em_cores_v3.png';
 // ==========================================
 // 🌟 COMPONENTE DO MENU FLUTUANTE (Dropdown)
 // ==========================================
-function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
+function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout, isCompact }) {
     const [menuAberto, setMenuAberto] = useState(false);
     const menuRef = useRef(null);
 
@@ -28,7 +28,11 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout }) {
             <button
                 onClick={() => setMenuAberto(!menuAberto)}
                 className="btn-secundario"
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 15px' }}
+                style={{ 
+                    display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', 
+                    padding: isCompact ? '6px 10px' : '8px 15px', 
+                    fontSize: isCompact ? '13px' : '15px' 
+                }}
             >
                 👤 <span className="texto-oculto-mobile">Olá, Professor(a)</span> {menuAberto ? '▴' : '▾'}
             </button>
@@ -83,6 +87,7 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
 
     const isMobile = larguraTela <= 750;
     const isTablet = larguraTela <= 1300; 
+    const isCompact = larguraTela <= 980; // 🌟 A zona de perigo onde os botões começariam a esmagar
 
     function fazerLogout() {
       localStorage.removeItem("token");
@@ -98,38 +103,37 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
         background: '#fff', 
         padding: isMobile ? '10px' : '10px 20px', 
         boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-        display: 'flex', flexDirection: 'column', gap: '10px'
+        display: 'flex', flexDirection: 'column', gap: '10px',
+        boxSizing: 'border-box' // 🌟 TRAVA DE SEGURANÇA: Impede os itens de vazarem da tela
       }}>
 
-        {/* 🌟 MUDANÇA AQUI: Sem 'flexWrap: wrap'. Todo mundo preso na mesma linha! */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '15px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: isCompact ? '5px' : '15px' }}>
             
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: isCompact ? '10px' : '20px', flexShrink: 0 }}>
                 <div 
                     onClick={() => setPaginaAtual("loja")} 
                     style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'transform 0.2s' }}
                     onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                 >
-                    <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '65px' : '80px', width: 'auto' }} />
+                    <img src={logo} alt="Logo Didáticos" style={{ height: isTablet ? '60px' : '80px', width: 'auto' }} />
                 </div>
 
                 {!isMobile && (
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
+                    <div style={{ display: 'flex', gap: isCompact ? '5px' : '10px' }}>
+                        <button onClick={() => setPaginaAtual("loja")} className="btn-secundario" style={{ padding: isCompact ? '6px 8px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>
                             Página Inicial
                         </button>
-                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
+                        <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: isCompact ? '6px 8px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>
                             Quem Somos
                         </button>
-                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '8px 15px', whiteSpace: 'nowrap' }}>
+                        <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: isCompact ? '6px 8px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>
                             Como Funciona
                         </button>
                     </div>
                 )}
             </div>
 
-            {/* Pesquisa permite flexibilidade (flex: 1) para encolher se necessário sem quebrar a linha */}
             {!isTablet && (
                 <div style={{ flex: 1, maxWidth: '400px', margin: '0 10px', minWidth: '150px' }}>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -143,17 +147,17 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
             )}
 
-            <div style={{ display: "flex", gap: isMobile ? "8px" : "15px", alignItems: "center", flexShrink: 0 }}>
-                <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isMobile ? '8px 10px' : '8px 15px' }}>
+            <div style={{ display: "flex", gap: isCompact ? "5px" : "15px", alignItems: "center", flexShrink: 0 }}>
+                <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>
                     🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
                 </button>
 
                 {token ? (
-                    <MenuUsuario setPaginaAtual={setPaginaAtual} buscarHistorico={buscarHistorico} fazerLogout={fazerLogout} />
+                    <MenuUsuario setPaginaAtual={setPaginaAtual} buscarHistorico={buscarHistorico} fazerLogout={fazerLogout} isCompact={isCompact} />
                 ) : (
                     <>
-                        <button onClick={() => setPaginaAtual("login")} className="btn-secundario" style={{ padding: isMobile ? '8px 10px' : '8px 15px' }}>Login</button>
-                        {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario" style={{ whiteSpace: 'nowrap' }}>Criar Conta</button>}
+                        <button onClick={() => setPaginaAtual("login")} className="btn-secundario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>Login</button>
+                        {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>Criar Conta</button>}
                     </>
                 )}
             </div>
