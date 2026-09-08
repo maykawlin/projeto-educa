@@ -122,7 +122,7 @@ export function QuemSomos({ setPaginaAtual }) {
                     <h3 style={{ margin: '15px 0 5px 0' }}>Maycon Kawlin</h3>
                     <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Fundador & Desenvolvedor</span>
                     <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
-                        Idealizador da plataforma e responsável por garantir que a sua experiência de compra seja rápida e segura.
+                        Desenvolvedor da plataforma e responsável por garantir que a sua experiência de compra seja rápida e segura.
                     </p>
                 </div>
 
