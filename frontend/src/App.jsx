@@ -230,21 +230,6 @@ function App() {
     }
   }
 
-  async function buscarHistorico() {
-    try { 
-      const resposta = await axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/', { headers: { Authorization: `Bearer ${token}` } } ); 
-      setHistoricoCompras(resposta.data); 
-      setPaginaAtual("historico"); 
-    } catch(erro) { 
-      if (erro.response && erro.response.status === 401) { 
-        alert("Sua sessão expirou. Por favor, faça o login novamente."); 
-        localStorage.removeItem("token"); setToken(null); setPaginaAtual("login"); 
-      } else { 
-        alert("Ops! Ocorreu um erro ao buscar seu histórico. Tente novamente."); 
-      } 
-    } 
-  }
-
   // Gatilho Automático: Se o usuário der F5 na página de Histórico, busca os dados novamente!
   useEffect(() => {
     if (paginaAtual === "historico" && token) {
@@ -259,7 +244,7 @@ function App() {
       });
     }
   }, [paginaAtual, token]);
-  // 👆 FIM DO NOVO BLOCO 👆
+
 
   return ( 
     <div> 
