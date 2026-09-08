@@ -19,7 +19,10 @@ import { Sucesso } from "./components/Sucesso";
 import { ComoFunciona } from "./components/ComoFunciona";
 
 function App() {
-  const [ paginaAtual, setPaginaAtual ] = useState("loja");
+  const [ paginaAtual, setPaginaAtual ] = useState(() => {
+    const paginaSalva = sessionStorage.getItem('paginaSalva');
+    return paginaSalva ? paginaSalva : "loja";
+  });
   const [ produtos, setProdutos ] = useState([]);
   const [ urlProdutos, setUrlProdutos ] = useState('https://api.materialdidaticos.com.br/api/produtos/');
   const [ linkProxima, setLinkProxima ] = useState(null);
@@ -90,6 +93,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
   }, [carrinho]); 
+
+  useEffect(() => {
+    sessionStorage.setItem('paginaSalva', paginaAtual);
+}, [paginaAtual]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
