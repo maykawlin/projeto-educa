@@ -213,22 +213,7 @@ function App() {
     setTimeout(() => { setUltimoProdutoAdicionado(null); }, 3000);
   }
 
-  async function buscarHistorico() {
-    try {
-      const resposta = await axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/',
-        { headers: { Authorization: `Bearer ${token}` } } 
-      );
-      setHistoricoCompras(resposta.data);
-      setPaginaAtual("historico");
-    } catch(erro) {
-      if (erro.response && erro.response.status === 401) {
-        alert("Sua sessão expirou. Por favor, faça o login novamente.");
-        localStorage.removeItem("token"); setToken(null); setPaginaAtual("login"); 
-      } else {
-        alert("Ops! Ocorreu um erro ao buscar seu histórico. Tente novamente.");
-      }
-    }
-  }
+  
 
 
   return ( 
@@ -239,7 +224,6 @@ function App() {
     <div>
       <Navegacao
         setPaginaAtual={setPaginaAtual} tamanhoCarrinho={carrinho.length} token={token} setToken={setToken}
-        buscarHistorico={buscarHistorico} abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
         busca={busca} alterarBusca={alterarBusca} setBuscaAtiva={setBuscaAtiva}
       />
       

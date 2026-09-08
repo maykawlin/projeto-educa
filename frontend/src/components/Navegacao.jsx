@@ -47,7 +47,7 @@ function MenuUsuario({ setPaginaAtual, buscarHistorico, fazerLogout, isCompact }
                     <button onClick={() => { setPaginaAtual("loja"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         🏠 Página Inicial
                     </button>
-                    <button onClick={() => { buscarHistorico(); setMenuAberto(false); }} style={estiloOpcaoMenu}>
+                    <button onClick={() => { setPaginaAtual("historico"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
                         📦 Meus Pedidos
                     </button>
                     <button onClick={() => { setPaginaAtual("quem_somos"); setMenuAberto(false); }} style={estiloOpcaoMenu}>
