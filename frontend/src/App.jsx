@@ -281,7 +281,7 @@ function App() {
         ) : paginaAtual === "ativar_conta" ? (
           <AtivarConta setPaginaAtual={setPaginaAtual} />
         ) : paginaAtual === "historico" ? (
-          <Historico historicoCompras={historicoCompras} setPaginaAtual={setPaginaAtual} token={token} />
+          <Historico setPaginaAtual={setPaginaAtual} token={token} />
         ) : paginaAtual === "perfil" ? (
           <Perfil token={token} />
         ) : paginaAtual === "quem_somos" ? (
