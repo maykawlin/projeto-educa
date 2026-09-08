@@ -20,6 +20,8 @@ export function Historico({ setPaginaAtual, token }) {
                 console.error("Erro ao carregar os pedidos:", erro);
                 setCarregando(false);
             });
+        } else {
+            setCarregando(false);
         }
     }, [token]);
 
@@ -51,7 +53,7 @@ export function Historico({ setPaginaAtual, token }) {
                     <p style={{ color: 'var(--cor-texto-secundario)' }}>Conectando ao servidor seguro, só um instante.</p>
                 </div>
             ) : 
-            /* 2. SE NÃO TIVER NADA: Mostra que não tem pedidos */
+            /* 2. SE A LISTA DE FATO ESTIVER VAZIA */
             pedidos.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                     <p style={{ fontSize: '18px', color: 'var(--cor-texto-secundario)' }}>Você ainda não possui pedidos confirmados.</p>
