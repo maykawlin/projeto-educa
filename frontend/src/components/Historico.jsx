@@ -1,24 +1,40 @@
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export function Historico({ historicoCompras, setPaginaAtual, token }) {
+export function Historico({ setPaginaAtual, token }) {
+    // Memórias exclusivas e autônomas desta página!
+    const [pedidos, setPedidos] = useState([]);
+    const [carregando, setCarregando] = useState(true);
 
-    
-    // Função atualizada para usar Links Seguros da Nuvem
+    // Assim que a página abre (ou no F5), ela mesma busca os dados!
+    useEffect(() => {
+        if (token) {
+            axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(resposta => {
+                setPedidos(resposta.data);
+                setCarregando(false);
+            })
+            .catch(erro => {
+                console.error("Erro ao carregar os pedidos:", erro);
+                setCarregando(false);
+            });
+        }
+    }, [token]);
+
     async function fazerDownload(itemId) {
         try {
-        // 1. Pede o Link VIP para o Django
-        const resposta = await axios.get(`https://api.materialdidaticos.com.br/api/baixar-material/${itemId}/`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+            const resposta = await axios.get(`https://api.materialdidaticos.com.br/api/baixar-material/${itemId}/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        // 2. O Django devolveu o link? Então abre ele em uma nova aba para iniciar o download!
-        if (resposta.data.url_download) {
-            window.open(resposta.data.url_download, '_blank');
-        }
-
+            if (resposta.data.url_download) {
+                window.open(resposta.data.url_download, '_blank');
+            }
         } catch (erro) {
-        console.log("Erro ao baixar:", erro);
-        alert("Ops! Ocorreu um erro ao gerar seu link de download. Tente novamente.");
+            console.log("Erro ao baixar:", erro);
+            alert("Ops! Ocorreu um erro ao gerar seu link de download. Tente novamente.");
         }
     }   
 
@@ -28,15 +44,22 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
                 📚 Meus Materiais (Histórico de Compras)
             </h2>
 
-            {/* Se a lista estiver vazia, mostramos uma mensagem amigável */}
-            {historicoCompras.length === 0 ? (
+            {/* 1. SE ESTIVER CARREGANDO: Mostra a mensagem de espera */}
+            {carregando ? (
+                <div style={{ textAlign: 'center', padding: '60px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                    <h3 style={{ color: 'var(--cor-primaria-azul)' }}>⏳ Buscando seus materiais...</h3>
+                    <p style={{ color: 'var(--cor-texto-secundario)' }}>Conectando ao servidor seguro, só um instante.</p>
+                </div>
+            ) : 
+            /* 2. SE NÃO TIVER NADA: Mostra que não tem pedidos */
+            pedidos.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                     <p style={{ fontSize: '18px', color: 'var(--cor-texto-secundario)' }}>Você ainda não possui pedidos confirmados.</p>
                 </div>
             ) : (
-                // Se tiver pedidos, fazemos um loop para desenhar cada um
+            /* 3. SE TUDO DEU CERTO: Mostra os pedidos */
                 <div>
-                    {historicoCompras.map((pedido) => (
+                    {pedidos.map((pedido) => (
                         <div key={pedido.id} style={{ border: '1px solid var(--cor-borda)', borderRadius: '8px', padding: '20px', marginBottom: '25px', backgroundColor: '#f8f9fa' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                 <h3 style={{ margin: 0, color: 'var(--cor-texto-principal)' }}>
@@ -47,7 +70,6 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
                                 </span>
                             </div>
                             
-                            {/* Aqui nós fazemos um SEGUNDO loop para mostrar os itens dentro deste pedido! */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                                 {pedido.itens.map((item) => (
                                     <div key={item.id} style={{ 
@@ -57,11 +79,10 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
                                         backgroundColor: 'white',
                                         display: 'flex', 
                                         alignItems: 'center', 
-                                        justifyContent: 'space-between', /* Empurra o texto para a esquerda e o botão para a direita */
+                                        justifyContent: 'space-between',
                                         boxShadow: 'var(--sombra-suave)'
                                     }}>
                                         
-                                        {/* Informações do Produto */}
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                             <span style={{ fontSize: '16px', fontWeight: 'bold', color: 'var(--cor-texto-principal)' }}>
                                                 📄 {item.produto_titulo}
@@ -71,10 +92,9 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
                                             </span>
                                         </div>
                                     
-                                        {/* Só mostra o botão SE o produto tiver um arquivo */}
                                         {item.produto_arquivo ? (
                                             <button 
-                                                onClick={() => fazerDownload(item.id, item.produto_titulo)}
+                                                onClick={() => fazerDownload(item.id)}
                                                 className="btn-primario" 
                                                 style={{ border: 'none', cursor: 'pointer', padding: '10px 20px', fontSize: '15px' }}>
                                                 ⬇️ Baixar Material
@@ -98,6 +118,4 @@ export function Historico({ historicoCompras, setPaginaAtual, token }) {
             </button>
         </div>
     );
-
-    
 }
