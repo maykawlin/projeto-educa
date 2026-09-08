@@ -230,21 +230,6 @@ function App() {
     }
   }
 
-  // Gatilho Automático: Se o usuário der F5 na página de Histórico, busca os dados novamente!
-  useEffect(() => {
-    if (paginaAtual === "historico" && token) {
-      axios.get('https://api.materialdidaticos.com.br/api/carrinho/historico/', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(resposta => {
-        setHistoricoCompras(resposta.data);
-      })
-      .catch(erro => {
-        console.error("Erro ao restaurar o histórico no refresh:", erro);
-      });
-    }
-  }, [paginaAtual, token]);
-
 
   return ( 
     <div> 
