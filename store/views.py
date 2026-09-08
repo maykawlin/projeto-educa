@@ -131,12 +131,13 @@ class CarrinhoViewSet(viewsets.ModelViewSet):
     # methods=['get']: O React só vai "pedir" os dados para ler, não vai enviar ou alterar nada.
     @action(detail=False, methods=['get'])
     def historico(self, request):
-
-        # 1. Busca no banco de dados: pega todos os carrinhos DO USUÁRIO que estão CONFIRMADOS
-        carrinhos_pagos = Carrinho.objects.filter(usuario=request.user, confirmado=True)
+        # 1. Busca no banco de dados com NITRO (prefetch_related) para evitar a lentidão do N+1
+        carrinhos_pagos = Carrinho.objects.filter(
+            usuario=request.user, 
+            confirmado=True
+        ).prefetch_related('itemcarrinho_set__produto')
 
         # 2. Chama o Tradutor (Serializer) para transformar essa lista do banco em JSON
-        # O 'many=True' avisa o tradutor que isso é uma lista com vários itens, e não um só.
         dados_em_json = self.get_serializer(carrinhos_pagos, many=True)
 
         # 3. Entrega o arquivo em JSON para o react!
