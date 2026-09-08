@@ -115,6 +115,8 @@ export function QuemSomos({ setPaginaAtual }) {
             <h2 style={{ textAlign: 'center', color: 'var(--cor-primaria-azul)', marginBottom: '30px' }}>Quem faz a Didáticos acontecer 🤝</h2>
             
             <div style={{ display: 'flex', gap: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                
+                {/* CARD MAYCON */}
                 <div style={estiloCardEquipe}>
                     <div style={estiloFotoPlaceholder}>MK</div>
                     <h3 style={{ margin: '15px 0 5px 0' }}>Maycon Kawlin</h3>
@@ -123,6 +125,27 @@ export function QuemSomos({ setPaginaAtual }) {
                         Idealizador da plataforma e responsável por garantir que a sua experiência de compra seja rápida e segura.
                     </p>
                 </div>
+
+                {/* CARD OLMA */}
+                <div style={estiloCardEquipe}>
+                    <div style={estiloFotoPlaceholder}>OM</div>
+                    <h3 style={{ margin: '15px 0 5px 0' }}>Olma Medeiro</h3>
+                    <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Co-fundadora & Conteúdo</span>
+                    <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
+                        Especialista pedagógica focada em garantir que cada material seja prático, impecável e perfeitamente alinhado com a realidade da sala de aula.
+                    </p>
+                </div>
+
+                {/* CARD MARCOS */}
+                <div style={estiloCardEquipe}>
+                    <div style={estiloFotoPlaceholder}>MF</div>
+                    <h3 style={{ margin: '15px 0 5px 0' }}>Marcos Faleiros</h3>
+                    <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Co-fundador & Planejamento</span>
+                    <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
+                        Responsável por estruturar as soluções e metodologias que transformam o planejamento complexo em recursos fáceis de aplicar.
+                    </p>
+                </div>
+
             </div>
 
             {/* BOTÃO DE VOLTAR */}
