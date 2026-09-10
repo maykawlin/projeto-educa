@@ -10,8 +10,9 @@ export function Footer({ setPaginaAtual }) {
                     <h3>📚 Sobre a Didáticos</h3>
                     <p style={{ textAlign: 'justify' }}>
                         Na Didáticos, acreditamos que o professor merece mais tempo para ensinar e menos tempo preparando materiais.
-                        Criamos atividades, apostilas, slides, e-books e recursos pedagógicos prontos, desenvolvidos com qualidade e organização para facilitar a rotina dos educadores.
-                        Nosso compromisso é ser muito mais que um fornecedor de materiais: queremos ser o parceiro de confiança dos professores.{' '}
+                        Criamos atividades, apostilas, slides, e-books e recursos pedagógicos prontos, desenvolvidos com qualidade e 
+                        organização para facilitar a rotina dos educadores. Nosso compromisso é ser muito mais que um fornecedor de 
+                        materiais: queremos ser o parceiro de confiança dos professores.{' '}
                         <span 
                             onClick={() => setPaginaAtual("quem_somos")} 
                             style={{ cursor: 'pointer', color: 'var(--cor-primaria-verde)', textDecoration: 'underline' }}
