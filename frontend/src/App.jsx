@@ -216,9 +216,6 @@ function App() {
   
 
 
-  return ( 
-    <div> 
-      <Navegacao setPaginaAtual={setPaginaAtual} tamanhoCarrinho={carrinho.length} token={token} //...
 
   return (
     <div>
