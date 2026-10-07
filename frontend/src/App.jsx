@@ -220,6 +220,7 @@ function App() {
     <div>
       <Navegacao
         setPaginaAtual={setPaginaAtual} tamanhoCarrinho={carrinho.length} token={token} setToken={setToken}
+        abrirMiniCarrinho={() => setMiniCarrinhoAberto(true)}
         busca={busca} alterarBusca={alterarBusca} setBuscaAtiva={setBuscaAtiva}
       />
       
