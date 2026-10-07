@@ -147,20 +147,33 @@ export function Navegacao({ setPaginaAtual, tamanhoCarrinho, token, setToken, bu
                 </div>
             )}
 
-            <div style={{ display: "flex", gap: isCompact ? "5px" : "15px", alignItems: "center", flexShrink: 0 }}>
-                <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>
-                    🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
-                </button>
+            <div style={{ display: "flex", gap: isCompact ? "5px" : "15px", alignItems: "center", flexShrink: 0, flexWrap: "wrap", justifyContent: "center" }}>
+            
+            {/* 🌟 NOVIDADE: Botões extras visíveis apenas no celular */}
+            {isMobile && (
+                <>
+                    <button onClick={() => setPaginaAtual("quem_somos")} className="btn-secundario" style={{ padding: '6px 10px', fontSize: '13px' }}>
+                        Quem Somos
+                    </button>
+                    <button onClick={() => setPaginaAtual("como_funciona")} className="btn-secundario" style={{ padding: '6px 10px', fontSize: '13px' }}>
+                        Como Funciona
+                    </button>
+                </>
+            )}
 
-                {token ? (
-                    <MenuUsuario setPaginaAtual={setPaginaAtual} buscarHistorico={buscarHistorico} fazerLogout={fazerLogout} isCompact={isCompact} />
-                ) : (
-                    <>
-                        <button onClick={() => setPaginaAtual("login")} className="btn-secundario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>Login</button>
-                        {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>Criar Conta</button>}
-                    </>
-                )}
-            </div>
+            <button onClick={abrirMiniCarrinho} className="btn-secundario" style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>
+                🛒 <span className="texto-oculto-mobile">Carrinho</span> ({tamanhoCarrinho})
+            </button>
+
+            {token ? (
+                <MenuUsuario setPaginaAtual={setPaginaAtual} buscarHistorico={buscarHistorico} fazerLogout={fazerLogout} isCompact={isCompact} />
+            ) : (
+                <>
+                    <button onClick={() => setPaginaAtual("login")} className="btn-secundario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px' }}>Login</button>
+                    {!isMobile && <button onClick={() => setPaginaAtual("cadastro")} className="btn-primario" style={{ padding: isCompact ? '6px 10px' : '8px 15px', fontSize: isCompact ? '13px' : '15px', whiteSpace: 'nowrap' }}>Criar Conta</button>}
+                </>
+            )}
+        </div>
         </div>
 
         {isTablet && (
