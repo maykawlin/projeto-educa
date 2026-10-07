@@ -61,7 +61,7 @@ export function Footer({ setPaginaAtual }) {
 
             {/* Linha final de Copyright */}
             <div className="footer-bottom">
-                <p>&copy; {anoAtual} Didáticos. Todos os direitos reservados.</p>
+                <p>&copy; {anoAtual} Didáticos. CNPJ: 68.819.080/0001-45. Todos os direitos reservados.</p>
             </div>
         </footer>
     );
