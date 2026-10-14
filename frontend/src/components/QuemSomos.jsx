@@ -1,4 +1,8 @@
 import React, {useEffect} from 'react';
+// IMPORTANDO AS FOTOS DA PASTA ASSETS
+import fotoMaycon from '../assets/foto_maycon.jpg';
+import fotoOlma from '../assets/foto_olma.jpg';
+import fotoMarcos from '../assets/foto_marcos.jpg';
 
 export function QuemSomos({ setPaginaAtual }) {
     useEffect(() => {
@@ -116,8 +120,10 @@ export function QuemSomos({ setPaginaAtual }) {
             
             <div style={{ display: 'flex', gap: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 
+                {/* TROCANDO O ESPAÇO VAZIO PELAS IMAGENS OFICIAIS */}
+                
                 <div style={estiloCardEquipe}>
-                    <div style={estiloFotoPlaceholder}>MK</div>
+                    <img src={fotoMaycon} alt="Maycon Kawlin" style={estiloFotoPerfil} />
                     <h3 style={{ margin: '15px 0 5px 0' }}>Maycon Kawlin</h3>
                     <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Fundador & Desenvolvedor</span>
                     <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
@@ -126,7 +132,7 @@ export function QuemSomos({ setPaginaAtual }) {
                 </div>
 
                 <div style={estiloCardEquipe}>
-                    <div style={estiloFotoPlaceholder}>OM</div>
+                    <img src={fotoOlma} alt="Olma Medeiro" style={estiloFotoPerfil} />
                     <h3 style={{ margin: '15px 0 5px 0' }}>Olma Medeiro</h3>
                     <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Co-fundadora & Conteúdo</span>
                     <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
@@ -135,7 +141,7 @@ export function QuemSomos({ setPaginaAtual }) {
                 </div>
 
                 <div style={estiloCardEquipe}>
-                    <div style={estiloFotoPlaceholder}>MF</div>
+                    <img src={fotoMarcos} alt="Marcos Faleiros" style={estiloFotoPerfil} />
                     <h3 style={{ margin: '15px 0 5px 0' }}>Marcos Faleiros</h3>
                     <span style={{ color: 'var(--cor-primaria-verde)', fontWeight: 'bold', fontSize: '14px' }}>Co-fundador & Planejamento</span>
                     <p style={{ fontSize: '14px', color: 'var(--cor-texto-secundario)', marginTop: '10px', textAlign: 'justify' }}>
@@ -161,4 +167,6 @@ const estiloTituloValor = { margin: '0 0 10px 0', color: 'var(--cor-primaria-ver
 const estiloTextoValor = { margin: 0, fontSize: '14px', color: 'var(--cor-texto-secundario)', lineHeight: '1.5' };
 
 const estiloCardEquipe = { backgroundColor: 'white', border: '1px solid var(--cor-borda)', borderRadius: '12px', padding: '25px', width: '250px', textAlign: 'center', boxShadow: 'var(--sombra-suave)', transition: 'transform 0.2s' };
-const estiloFotoPlaceholder = { width: '80px', height: '80px', borderRadius: '50%', backgroundColor: 'var(--cor-primaria-azul)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', margin: '0 auto' };
+
+// Deixa as fotos redondas, centralizadas e com uma borda azul elegante
+const estiloFotoPerfil = { width: '85px', height: '85px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto', display: 'block', border: '3px solid var(--cor-primaria-azul)' };
