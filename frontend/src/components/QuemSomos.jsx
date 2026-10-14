@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 // IMPORTANDO AS FOTOS DA PASTA ASSETS
-import fotoMaycon from '../assets/foto_maycon.jpg';
-import fotoOlma from '../assets/foto_olma.jpg';
-import fotoMarcos from '../assets/foto_marcos.jpg';
+import fotoMaycon from '../assets/foto_maycon.jpeg';
+import fotoOlma from '../assets/foto_olma.jpeg';
+import fotoMarcos from '../assets/foto_marcos.jpeg';
 
 export function QuemSomos({ setPaginaAtual }) {
     useEffect(() => {
