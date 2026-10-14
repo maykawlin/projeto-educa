@@ -168,5 +168,12 @@ const estiloTextoValor = { margin: 0, fontSize: '14px', color: 'var(--cor-texto-
 
 const estiloCardEquipe = { backgroundColor: 'white', border: '1px solid var(--cor-borda)', borderRadius: '12px', padding: '25px', width: '250px', textAlign: 'center', boxShadow: 'var(--sombra-suave)', transition: 'transform 0.2s' };
 
-// Deixa as fotos redondas, centralizadas e com uma borda azul elegante
-const estiloFotoPerfil = { width: '85px', height: '85px', borderRadius: '50%', objectFit: 'cover', margin: '0 auto', display: 'block', border: '3px solid var(--cor-primaria-azul)' };
+const estiloFotoPerfil = { 
+    width: '160px', 
+    height: '210px', 
+    borderRadius: '12px', 
+    objectFit: 'cover', 
+    objectPosition: 'top', /* O truque mágico: garante que o corte comece do topo da cabeça! */
+    margin: '0 auto', 
+    display: 'block' 
+};
